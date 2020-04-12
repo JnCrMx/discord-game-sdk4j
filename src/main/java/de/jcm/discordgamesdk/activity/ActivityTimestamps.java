@@ -6,7 +6,7 @@ public class ActivityTimestamps
 {
 	private long pointer;
 
-	public ActivityTimestamps(long pointer)
+	ActivityTimestamps(long pointer)
 	{
 		this.pointer = pointer;
 	}

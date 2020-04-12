@@ -4,7 +4,7 @@ public class ActivityAssets
 {
 	private long pointer;
 
-	public ActivityAssets(long pointer)
+	ActivityAssets(long pointer)
 	{
 		this.pointer = pointer;
 	}
