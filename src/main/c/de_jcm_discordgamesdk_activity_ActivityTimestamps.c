@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_activity_ActivityTimestamps.h"
