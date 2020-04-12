@@ -53,6 +53,10 @@ public class DiscordTest
 					activity.assets().setSmallImage("test");
 					activity.assets().setSmallText("It's a TEST!!!");
 
+					activity.secrets().setMatchSecret("match");
+					activity.secrets().setJoinSecret("join");
+					activity.secrets().setSpectateSecret("spectate");
+
 					core.activityManager().updateActivity(activity);
 				}
 

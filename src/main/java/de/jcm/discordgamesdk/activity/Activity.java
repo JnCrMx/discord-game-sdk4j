@@ -4,17 +4,19 @@ public class Activity implements AutoCloseable
 {
 	private long pointer;
 
-	private ActivityAssets assets;
 	private ActivityTimestamps timestamps;
+	private ActivityAssets assets;
 	private ActivityParty party;
+	private ActivitySecrets secrets;
 
 	public Activity()
 	{
 		this.pointer = allocate();
 
-		this.assets = new ActivityAssets(getAssets(pointer));
 		this.timestamps = new ActivityTimestamps(getTimestamps(pointer));
+		this.assets = new ActivityAssets(getAssets(pointer));
 		this.party = new ActivityParty(getParty(pointer));
+		this.secrets = new ActivitySecrets(getSecrets(pointer));
 	}
 
 	public void setState(String state)
@@ -49,17 +51,21 @@ public class Activity implements AutoCloseable
 		return ActivityType.values()[getType(pointer)];
 	}
 
-	public ActivityAssets assets()
-	{
-		return assets;
-	}
 	public ActivityTimestamps timestamps()
 	{
 		return timestamps;
 	}
+	public ActivityAssets assets()
+	{
+		return assets;
+	}
 	public ActivityParty party()
 	{
 		return party;
+	}
+	public ActivitySecrets secrets()
+	{
+		return secrets;
 	}
 
 	private native long allocate();
@@ -74,9 +80,10 @@ public class Activity implements AutoCloseable
 	private native void setType(long pointer, int type);
 	private native int getType(long pointer);
 
-	private native long getAssets(long pointer);
 	private native long getTimestamps(long pointer);
+	private native long getAssets(long pointer);
 	private native long getParty(long pointer);
+	private native long getSecrets(long pointer);
 
 	@Override
 	public void close()

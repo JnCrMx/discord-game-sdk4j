@@ -6,6 +6,7 @@ OBJ = \
 	../../../target/obj/de_jcm_discordgamesdk_activity_ActivityAssets.o \
 	../../../target/obj/de_jcm_discordgamesdk_activity_ActivityParty.o \
 	../../../target/obj/de_jcm_discordgamesdk_activity_ActivityPartySize.o \
+	../../../target/obj/de_jcm_discordgamesdk_activity_ActivitySecrets.o \
 	../../../target/obj/de_jcm_discordgamesdk_activity_ActivityTimestamps.o \
 	../../../target/obj/de_jcm_discordgamesdk_ActivityManager.o \
 	../../../target/obj/de_jcm_discordgamesdk_CreateParams.o \

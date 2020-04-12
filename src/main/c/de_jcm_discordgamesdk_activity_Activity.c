@@ -56,22 +56,28 @@ JNIEXPORT jint JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getType(JNIE
 	return activity->type;
 }
 
-JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getAssets(JNIEnv *env, jobject object, jlong pointer)
-{
-	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
-	return (uint64_t) &(activity->assets);
-}
-
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getTimestamps(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
 	return (uint64_t) &(activity->timestamps);
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getAssets(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+	return (uint64_t) &(activity->assets);
+}
+
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getParty(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
 	return (uint64_t) &(activity->party);
+}
+
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getSecrets(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+	return (uint64_t) &(activity->secrets);
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free(JNIEnv *env, jobject object, jlong pointer)
