@@ -47,6 +47,12 @@ public class DiscordTest
 					activity.timestamps().setStart(Instant.now());
 					activity.timestamps().setEnd(Instant.now().plusSeconds(16));
 
+					activity.assets().setLargeImage("test");
+					activity.assets().setLargeText("Just a test!");
+
+					activity.assets().setSmallImage("test");
+					activity.assets().setSmallText("It's a TEST!!!");
+
 					core.activityManager().updateActivity(activity);
 				}
 

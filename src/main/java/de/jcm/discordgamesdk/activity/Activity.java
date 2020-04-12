@@ -4,6 +4,7 @@ public class Activity implements AutoCloseable
 {
 	private long pointer;
 
+	private ActivityAssets assets;
 	private ActivityTimestamps timestamps;
 	private ActivityParty party;
 
@@ -11,6 +12,7 @@ public class Activity implements AutoCloseable
 	{
 		this.pointer = allocate();
 
+		this.assets = new ActivityAssets(getAssets(pointer));
 		this.timestamps = new ActivityTimestamps(getTimestamps(pointer));
 		this.party = new ActivityParty(getParty(pointer));
 	}
@@ -47,6 +49,10 @@ public class Activity implements AutoCloseable
 		return ActivityType.values()[getType(pointer)];
 	}
 
+	public ActivityAssets assets()
+	{
+		return assets;
+	}
 	public ActivityTimestamps timestamps()
 	{
 		return timestamps;
@@ -68,6 +74,7 @@ public class Activity implements AutoCloseable
 	private native void setType(long pointer, int type);
 	private native int getType(long pointer);
 
+	private native long getAssets(long pointer);
 	private native long getTimestamps(long pointer);
 	private native long getParty(long pointer);
 

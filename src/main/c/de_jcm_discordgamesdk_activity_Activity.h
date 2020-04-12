@@ -73,6 +73,14 @@ JNIEXPORT jint JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getType
 
 /*
  * Class:     de_jcm_discordgamesdk_activity_Activity
+ * Method:    getAssets
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getAssets
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_activity_Activity
  * Method:    getTimestamps
  * Signature: (J)J
  */

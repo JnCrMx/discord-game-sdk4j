@@ -56,6 +56,12 @@ JNIEXPORT jint JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getType(JNIE
 	return activity->type;
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getAssets(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+	return (uint64_t) &(activity->assets);
+}
+
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getTimestamps(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
