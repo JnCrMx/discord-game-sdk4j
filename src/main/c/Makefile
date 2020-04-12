@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-fPIC -c -I"${JAVA_HOME}/include" -I"${JAVA_HOME}/include/win32" -I"../../../discord_game_sdk/c"
-LFLAGS=-shared -L../../../ -ldiscord_game_sdk
+CFLAGS=-fPIC -c -I"${JAVA_HOME}/include" -I"${JAVA_HOME}/include/win32" -I"${JAVA_HOME}/include/linux" -I"../../../discord_game_sdk/c"
+LFLAGS=-shared -L../../../discord_game_sdk/lib/x86_64/ -ldiscord_game_sdk
 OBJ = \
 	../../../target/obj/de_jcm_discordgamesdk_activity_Activity.o \
 	../../../target/obj/de_jcm_discordgamesdk_activity_ActivityAssets.o \

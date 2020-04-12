@@ -6,17 +6,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Random;
 
 public class DiscordTest
 {
 	@Test
 	void createParamTest()
 	{
-		System.loadLibrary("native");
-
-		Random random = new Random();
-
 		try(CreateParams params = new CreateParams())
 		{
 			params.setClientID(698611073133051974L);

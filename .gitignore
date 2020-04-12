@@ -1,6 +1,5 @@
 # Build output
 /target/
-/native.dll
 
 # IDEA stuff
 /.idea/
@@ -11,4 +10,6 @@
 
 # Discord Game SDK (include it yourself)
 /discord_game_sdk/
-/discord_game_sdk.dll
+
+*.dll
+*.so
