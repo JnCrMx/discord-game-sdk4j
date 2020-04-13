@@ -17,5 +17,16 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_ActivityManager.c
 			de_jcm_discordgamesdk_CreateParams.c
 			de_jcm_discordgamesdk_Core.c)
-             
-target_link_libraries(discord_game_sdk_jni dl)
+
+if(UNIX)
+	target_link_libraries(discord_game_sdk_jni dl)
+endif(UNIX)
+
+if(MSVC)
+	add_library(discord_game_sdk SHARED IMPORTED)
+	set_target_properties(discord_game_sdk
+		PROPERTIES
+		IMPORTED_IMPLIB
+		${CMAKE_SOURCE_DIR}/../../../discord_game_sdk/lib/x86_64/discord_game_sdk.dll.lib)
+	target_link_libraries(discord_game_sdk_jni discord_game_sdk)
+endif(MSVC)

@@ -20,6 +20,7 @@ public class Core implements AutoCloseable
 			{
 				if(System.getProperty("os.name").toLowerCase().contains("windows"))
 				{
+					System.load(discordLibrary.getAbsolutePath());
 					NativeUtils.loadLibraryFromJar("/"+"discord_game_sdk_jni"+".dll");
 				}
 				else
@@ -49,12 +50,20 @@ public class Core implements AutoCloseable
 
 	public Core(CreateParams params)
 	{
-		this.pointer = create(params.getPointer());
+		Object ret = create(params.getPointer());
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			pointer = (long) ret;
+		}
 
 		this.activityManager = new ActivityManager(getActivityManager(pointer));
 	}
 
-	private native long create(long paramPointer);
+	private native Object create(long paramPointer);
 	private native void destroy(long pointer);
 
 	private native long getActivityManager(long pointer);

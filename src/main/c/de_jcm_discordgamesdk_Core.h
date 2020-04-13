@@ -20,7 +20,7 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_initDiscordNative
  * Method:    create
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_create
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create
   (JNIEnv *, jobject, jlong);
 
 /*

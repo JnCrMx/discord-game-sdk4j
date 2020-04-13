@@ -3,17 +3,55 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.function.Predicate;
 
 public class DiscordTest
 {
-	@Test
-	void createParamTest()
+	@BeforeAll
+	static void checkPreconditions()
 	{
-		Core.init(new File("./discord_game_sdk/lib/x86_64/discord_game_sdk.so"));
+		Predicate<? super ProcessHandle> processDetector = process ->
+		{
+			if(!process.isAlive())
+				return false;
+
+			String command = process.info().command().orElse("");
+			if(command.endsWith("\\Discord.exe"))
+				return true;
+			if(command.endsWith("/discord"))
+				return true;
+			if(command.equals("discord"))
+				return true;
+			if(command.endsWith("/Discord"))
+				return true;
+			if(command.equals("Discord"))
+				return true;
+
+			return false;
+		};
+		Assumptions.assumeTrue(ProcessHandle.allProcesses().anyMatch(processDetector),
+		                       "Discord is not running");
+	}
+
+	@Test
+	void activityTest()
+	{
+		String discordLibraryPath;
+		if(System.getProperty("os.name").toLowerCase().contains("windows"))
+		{
+			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.dll";
+		}
+		else
+		{
+			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
+		}
+		Core.init(new File(discordLibraryPath));
 
 		try(CreateParams params = new CreateParams())
 		{

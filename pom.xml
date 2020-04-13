@@ -49,8 +49,8 @@
                                 <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
                                     <arg line="${basedir}/src/main/c"/>
                                 </exec>
-                                <exec executable="make" dir="${project.build.directory}/native" failonerror="true">
-                                    <arg line="VERBOSE=1"/>
+                                <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
+                                    <arg line="--build ."/>
                                 </exec>
                             </target>
                         </configuration>
@@ -74,6 +74,13 @@
                                     <directory>${project.build.directory}/native</directory>
                                     <includes>
                                         <include>libdiscord_game_sdk_jni.so</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/native/Debug</directory>
+                                    <includes>
+                                        <include>discord_game_sdk_jni.dll</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
