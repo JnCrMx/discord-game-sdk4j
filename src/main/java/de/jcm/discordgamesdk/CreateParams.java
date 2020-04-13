@@ -1,37 +1,7 @@
 package de.jcm.discordgamesdk;
 
-import cz.adamh.utils.NativeUtils;
-
-import java.io.IOException;
-
 public class CreateParams implements AutoCloseable
 {
-	static
-	{
-		try
-		{
-			System.loadLibrary("native");
-		}
-		catch(UnsatisfiedLinkError e)
-		{
-			try
-			{
-				if(System.getProperty("os.name").toLowerCase().contains("windows"))
-				{
-					NativeUtils.loadLibraryFromJar("/windows-" + System.getProperty("os.arch") + ".dll");
-				}
-				else
-				{
-					NativeUtils.loadLibraryFromJar("/linux-" + System.getProperty("os.arch") + ".so");
-				}
-			}
-			catch(IOException ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-	}
-
 	private long pointer;
 
 	public CreateParams()
