@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    initDiscordNative
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_initDiscordNative
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    create
  * Signature: (J)J
  */

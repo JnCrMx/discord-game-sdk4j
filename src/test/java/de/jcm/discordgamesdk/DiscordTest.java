@@ -5,6 +5,7 @@ import de.jcm.discordgamesdk.activity.ActivityType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.time.Instant;
 
 public class DiscordTest
@@ -12,6 +13,8 @@ public class DiscordTest
 	@Test
 	void createParamTest()
 	{
+		Core.init(new File("./discord_game_sdk/lib/x86_64/discord_game_sdk.so"));
+
 		try(CreateParams params = new CreateParams())
 		{
 			params.setClientID(698611073133051974L);
