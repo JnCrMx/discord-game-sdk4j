@@ -30,7 +30,7 @@ public class Activity implements AutoCloseable
 	/**
 	 * Sets the player's current party status.
 	 * @param state Current party status, max 127 characters
-	 * @throws IllegalArgumentException if state is too long
+	 * @throws IllegalArgumentException if {@code state} is too long
 	 */
 	public void setState(String state)
 	{
@@ -51,7 +51,7 @@ public class Activity implements AutoCloseable
 	/**
 	 * Sets what the player is currently doing.
 	 * @param details What the player is currently doing, max 127 characters
-	 * @throws IllegalArgumentException if details is too long
+	 * @throws IllegalArgumentException if {@code details} is too long
 	 */
 	public void setDetails(String details)
 	{

@@ -21,7 +21,7 @@ public class ActivityManager
 
 	/**
 	 * <p>Updates the user's current presence to a new activity.</p>
-	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to process the returned {@link Result}.</p>
+	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
 	 * @param activity New activity for the user.
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#updateactivity">
 	 *     https://discordapp.com/developers/docs/game-sdk/activities#updateactivity</a>
@@ -33,7 +33,7 @@ public class ActivityManager
 
 	/**
 	 * <p>Updates the user's current presence to a new activity.</p>
-	 * <p>A custom callback is used to process the returned {@link Result}.</p>
+	 * <p>A custom callback is used to handle the returned {@link Result}.</p>
 	 * @param activity New activity for the user.
 	 * @param callback Callback to process the returned {@link Result}.
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#updateactivity">
@@ -44,11 +44,24 @@ public class ActivityManager
 		updateActivity(pointer, activity.getPointer(), callback);
 	}
 
+	/**
+	 * <p>Clears the user's current presence.</p>
+	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#clearactivity">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#clearactivity</a>
+	 */
 	public void clearActivity()
 	{
 		clearActivity(Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * <p>Clears the user's current presence.</p>
+	 * <p>A custom callback is used to handle the returned {@link Result}.</p>
+	 * @param callback Callback to process the returned {@link Result}.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#clearactivity">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#clearactivity</a>
+	 */
 	public void clearActivity(@NotNull Consumer<Result> callback)
 	{
 		clearActivity(pointer, callback);
