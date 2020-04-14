@@ -1,0 +1,6 @@
+jdk:
+    - openjdk11
+before_install:
+    - sh jitpack-download-natives.sh
+install:
+    - mvn install -DskipTests -Dmaven.antrun.skip=true
