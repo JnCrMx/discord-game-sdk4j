@@ -1,5 +1,9 @@
 package de.jcm.discordgamesdk.activity;
 
+/**
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activitysecrets-struct">
+ *     https://discordapp.com/developers/docs/game-sdk/activities#data-models-activitysecrets-struct</a>
+ */
 public class ActivitySecrets
 {
 	private long pointer;

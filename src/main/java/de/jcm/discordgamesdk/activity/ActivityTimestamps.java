@@ -2,6 +2,10 @@ package de.jcm.discordgamesdk.activity;
 
 import java.time.Instant;
 
+/**
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activitytimestamps-struct">
+ *     https://discordapp.com/developers/docs/game-sdk/activities#data-models-activitytimestamps-struct</a>
+ */
 public class ActivityTimestamps
 {
 	private long pointer;

@@ -1,5 +1,9 @@
 package de.jcm.discordgamesdk.activity;
 
+/**
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activityparty-struct">
+ *     https://discordapp.com/developers/docs/game-sdk/activities#data-models-activityparty-struct</a>
+ */
 public class ActivityParty
 {
 	private long pointer;

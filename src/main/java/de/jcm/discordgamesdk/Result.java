@@ -1,7 +1,15 @@
 package de.jcm.discordgamesdk;
 
+/**
+ * Enum for results the SDK might return.
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#data-models-result-enum">
+ *     https://discordapp.com/developers/docs/game-sdk/discord#data-models-result-enum</a>
+ */
 public enum Result
 {
+	/**
+	 * Everything is fine
+	 */
 	OK,
 	SERVICE_UNAVAILABLE,
 	INVALID_VERSION,

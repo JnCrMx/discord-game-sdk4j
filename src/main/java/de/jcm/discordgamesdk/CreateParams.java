@@ -1,29 +1,57 @@
 package de.jcm.discordgamesdk;
 
+/**
+ * Initial parameters to create a {@link Core} from.
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#create-parameters">
+ *     https://discordapp.com/developers/docs/game-sdk/discord#create-parameters</a>
+ */
 public class CreateParams implements AutoCloseable
 {
 	private long pointer;
 
+	/**
+	 * Allocates a new structure and initializes it with default parameters.
+	 */
 	public CreateParams()
 	{
 		this.pointer = allocate();
 	}
 
+	/**
+	 * Sets the application/client ID.
+	 * @param id Application/client ID.
+	 */
 	public void setClientID(long id)
 	{
 		setClientID(pointer, id);
 	}
 
+	/**
+	 * Gets the application/client ID.
+	 * @return Application/client ID.
+	 */
 	public long getClientID()
 	{
 		return getClientID(pointer);
 	}
 
+	/**
+	 * Sets flags for the Core.
+	 * @param flags Flags to initialize the Core with.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum</a>
+	 */
 	public void setFlags(long flags)
 	{
 		setFlags(pointer, flags);
 	}
 
+	/**
+	 * Gets the flags set for the Core.
+	 * @return Flags that have been set.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum</a>
+	 */
 	public long getFlags()
 	{
 		return getFlags(pointer);
@@ -38,14 +66,27 @@ public class CreateParams implements AutoCloseable
 	private native void setFlags(long pointer, long flags);
 	private native long getFlags(long pointer);
 
+	/**
+	 * Gets the default flags for new Cores.
+	 * @return The default flags.
+	 */
 	public static native long getDefaultFlags();
 
+	/**
+	 * <p>Frees the allocated native structure.</p>
+	 * <p>You should call this when you do not need the structure anymore.</p>
+	 */
 	@Override
 	public void close()
 	{
 		free(pointer);
 	}
 
+	/**
+	 * <p>Return the pointer to the native structure.</p>
+	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
+	 * @return A native pointer.
+	 */
 	public long getPointer()
 	{
 		return pointer;
