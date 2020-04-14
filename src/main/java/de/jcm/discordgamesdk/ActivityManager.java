@@ -24,5 +24,16 @@ public class ActivityManager
 		updateActivity(pointer, activity.getPointer(), callback);
 	}
 
+	public void clearActivity()
+	{
+		clearActivity(Core.DEFAULT_CALLBACK);
+	}
+
+	public void clearActivity(@NotNull Consumer<Result> callback)
+	{
+		clearActivity(pointer, callback);
+	}
+
 	private native void updateActivity(long pointer, long activityPointer, Consumer<Result> callback);
+	private native void clearActivity(long pointer, Consumer<Result> callback);
 }

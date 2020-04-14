@@ -8,7 +8,7 @@ struct CallbackData {
 	jobject callback;
 };
 
-void update_activity_callback(void* data, enum EDiscordResult result)
+void activity_callback(void* data, enum EDiscordResult result)
 {
 	struct CallbackData* cbd = (struct CallbackData*)data;
 	
@@ -46,5 +46,19 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity
 	cbd->jvm = jvm;
 	cbd->callback = (*env)->NewGlobalRef(env, callback);
 	
-	activity_manager->update_activity(activity_manager, activity, cbd, update_activity_callback);
+	activity_manager->update_activity(activity_manager, activity, cbd, activity_callback);
+}
+
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_clearActivity(JNIEnv *env, jobject object, jlong pointer, jobject callback)
+{
+	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
+	
+	JavaVM* jvm = malloc(sizeof(jvm));
+	(*env)->GetJavaVM(env, &jvm);
+	
+	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
+	cbd->jvm = jvm;
+	cbd->callback = (*env)->NewGlobalRef(env, callback);
+	
+	activity_manager->clear_activity(activity_manager, cbd, activity_callback);
 }

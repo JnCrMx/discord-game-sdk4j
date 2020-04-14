@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity
   (JNIEnv *, jobject, jlong, jlong, jobject);
 
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    clearActivity
+ * Signature: (JLjava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_clearActivity
+  (JNIEnv *, jobject, jlong, jobject);
+
 #ifdef __cplusplus
 }
 #endif
