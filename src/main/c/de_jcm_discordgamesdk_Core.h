@@ -18,7 +18,7 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_initDiscordNative
 /*
  * Class:     de_jcm_discordgamesdk_Core
  * Method:    create
- * Signature: (J)J
+ * Signature: (J)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create
   (JNIEnv *, jobject, jlong);
@@ -46,6 +46,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getActivityManager
  */
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks
   (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
+ * Method:    setLogHook
+ * Signature: (JILjava/util/function/BiConsumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_setLogHook
+  (JNIEnv *, jobject, jlong, jint, jobject);
 
 #ifdef __cplusplus
 }

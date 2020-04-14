@@ -97,3 +97,49 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks(JNIEnv *env,
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	core->run_callbacks(core);
 }
+
+struct HookData {
+	JavaVM* jvm;
+	jobject hook;
+};
+
+void log_hook(void* data, enum EDiscordLogLevel level, const char* message)
+{
+	struct HookData* hook_data = (struct HookData*)data;
+	
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(hook_data->jvm))->AttachCurrentThread(hook_data->jvm, (void**)&env, &args);
+	
+	jclass level_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/LogLevel");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, level_clazz, "values", "()[Lde/jcm/discordgamesdk/LogLevel;");
+	jobjectArray levels = (jobjectArray) (*env)->CallStaticObjectMethod(env, level_clazz, values_method);
+	// enum DiscordLogLevel starts with index 1, so subtract 1 to translate to "normal" enum
+	jobject level_object = (*env)->GetObjectArrayElement(env, levels, level-1);
+	
+	jstring message_string = (*env)->NewStringUTF(env, message);
+	
+	jclass clazz = (*env)->GetObjectClass(env, hook_data->hook);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "accept", "(Ljava/lang/Object;Ljava/lang/Object;)V");
+	(*env)->CallVoidMethod(env, hook_data->hook, method, level_object, message_string);
+	
+	(*(hook_data->jvm))->DetachCurrentThread(hook_data->jvm);
+}
+
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_setLogHook(JNIEnv *env, jobject object, jlong pointer, jint min_level, jobject hook)
+{	
+	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
+	
+	JavaVM* jvm = malloc(sizeof(jvm));
+	(*env)->GetJavaVM(env, &jvm);
+	
+	struct HookData* hook_data = malloc(sizeof(struct HookData));
+	hook_data->jvm = jvm;
+	hook_data->hook = (*env)->NewGlobalRef(env, hook);
+	
+	// enum DiscordLogLevel starts with index 1, so add 1 to translate from "normal" enum
+	core->set_log_hook(core, min_level+1, hook_data, log_hook);
+}

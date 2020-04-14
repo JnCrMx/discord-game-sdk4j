@@ -1,9 +1,11 @@
 package de.jcm.discordgamesdk;
 
 import cz.adamh.utils.NativeUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Core implements AutoCloseable
@@ -44,6 +46,11 @@ public class Core implements AutoCloseable
 			throw new GameSDKException(result);
 	};
 
+	public static final BiConsumer<LogLevel, String> DEFAULT_LOG_HOOK= (level, message) ->
+	{
+		System.out.printf("[%s] %s\n", level, message);
+	};
+
 	private long pointer;
 
 	private ActivityManager activityManager;
@@ -60,6 +67,8 @@ public class Core implements AutoCloseable
 			pointer = (long) ret;
 		}
 
+		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
+
 		this.activityManager = new ActivityManager(getActivityManager(pointer));
 	}
 
@@ -70,6 +79,8 @@ public class Core implements AutoCloseable
 
 	private native void runCallbacks(long pointer);
 
+	private native void setLogHook(long pointer, int minLevel, BiConsumer<LogLevel, String> logHook);
+
 	public ActivityManager activityManager()
 	{
 		return activityManager;
@@ -78,6 +89,11 @@ public class Core implements AutoCloseable
 	public void runCallbacks()
 	{
 		runCallbacks(pointer);
+	}
+
+	public void setLogHook(LogLevel minLevel, @NotNull BiConsumer<LogLevel, String> logHook)
+	{
+		setLogHook(pointer, minLevel.ordinal(), logHook);
 	}
 
 	@Override
