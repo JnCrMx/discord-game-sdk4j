@@ -1,5 +1,7 @@
 package de.jcm.discordgamesdk;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Initial parameters to create a {@link Core} from.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#create-parameters">
@@ -57,6 +59,15 @@ public class CreateParams implements AutoCloseable
 		return getFlags(pointer);
 	}
 
+	/**
+	 * Registers an event handler to later receive events from the created Core.
+	 * @param eventHandler An EventHandler
+	 */
+	public void registerEventHandler(@NotNull DiscordEventAdapter eventHandler)
+	{
+		registerEventHandler(pointer, eventHandler);
+	}
+
 	private native long allocate();
 	private native void free(long pointer);
 
@@ -65,6 +76,8 @@ public class CreateParams implements AutoCloseable
 
 	private native void setFlags(long pointer, long flags);
 	private native long getFlags(long pointer);
+
+	private native void registerEventHandler(long pointer, DiscordEventAdapter handler);
 
 	/**
 	 * Gets the default flags for new Cores.
