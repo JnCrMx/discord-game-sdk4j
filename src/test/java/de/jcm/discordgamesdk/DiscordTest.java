@@ -39,8 +39,8 @@ public class DiscordTest
 		                       "Discord is not running");
 	}
 
-	@Test
-	void activityTest()
+	@BeforeAll
+	static void initCore()
 	{
 		String discordLibraryPath;
 		if(System.getProperty("os.name").toLowerCase().contains("windows"))
@@ -52,7 +52,11 @@ public class DiscordTest
 			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
 		}
 		Core.init(new File(discordLibraryPath));
+	}
 
+	@Test
+	void activityTest()
+	{
 		try(CreateParams params = new CreateParams())
 		{
 			params.setClientID(698611073133051974L);
@@ -103,6 +107,60 @@ public class DiscordTest
 						core.activityManager().clearActivity();
 					}
 
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	void eventTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			params.setClientID(698611073133051974L);
+			params.registerEventHandler(new DiscordEventAdapter()
+			{
+				@Override
+				public void onActivitySpectate(String secret)
+				{
+					System.out.println("DiscordTest.onActivitySpectate");
+					System.out.println("secret = " + secret);
+				}
+
+				@Override
+				public void onActivityJoinRequest(DiscordUser user)
+				{
+					System.out.println("DiscordTest.onActivityJoinRequest");
+					System.out.println("user = " + user);
+				}
+			});
+
+			try(Core core = new Core(params))
+			{
+				try(Activity activity = new Activity())
+				{
+					activity.party().setID("1234");
+					activity.party().size().setCurrentSize(10);
+					activity.party().size().setMaxSize(100);
+
+					activity.secrets().setMatchSecret("match");
+					activity.secrets().setJoinSecret("join");
+					activity.secrets().setSpectateSecret("spectate");
+
+					core.activityManager().updateActivity(activity);
+				}
+
+				for(int i=0; i<1000; i++)
+				{
 					core.runCallbacks();
 					try
 					{

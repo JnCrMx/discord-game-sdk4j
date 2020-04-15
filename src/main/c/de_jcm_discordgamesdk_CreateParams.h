@@ -57,6 +57,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getFlags
 
 /*
  * Class:     de_jcm_discordgamesdk_CreateParams
+ * Method:    registerEventHandler
+ * Signature: (JLde/jcm/discordgamesdk/events/EventHandler;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHandler
+  (JNIEnv *, jobject, jlong, jobject);
+
+/*
+ * Class:     de_jcm_discordgamesdk_CreateParams
  * Method:    getDefaultFlags
  * Signature: ()J
  */

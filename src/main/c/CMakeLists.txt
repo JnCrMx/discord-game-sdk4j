@@ -16,7 +16,9 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_activity_ActivityTimestamps.c
 			de_jcm_discordgamesdk_ActivityManager.c
 			de_jcm_discordgamesdk_CreateParams.c
-			de_jcm_discordgamesdk_Core.c)
+			de_jcm_discordgamesdk_Core.c
+
+			EventHandler.c)
 
 if(UNIX)
 	target_link_libraries(discord_game_sdk_jni dl)
