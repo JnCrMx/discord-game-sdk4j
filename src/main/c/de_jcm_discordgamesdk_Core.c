@@ -92,6 +92,12 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getActivityManager(JNIEn
 	return (uint64_t) core->get_activity_manager(core);
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getUserManager(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
+	return (uint64_t) core->get_user_manager(core);
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;

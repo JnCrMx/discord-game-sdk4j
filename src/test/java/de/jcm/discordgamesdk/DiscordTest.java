@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class DiscordTest
@@ -171,6 +173,79 @@ public class DiscordTest
 						e.printStackTrace();
 					}
 				}
+			}
+		}
+	}
+
+	@Test
+	void userTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			// We sadly need this rather ugly reference to access the Core in our EventAdapter.
+			AtomicReference<Core> coreRef = new AtomicReference<>();
+			// Goals to quit when we are done
+			AtomicBoolean receivedCurrentUser = new AtomicBoolean(false);
+			AtomicBoolean receivedUser = new AtomicBoolean(false);
+
+			params.setClientID(698611073133051974L);
+			params.registerEventHandler(new DiscordEventAdapter()
+			{
+				@Override
+				public void onCurrentUserUpdate()
+				{
+					DiscordUser currentUser = coreRef.get().userManager().getCurrentUser();
+					Assertions.assertNotNull(currentUser, "get_current_user returned null.");
+
+					receivedCurrentUser.set(true);
+				}
+			});
+			try(Core core = new Core(params))
+			{
+				coreRef.set(core);
+				/*
+				 Calling it directly after initialization of the Core will fail
+				 because onCurrentUserUpdate() hasn't been fired at this point.
+				 */
+				Assertions.assertThrows(GameSDKException.class, ()->core.userManager().getCurrentUser(),
+				                        "We can access the current user too early. This is weird.");
+
+				Assertions.assertDoesNotThrow(()->core.userManager().getCurrentUserPremiumType(),
+				                              "get_current_user_premium_type failed.");
+				Assertions.assertDoesNotThrow(()->core.userManager().currentUserHasFlag(UserManager.USER_FLAG_PARTNER),
+				                              "current_user_has_flag failed.");
+
+				long userId = 352386023159758848L;
+				core.userManager().getUser(userId, (result, user) ->
+				{
+					Assertions.assertEquals(Result.OK, result, "get_user failed.");
+					Assertions.assertNotNull(user, "get_user returned null.");
+					Assertions.assertEquals(userId, user.getUserId(), "get_user did not return correct user ID.");
+
+					receivedUser.set(true);
+				});
+
+				for(int i=0; i<2000 &&
+						// Quit when we are done
+						!(
+								receivedCurrentUser.get() &&
+								receivedUser.get()
+						); i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				Assertions.assertTrue(receivedUser.get(),
+				                      "Did not receive information about a user.");
+				Assertions.assertTrue(receivedCurrentUser.get(),
+				                      "Did not receive information about the current user.");
 			}
 		}
 	}

@@ -82,6 +82,7 @@ public class Core implements AutoCloseable
 	private long pointer;
 
 	private ActivityManager activityManager;
+	private UserManager userManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -118,12 +119,14 @@ public class Core implements AutoCloseable
 		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
 
 		this.activityManager = new ActivityManager(getActivityManager(pointer));
+		this.userManager = new UserManager(getUserManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
 	private native void destroy(long pointer);
 
 	private native long getActivityManager(long pointer);
+	private native long getUserManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -139,6 +142,18 @@ public class Core implements AutoCloseable
 	public ActivityManager activityManager()
 	{
 		return activityManager;
+	}
+
+	/**
+	 * <p>Returns the {@link UserManager} associated with this core.</p>
+	 * <p>A UserManager is used to receive information about Discord users.</p>
+	 * @return A {@link UserManager}
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#getusermanager">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#getusermanager</a>
+	 */
+	public UserManager userManager()
+	{
+		return userManager;
 	}
 
 	/**
