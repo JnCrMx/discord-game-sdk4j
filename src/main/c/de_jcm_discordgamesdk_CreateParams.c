@@ -2,6 +2,7 @@
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_CreateParams.h"
+#include "EventHandler.h"
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_allocate(JNIEnv *env, jobject object)
 {
@@ -12,7 +13,11 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_allocate(JNIEnv 
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_free(JNIEnv *env, jobject object, jlong pointer)
 {
-	free((void*)pointer);
+	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
+	
+	if(params->activity_events)
+		free(params->activity_events);
+	free(params);
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_setClientID(JNIEnv *env, jobject object, jlong pointer, jlong client_id)
@@ -37,6 +42,39 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getFlags(JNIEnv 
 {
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	return params->flags;
+}
+
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHandler(JNIEnv *env, jobject object, jlong pointer, jobject handler)
+{
+	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
+	
+	// event_data
+	JavaVM* jvm = malloc(sizeof(jvm));
+	(*env)->GetJavaVM(env, &jvm);
+	
+	struct EventData* event_data = malloc(sizeof(struct EventData));
+	event_data->jvm = jvm;
+	event_data->handler = (*env)->NewGlobalRef(env, handler);
+	
+	params->event_data = event_data;
+	
+	// activities events
+	struct IDiscordActivityEvents *activity_events = malloc(sizeof(struct IDiscordActivityEvents));
+	memset(activity_events, 0, sizeof(struct IDiscordActivityEvents));
+	
+	activity_events->on_activity_join = on_activity_join;
+	activity_events->on_activity_spectate = on_activity_spectate;
+	activity_events->on_activity_join_request = on_activity_join_request;
+	
+	params->activity_events = activity_events;
+	
+	// user_events
+	struct IDiscordUserEvents *user_events = malloc(sizeof(struct IDiscordUserEvents));
+	memset(user_events, 0, sizeof(struct IDiscordUserEvents));
+	
+	user_events->on_current_user_update = on_current_user_update;
+	
+	params->user_events = user_events;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getDefaultFlags(JNIEnv *env, jclass clazz)
