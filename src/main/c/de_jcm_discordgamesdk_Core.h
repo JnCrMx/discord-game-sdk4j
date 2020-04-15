@@ -41,6 +41,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getActivityManager
 
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getUserManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getUserManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    runCallbacks
  * Signature: (J)V
  */

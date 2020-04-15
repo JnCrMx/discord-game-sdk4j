@@ -17,6 +17,7 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_ActivityManager.c
 			de_jcm_discordgamesdk_CreateParams.c
 			de_jcm_discordgamesdk_Core.c
+			de_jcm_discordgamesdk_UserManager.c
 
 			EventHandler.c)
 
