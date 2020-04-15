@@ -1,6 +1,6 @@
 #include <discord_game_sdk.h>
 
-#include "de_jcm_discordgamesdk_activity_Activity.h"
+#include "de_jcm_discordgamesdk_activity_ActivitySecrets.h"
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivitySecrets_setMatchSecret(JNIEnv *env, jobject object, jlong pointer, jstring secret)
 {
