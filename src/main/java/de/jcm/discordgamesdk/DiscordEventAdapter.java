@@ -48,4 +48,17 @@ public abstract class DiscordEventAdapter
 	public void onCurrentUserUpdate()
 	{
 	}
+
+	/**
+	 * <p>Fires when the overlay is toggled (locked / unlocked).</p>
+	 * <p>Apparently <i>also</i> fires after initialization of the {@link OverlayManager} and therefore
+	 * tells you the initial overlay state.</p>
+	 * @param locked Current state of the overlay
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#ontoggle">
+	 *     https://discordapp.com/developers/docs/game-sdk/overlay#ontoggle</a>
+	 */
+	public void onOverlayToggle(boolean locked)
+	{
+
+	}
 }

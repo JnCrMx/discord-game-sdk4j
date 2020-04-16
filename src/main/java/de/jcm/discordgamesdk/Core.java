@@ -83,6 +83,7 @@ public class Core implements AutoCloseable
 
 	private ActivityManager activityManager;
 	private UserManager userManager;
+	private OverlayManager overlayManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -120,6 +121,7 @@ public class Core implements AutoCloseable
 
 		this.activityManager = new ActivityManager(getActivityManager(pointer));
 		this.userManager = new UserManager(getUserManager(pointer));
+		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -127,6 +129,7 @@ public class Core implements AutoCloseable
 
 	private native long getActivityManager(long pointer);
 	private native long getUserManager(long pointer);
+	private native long getOverlayManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -154,6 +157,18 @@ public class Core implements AutoCloseable
 	public UserManager userManager()
 	{
 		return userManager;
+	}
+
+	/**
+	 * <p>Returns the {@link OverlayManager} associated with this core.</p>
+	 * <p>An OverlayManager is used to control the overlay for this game.</p>
+	 * @return An {@link OverlayManager}
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#getoverlaymanager">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#getoverlaymanager</a>
+	 */
+	public OverlayManager overlayManager()
+	{
+		return overlayManager;
 	}
 
 	/**

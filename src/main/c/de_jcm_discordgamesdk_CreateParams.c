@@ -17,6 +17,10 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_free(JNIEnv *env,
 	
 	if(params->activity_events)
 		free(params->activity_events);
+	if(params->user_events)
+		free(params->user_events);
+	if(params->overlay_events)
+		free(params->overlay_events);
 	free(params);
 }
 
@@ -75,6 +79,14 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHand
 	user_events->on_current_user_update = on_current_user_update;
 	
 	params->user_events = user_events;
+	
+	// overlay_events
+	struct IDiscordOverlayEvents *overlay_events = malloc(sizeof(struct IDiscordOverlayEvents));
+	memset(overlay_events, 0, sizeof(struct IDiscordOverlayEvents));
+	
+	overlay_events->on_toggle = on_overlay_toggle;
+	
+	params->overlay_events = overlay_events;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getDefaultFlags(JNIEnv *env, jclass clazz)

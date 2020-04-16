@@ -90,3 +90,22 @@ void on_current_user_update(void* event_data)
 	
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }
+
+// overlay_events
+void on_overlay_toggle(void* event_data, bool locked)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+	
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+	
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onOverlayToggle", "(Z)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, locked);
+	
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
