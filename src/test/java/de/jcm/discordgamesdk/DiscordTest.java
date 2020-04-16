@@ -1,6 +1,7 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -246,6 +247,78 @@ public class DiscordTest
 				                      "Did not receive information about a user.");
 				Assertions.assertTrue(receivedCurrentUser.get(),
 				                      "Did not receive information about the current user.");
+			}
+		}
+	}
+
+	@Test
+	void overlayTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			params.setClientID(698611073133051974L);
+			try(Core core = new Core(params))
+			{
+				Assertions.assertDoesNotThrow(()->core.overlayManager().isEnabled(),
+				                              "is_enabled failed.");
+				boolean locked = core.overlayManager().isLocked();
+				core.overlayManager().setLocked(!locked, result->
+				{
+					Assertions.assertEquals(Result.OK, result, "set_locked failed.");
+					boolean newLocked = core.overlayManager().isLocked();
+					Assertions.assertEquals(!locked, newLocked, "locked did not change.");
+				});
+
+				try(Activity activity = new Activity())
+				{
+					activity.party().setID("1234");
+					activity.party().size().setCurrentSize(10);
+					activity.party().size().setMaxSize(100);
+
+					activity.secrets().setMatchSecret("match");
+					activity.secrets().setJoinSecret("join");
+					activity.secrets().setSpectateSecret("spectate");
+
+					core.activityManager().updateActivity(activity);
+				}
+
+				AtomicBoolean openActivityInviteComplete = new AtomicBoolean(false);
+				AtomicBoolean openGuildInviteComplete = new AtomicBoolean(false);
+				AtomicBoolean openVoiceSettingsComplete = new AtomicBoolean(false);
+
+				core.overlayManager().openActivityInvite(ActivityActionType.SPECTATE, result->
+				{
+					Assertions.assertEquals(Result.OK, result, "open_activity_invite failed.");
+					openActivityInviteComplete.set(true);
+				});
+				core.overlayManager().openGuildInvite("discord-developers", result->
+				{
+					Assertions.assertEquals(Result.OK, result, "open_guild_invite failed.");
+					openGuildInviteComplete.set(true);
+				});
+				core.overlayManager().openVoiceSettings(result-> {
+					Assertions.assertEquals(Result.OK, result, "open_voice_settings failed.");
+					openVoiceSettingsComplete.set(true);
+				});
+
+				for(int i=0; i<1000 &&
+						// Quit when we are done
+						!(
+								openActivityInviteComplete.get() &&
+								openGuildInviteComplete.get() &&
+								openVoiceSettingsComplete.get()
+						); i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

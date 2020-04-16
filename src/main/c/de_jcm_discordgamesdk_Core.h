@@ -49,6 +49,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getUserManager
 
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getOverlayManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getOverlayManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    runCallbacks
  * Signature: (J)V
  */
