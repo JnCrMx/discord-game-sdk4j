@@ -14,4 +14,8 @@ void on_activity_join_request(void* event_data, struct DiscordUser* user);
 // user_events
 void on_current_user_update(void* event_data);
 
+// relationship_events
+void on_relationship_refresh(void* event_data);
+void on_relationship_update(void* event_data, struct DiscordRelationship* relationship);
+
 #endif

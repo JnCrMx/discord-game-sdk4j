@@ -83,6 +83,7 @@ public class Core implements AutoCloseable
 
 	private ActivityManager activityManager;
 	private UserManager userManager;
+	private RelationshipManager relationshipManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -120,6 +121,7 @@ public class Core implements AutoCloseable
 
 		this.activityManager = new ActivityManager(getActivityManager(pointer));
 		this.userManager = new UserManager(getUserManager(pointer));
+		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -127,6 +129,7 @@ public class Core implements AutoCloseable
 
 	private native long getActivityManager(long pointer);
 	private native long getUserManager(long pointer);
+	private native long getRelationshipManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -154,6 +157,19 @@ public class Core implements AutoCloseable
 	public UserManager userManager()
 	{
 		return userManager;
+	}
+
+	/**
+	 * <p>Returns the {@link RelationshipManager} associated with this core.</p>
+	 * <p>A RelationshipManager is used to receive information about the user's
+	 * relationships with other Discord users (e.g. friends).</p>
+	 * @return A {@link RelationshipManager}
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#getrelationshipmanager">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#getrelationshipmanager</a>
+	 */
+	public RelationshipManager relationshipManager()
+	{
+		return relationshipManager;
 	}
 
 	/**

@@ -75,6 +75,15 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHand
 	user_events->on_current_user_update = on_current_user_update;
 	
 	params->user_events = user_events;
+	
+	// relationship_events
+	struct IDiscordRelationshipEvents *relationship_events = malloc(sizeof(struct IDiscordRelationshipEvents));
+	memset(relationship_events, 0, sizeof(struct IDiscordRelationshipEvents));
+	
+	relationship_events->on_refresh = on_relationship_refresh;
+	relationship_events->on_relationship_update = on_relationship_update;
+	
+	params->relationship_events = relationship_events;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getDefaultFlags(JNIEnv *env, jclass clazz)

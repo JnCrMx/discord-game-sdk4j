@@ -25,6 +25,22 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free
 
 /*
  * Class:     de_jcm_discordgamesdk_activity_Activity
+ * Method:    getApplicationId
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getApplicationId
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_activity_Activity
+ * Method:    getName
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getName
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_activity_Activity
  * Method:    setState
  * Signature: (JLjava/lang/String;)V
  */

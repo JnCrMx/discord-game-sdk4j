@@ -249,4 +249,55 @@ public class DiscordTest
 			}
 		}
 	}
+
+	@Test
+	void relationshipTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			// We sadly need this rather ugly reference to access the Core in our EventAdapter.
+			AtomicReference<Core> coreRef = new AtomicReference<>();
+
+			params.setClientID(698611073133051974L);
+			params.registerEventHandler(new DiscordEventAdapter()
+			{
+				@Override
+				public void onRelationshipRefresh()
+				{
+					System.out.println("DiscordTest.onRelationshipRefresh");
+
+					long userId = 691614879399936078L;
+					Relationship relationship = coreRef.get()
+							.relationshipManager().getWith(userId);
+					Assertions.assertEquals(userId, relationship.getUser().getUserId(),
+					                        "Relationship has wrong user ID.");
+
+					coreRef.get().relationshipManager().filter(RelationshipManager.NO_FILTER);
+				}
+
+				@Override
+				public void onRelationshipUpdate(Relationship relationship)
+				{
+					System.out.println(relationship);
+				}
+			});
+			try(Core core = new Core(params))
+			{
+				coreRef.set(core);
+
+				for(int i = 0; i < 1000; i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 }

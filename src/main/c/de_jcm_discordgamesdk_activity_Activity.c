@@ -10,6 +10,20 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_allocate(JN
 	return (uint64_t) activity;
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getApplicationId(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+	
+	return activity->application_id;
+}
+
+JNIEXPORT jstring JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getName(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+	
+	return (*env)->NewStringUTF(env, activity->name);
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_setState(JNIEnv *env, jobject object, jlong pointer, jstring state)
 {
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;

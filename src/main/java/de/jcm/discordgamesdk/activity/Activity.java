@@ -28,6 +28,43 @@ public class Activity implements AutoCloseable
 	}
 
 	/**
+	 * Parses the given pointer as an Activity.
+	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
+	 * @param pointer A native pointer
+	 */
+	public Activity(long pointer)
+	{
+		this.pointer = pointer;
+
+		this.timestamps = new ActivityTimestamps(getTimestamps(pointer));
+		this.assets = new ActivityAssets(getAssets(pointer));
+		this.party = new ActivityParty(getParty(pointer));
+		this.secrets = new ActivitySecrets(getSecrets(pointer));
+	}
+
+	/**
+	 * <p>Gets the application ID of the Activity.</p>
+	 * <p>This is a <i>read-only</i> property. You are only gonna use it
+	 * if you acquire the Activity from a {@link de.jcm.discordgamesdk.Presence}.</p>
+	 * @return The application ID
+	 */
+	public long getApplicationId()
+	{
+		return getApplicationId(pointer);
+	}
+
+	/**
+	 * <p>Gets the name of the Activity.</p>
+	 * <p>This is a <i>read-only</i> property. You are only gonna use it
+	 * if you acquire the Activity from a {@link de.jcm.discordgamesdk.Presence}.</p>
+	 * @return The name
+	 */
+	public String getName()
+	{
+		return getName(pointer);
+	}
+
+	/**
 	 * Sets the player's current party status.
 	 * @param state Current party status, max 127 characters
 	 * @throws IllegalArgumentException if {@code state} is too long
@@ -139,6 +176,9 @@ public class Activity implements AutoCloseable
 	private native long allocate();
 	private native void free(long pointer);
 
+	private native long getApplicationId(long pointer);
+	private native String getName(long pointer);
+
 	private native void setState(long pointer, String state);
 	private native String getState(long pointer);
 
@@ -166,7 +206,7 @@ public class Activity implements AutoCloseable
 	/**
 	 * <p>Return the pointer to the native structure.</p>
 	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
-	 * @return A native pointer.
+	 * @return A native pointer
 	 */
 	public long getPointer()
 	{
