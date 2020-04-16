@@ -57,7 +57,8 @@ public class UserManager
 
 	/**
 	 * <p>Fetches information about the current user.</p>
-	 * <p>You need to wait for an onCurrentUserUpdate to be fired, before using this method.</p>
+	 * <p>You need to wait for a {@link DiscordEventAdapter#onCurrentUserUpdate()} to be fired,
+	 * before using this method.</p>
 	 * @return The current DiscordUser
 	 * @throws GameSDKException if something went wrong fetching the user information
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/users#getcurrentuser">
