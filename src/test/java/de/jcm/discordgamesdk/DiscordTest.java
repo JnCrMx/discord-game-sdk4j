@@ -145,6 +145,13 @@ public class DiscordTest
 					System.out.println("DiscordTest.onActivityJoinRequest");
 					System.out.println("user = " + user);
 				}
+
+				@Override
+				public void onOverlayToggle(boolean locked)
+				{
+					System.out.println("DiscordTest.onOverlayToggle");
+					System.out.println("locked = " + locked);
+				}
 			});
 
 			try(Core core = new Core(params))
