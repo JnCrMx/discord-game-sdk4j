@@ -3,7 +3,7 @@ package de.jcm.discordgamesdk;
 /**
  * Adapter class for Discord events.
  */
-public class DiscordEventAdapter
+public abstract class DiscordEventAdapter
 {
 	/**
 	 * Fires when the user attempts to join a game by accepting an invite.
