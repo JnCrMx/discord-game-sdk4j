@@ -2,11 +2,7 @@
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_UserManager.h"
-
-struct CallbackData {
-	JavaVM* jvm;
-	jobject callback;
-};
+#include "Callback.h"
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_getCurrentUser(JNIEnv *env, jobject object, jlong pointer)
 {
@@ -85,12 +81,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_UserManager_getUser(JNIEnv *en
 {
 	struct IDiscordUserManager *user_manager = (struct IDiscordUserManager*) pointer;
 	
-	JavaVM* jvm = malloc(sizeof(jvm));
-	(*env)->GetJavaVM(env, &jvm);
-	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
-	cbd->jvm = jvm;
-	cbd->callback = (*env)->NewGlobalRef(env, callback);
+	prepare_callback_data(env, callback, cbd);
 	
 	user_manager->get_user(user_manager, userId, cbd, user_callback);
 }

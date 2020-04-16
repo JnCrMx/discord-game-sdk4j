@@ -19,6 +19,7 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_Core.c
 			de_jcm_discordgamesdk_UserManager.c
 
+			Callback.c
 			EventHandler.c)
 
 if(UNIX)
