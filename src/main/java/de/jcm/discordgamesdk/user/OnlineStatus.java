@@ -1,4 +1,4 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.user;
 
 /**
  * The Discord status of a user (usually party of their {@link Presence}).

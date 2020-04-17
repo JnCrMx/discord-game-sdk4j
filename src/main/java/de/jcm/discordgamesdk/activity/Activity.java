@@ -1,5 +1,7 @@
 package de.jcm.discordgamesdk.activity;
 
+import de.jcm.discordgamesdk.user.Presence;
+
 /**
  * Java representation of the Activity structure.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activity-struct">
@@ -45,7 +47,7 @@ public class Activity implements AutoCloseable
 	/**
 	 * <p>Gets the application ID of the Activity.</p>
 	 * <p>This is a <i>read-only</i> property. You are only gonna use it
-	 * if you acquire the Activity from a {@link de.jcm.discordgamesdk.Presence}.</p>
+	 * if you acquire the Activity from a {@link Presence}.</p>
 	 * @return The application ID
 	 */
 	public long getApplicationId()
@@ -56,7 +58,7 @@ public class Activity implements AutoCloseable
 	/**
 	 * <p>Gets the name of the Activity.</p>
 	 * <p>This is a <i>read-only</i> property. You are only gonna use it
-	 * if you acquire the Activity from a {@link de.jcm.discordgamesdk.Presence}.</p>
+	 * if you acquire the Activity from a {@link Presence}.</p>
 	 * @return The name
 	 */
 	public String getName()

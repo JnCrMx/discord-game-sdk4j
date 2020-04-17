@@ -6,11 +6,11 @@
 
 jobject create_java_relationship(JNIEnv *env, struct DiscordRelationship relationship)
 {
-	jclass relationship_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/Relationship");
+	jclass relationship_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/Relationship");
 	jmethodID relationship_create = (*env)->GetStaticMethodID(env, relationship_class, "createRelationship", 
-			"(ILde/jcm/discordgamesdk/DiscordUser;IJ)Lde/jcm/discordgamesdk/Relationship;");
+			"(ILde/jcm/discordgamesdk/user/DiscordUser;IJ)Lde/jcm/discordgamesdk/user/Relationship;");
 	
-	jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/DiscordUser");
+	jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/DiscordUser");
 	jmethodID user_constructor = (*env)->GetMethodID(env, user_class, "<init>", 
 			"(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 	jobject user_object = (*env)->NewObject(env, user_class, user_constructor,

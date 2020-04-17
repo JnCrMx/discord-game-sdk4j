@@ -1,5 +1,8 @@
 package de.jcm.discordgamesdk;
 
+import de.jcm.discordgamesdk.user.DiscordUser;
+import de.jcm.discordgamesdk.user.Relationship;
+
 /**
  * Adapter class for Discord events.
  */

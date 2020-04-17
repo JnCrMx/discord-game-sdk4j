@@ -1,4 +1,4 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.user;
 
 import de.jcm.discordgamesdk.activity.Activity;
 

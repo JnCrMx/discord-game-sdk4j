@@ -1,4 +1,4 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.user;
 
 /**
  * <p>Representation of a Discord user.</p>

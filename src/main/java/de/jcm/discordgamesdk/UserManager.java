@@ -1,5 +1,7 @@
 package de.jcm.discordgamesdk;
 
+import de.jcm.discordgamesdk.user.DiscordUser;
+import de.jcm.discordgamesdk.user.PremiumType;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 

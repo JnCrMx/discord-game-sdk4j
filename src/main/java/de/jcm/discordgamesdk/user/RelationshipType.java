@@ -1,4 +1,6 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.user;
+
+import de.jcm.discordgamesdk.user.Relationship;
 
 /**
  * The type of a {@link Relationship} between two users.

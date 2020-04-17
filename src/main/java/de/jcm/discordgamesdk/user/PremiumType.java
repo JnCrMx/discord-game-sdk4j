@@ -1,4 +1,4 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.user;
 
 /**
  * Type of a user's premium subscription.

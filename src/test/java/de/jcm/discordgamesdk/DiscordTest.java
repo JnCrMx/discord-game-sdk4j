@@ -3,6 +3,8 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
+import de.jcm.discordgamesdk.user.DiscordUser;
+import de.jcm.discordgamesdk.user.Relationship;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;

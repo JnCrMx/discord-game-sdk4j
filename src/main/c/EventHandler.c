@@ -56,7 +56,7 @@ void on_activity_join_request(void* event_data, struct DiscordUser* user)
 	args.group = NULL;
 	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
 	
-	jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/DiscordUser");
+	jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/DiscordUser");
 	jmethodID user_constructor = (*env)->GetMethodID(env, user_class, "<init>", 
 		"(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 	jobject user_object = (*env)->NewObject(env, user_class, user_constructor,
@@ -67,7 +67,7 @@ void on_activity_join_request(void* event_data, struct DiscordUser* user)
 		user->bot);
 	
 	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
-	jmethodID method = (*env)->GetMethodID(env, clazz, "onActivityJoinRequest", "(Lde/jcm/discordgamesdk/DiscordUser;)V");
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onActivityJoinRequest", "(Lde/jcm/discordgamesdk/user/DiscordUser;)V");
 	(*env)->CallVoidMethod(env, event_struct->handler, method, user_object);
 	
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
@@ -144,7 +144,7 @@ void on_relationship_update(void* event_data, struct DiscordRelationship* relati
 	jobject relationship_object = create_java_relationship(env, *relationship);
 
 	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
-	jmethodID method = (*env)->GetMethodID(env, clazz, "onRelationshipUpdate", "(Lde/jcm/discordgamesdk/Relationship;)V");
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onRelationshipUpdate", "(Lde/jcm/discordgamesdk/user/Relationship;)V");
 	(*env)->CallVoidMethod(env, event_struct->handler, method, relationship_object);
 
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);

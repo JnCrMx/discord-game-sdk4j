@@ -13,7 +13,7 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_getCurrentUser(
 	
 	if(result == DiscordResult_Ok) // if everything went well, return the user
 	{
-		jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/DiscordUser");
+		jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/DiscordUser");
 		jmethodID user_constructor = (*env)->GetMethodID(env, user_class, "<init>", 
 			"(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 		jobject user_object = (*env)->NewObject(env, user_class, user_constructor,
@@ -56,7 +56,7 @@ void user_callback(void* data, enum EDiscordResult result, struct DiscordUser* u
 	jobject user_object = NULL;
 	if(user) // not sure if we can get NULL as an argument
 	{
-		jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/DiscordUser");
+		jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/DiscordUser");
 		jmethodID user_constructor = (*env)->GetMethodID(env, user_class, "<init>", 
 			"(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
 		user_object = (*env)->NewObject(env, user_class, user_constructor,

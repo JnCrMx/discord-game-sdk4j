@@ -1,6 +1,9 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.ActivityType;
+import de.jcm.discordgamesdk.user.OnlineStatus;
+import de.jcm.discordgamesdk.user.Relationship;
+import de.jcm.discordgamesdk.user.RelationshipType;
 
 import java.util.List;
 import java.util.function.Predicate;
