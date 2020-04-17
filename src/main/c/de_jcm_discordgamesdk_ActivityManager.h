@@ -23,6 +23,30 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_clearActivity
   (JNIEnv *, jobject, jlong, jobject);
 
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    sendRequestReply
+ * Signature: (JJILjava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendRequestReply
+  (JNIEnv *, jobject, jlong, jlong, jint, jobject);
+
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    sendInvite
+ * Signature: (JJILjava/lang/String;Ljava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendInvite
+  (JNIEnv *, jobject, jlong, jlong, jint, jstring, jobject);
+
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    acceptRequest
+ * Signature: (JJLjava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_acceptRequest
+  (JNIEnv *, jobject, jlong, jlong, jobject);
+
 #ifdef __cplusplus
 }
 #endif

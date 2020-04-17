@@ -1,6 +1,8 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import de.jcm.discordgamesdk.activity.ActivityActionType;
+import de.jcm.discordgamesdk.activity.ActivityJoinRequestReply;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -67,6 +69,90 @@ public class ActivityManager
 		clearActivity(pointer, callback);
 	}
 
+	/**
+	 * <p>Replies to an "Ask to join" request.</p>
+	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user who asked to join
+	 * @param reply Type of reply to send
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#sendrequestreply">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#sendrequestreply</a>
+	 */
+	public void sendRequestReply(long userId, ActivityJoinRequestReply reply)
+	{
+		sendRequestReply(userId, reply, Core.DEFAULT_CALLBACK);
+	}
+
+	/**
+	 * <p>Replies to an "Ask to join" request.</p>
+	 * <p>A custom callback is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user who asked to join
+	 * @param reply Type of reply to send
+	 * @param callback Callback to process the returned {@link Result}.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#sendrequestreply">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#sendrequestreply</a>
+	 */
+	public void sendRequestReply(long userId, ActivityJoinRequestReply reply, Consumer<Result> callback)
+	{
+		sendRequestReply(pointer, userId, reply.ordinal(), callback);
+	}
+
+	/**
+	 * <p>Invites a user to join your game.</p>
+	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user to invite
+	 * @param type Type of invitation to send
+	 * @param content Content/message of the invitation
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#sendinvite">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#sendinvite</a>
+	 */
+	public void sendInvite(long userId, ActivityActionType type, String content)
+	{
+		sendInvite(userId, type, content, Core.DEFAULT_CALLBACK);
+	}
+
+	/**
+	 * <p>Invites a user to join your game.</p>
+	 * <p>A custom callback is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user to invite
+	 * @param type Type of invitation to send
+	 * @param content Content/message of the invitation
+	 * @param callback Callback to process the returned {@link Result}.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#sendinvite">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#sendinvite</a>
+	 */
+	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
+	{
+		sendInvite(pointer, userId, type.ordinal(), content, callback);
+	}
+
+	/**
+	 * <p>Accepts a game invitation from another user.</p>
+	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user to accept invitation from
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#acceptinvite">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#acceptinvite</a>
+	 */
+	public void acceptRequest(long userId)
+	{
+		acceptRequest(userId, Core.DEFAULT_CALLBACK);
+	}
+
+	/**
+	 * <p>Accepts a game invitation from another user.</p>
+	 * <p>A custom callback is used to handle the returned {@link Result}.</p>
+	 * @param userId ID of user to accept invitation from
+	 * @param callback Callback to process the returned {@link Result}.
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#acceptinvite">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#acceptinvite</a>
+	 */
+	public void acceptRequest(long userId, Consumer<Result> callback)
+	{
+		acceptRequest(pointer, userId, callback);
+	}
+
 	private native void updateActivity(long pointer, long activityPointer, Consumer<Result> callback);
 	private native void clearActivity(long pointer, Consumer<Result> callback);
+	private native void sendRequestReply(long pointer, long userId, int reply, Consumer<Result> callback);
+	private native void sendInvite(long pointer, long userId, int type, String content, Consumer<Result> callback);
+	private native void acceptRequest(long pointer, long userId, Consumer<Result> callback);
 }
