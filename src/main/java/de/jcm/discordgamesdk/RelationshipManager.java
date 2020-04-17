@@ -5,6 +5,11 @@ import de.jcm.discordgamesdk.activity.ActivityType;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Manager to fetch information about the current user's relationships with other users.
+ * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships">
+ *     https://discordapp.com/developers/docs/game-sdk/relationships</a>
+ */
 public class RelationshipManager
 {
 	/**
