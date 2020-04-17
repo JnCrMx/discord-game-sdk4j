@@ -276,6 +276,10 @@ public class DiscordTest
 					Assertions.assertEquals(!locked, newLocked, "locked did not change.");
 				});
 
+				AtomicBoolean openActivityInviteComplete = new AtomicBoolean(false);
+				AtomicBoolean openGuildInviteComplete = new AtomicBoolean(false);
+				AtomicBoolean openVoiceSettingsComplete = new AtomicBoolean(false);
+
 				try(Activity activity = new Activity())
 				{
 					activity.party().setID("1234");
@@ -286,27 +290,26 @@ public class DiscordTest
 					activity.secrets().setJoinSecret("join");
 					activity.secrets().setSpectateSecret("spectate");
 
-					core.activityManager().updateActivity(activity);
+					core.activityManager().updateActivity(activity, result->
+					{
+						Assumptions.assumeTrue(result == Result.OK,
+						                       "Cannot set activity.");
+						core.overlayManager().openActivityInvite(ActivityActionType.SPECTATE, r->
+						{
+							Assertions.assertEquals(Result.OK, r, "open_activity_invite failed.");
+							openActivityInviteComplete.set(true);
+						});
+						core.overlayManager().openGuildInvite("discord-developers", r->
+						{
+							Assertions.assertEquals(Result.OK, r, "open_guild_invite failed.");
+							openGuildInviteComplete.set(true);
+						});
+						core.overlayManager().openVoiceSettings(r-> {
+							Assertions.assertEquals(Result.OK, r, "open_voice_settings failed.");
+							openVoiceSettingsComplete.set(true);
+						});
+					});
 				}
-
-				AtomicBoolean openActivityInviteComplete = new AtomicBoolean(false);
-				AtomicBoolean openGuildInviteComplete = new AtomicBoolean(false);
-				AtomicBoolean openVoiceSettingsComplete = new AtomicBoolean(false);
-
-				core.overlayManager().openActivityInvite(ActivityActionType.SPECTATE, result->
-				{
-					Assertions.assertEquals(Result.OK, result, "open_activity_invite failed.");
-					openActivityInviteComplete.set(true);
-				});
-				core.overlayManager().openGuildInvite("discord-developers", result->
-				{
-					Assertions.assertEquals(Result.OK, result, "open_guild_invite failed.");
-					openGuildInviteComplete.set(true);
-				});
-				core.overlayManager().openVoiceSettings(result-> {
-					Assertions.assertEquals(Result.OK, result, "open_voice_settings failed.");
-					openVoiceSettingsComplete.set(true);
-				});
 
 				for(int i=0; i<1000 &&
 						// Quit when we are done
@@ -353,11 +356,13 @@ public class DiscordTest
 					                        "Relationship has wrong user ID.");
 
 					coreRef.get().relationshipManager().filter(RelationshipManager.NO_FILTER);
+					coreRef.get().relationshipManager().asList().forEach(System.out::println);
 				}
 
 				@Override
 				public void onRelationshipUpdate(Relationship relationship)
 				{
+					System.out.println("DiscordTest.onRelationshipUpdate");
 					System.out.println(relationship);
 				}
 			});
