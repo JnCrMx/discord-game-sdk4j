@@ -65,6 +65,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getRelationshipManager
 
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getImageManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getImageManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    runCallbacks
  * Signature: (J)V
  */

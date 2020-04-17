@@ -3,6 +3,9 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
+import de.jcm.discordgamesdk.image.ImageDimensions;
+import de.jcm.discordgamesdk.image.ImageHandle;
+import de.jcm.discordgamesdk.image.ImageType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +13,10 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -379,6 +385,47 @@ public class DiscordTest
 			try(Core core = new Core(params))
 			{
 				coreRef.set(core);
+
+				for(int i = 0; i < 1000; i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	void imageTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			params.setClientID(698611073133051974L);
+			try(Core core = new Core(params))
+			{
+				ImageHandle handle = new ImageHandle(ImageType.USER, 313720488306409472L, 256);
+				core.imageManager().fetch(handle, false, (result, handle1)->
+				{
+					Assertions.assertEquals(Result.OK, result,
+					                        "fetch failed.");
+
+					BufferedImage image = core.imageManager().getAsBufferedImage(handle);
+					try
+					{
+						ImageIO.write(image, "png", new File("test.png"));
+					}
+					catch(IOException e)
+					{
+						e.printStackTrace();
+					}
+				});
 
 				for(int i = 0; i < 1000; i++)
 				{

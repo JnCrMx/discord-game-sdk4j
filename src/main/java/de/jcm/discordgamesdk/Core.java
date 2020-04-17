@@ -85,6 +85,7 @@ public class Core implements AutoCloseable
 	private UserManager userManager;
 	private OverlayManager overlayManager;
 	private RelationshipManager relationshipManager;
+	private ImageManager imageManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -124,6 +125,7 @@ public class Core implements AutoCloseable
 		this.userManager = new UserManager(getUserManager(pointer));
 		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
 		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
+		this.imageManager = new ImageManager(getImageManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -133,6 +135,7 @@ public class Core implements AutoCloseable
 	private native long getUserManager(long pointer);
 	private native long getOverlayManager(long pointer);
 	private native long getRelationshipManager(long pointer);
+	private native long getImageManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -185,6 +188,19 @@ public class Core implements AutoCloseable
 	public RelationshipManager relationshipManager()
 	{
 		return relationshipManager;
+	}
+
+	/**
+	 * <p>Returns the {@link ImageManager} associated with this core.</p>
+	 * <p>An ImageManager is used to fetch images and information
+	 * about images (dimensions) from Discord (mainly avatars).</p>
+	 * @return An {@link ImageManager}
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#getimagemanager">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#getimagemanager</a>
+	 */
+	public ImageManager imageManager()
+	{
+		return imageManager;
 	}
 
 	/**
