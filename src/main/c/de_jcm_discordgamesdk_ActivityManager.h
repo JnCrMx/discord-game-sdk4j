@@ -9,6 +9,22 @@ extern "C" {
 #endif
 /*
  * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    registerCommand
+ * Signature: (JLjava/lang/String;)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerCommand
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
+ * Method:    registerSteam
+ * Signature: (JI)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerSteam
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     de_jcm_discordgamesdk_ActivityManager
  * Method:    updateActivity
  * Signature: (JJLjava/util/function/Consumer;)V
  */

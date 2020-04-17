@@ -118,6 +118,10 @@ public class DiscordTest
 						                                  "Join me baka!");
 					});
 				}
+				Assertions.assertEquals(Result.OK, core.activityManager().registerCommand("cmd.exe"),
+				                        "register_command failed");
+				Assertions.assertEquals(Result.OK, core.activityManager().registerSteam(1234),
+				                        "register_steam failed");
 
 				for(int i=0; i<1000; i++)
 				{
