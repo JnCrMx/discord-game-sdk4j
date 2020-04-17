@@ -4,6 +4,36 @@
 #include "de_jcm_discordgamesdk_ActivityManager.h"
 #include "Callback.h"
 
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerCommand(JNIEnv *env, jobject object, jlong pointer, jstring command)
+{
+	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
+	
+	const char *nativeString = (*env)->GetStringUTFChars(env, command, 0);
+	enum EDiscordResult result = activity_manager->register_command(activity_manager, nativeString);
+	(*env)->ReleaseStringUTFChars(env, command, nativeString);
+	
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerSteam(JNIEnv *env, jobject object, jlong pointer, jint steamId)
+{
+	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
+	
+	enum EDiscordResult result = activity_manager->register_steam(activity_manager, steamId);
+	
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity(JNIEnv *env, jobject object, jlong pointer, jlong activity_pointer, jobject callback)
 {
 	struct DiscordActivity *activity = (struct DiscordActivity*) activity_pointer;

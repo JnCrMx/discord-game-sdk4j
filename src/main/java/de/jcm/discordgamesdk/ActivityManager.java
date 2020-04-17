@@ -22,6 +22,31 @@ public class ActivityManager
 	}
 
 	/**
+	 * Registers a command for Discord to use to launch your game.
+	 * @param command Custom protocol URL or path to an executable (including options arguments)
+	 * @return The {@link Result} of the operation
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#registercommand">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#registercommand</a>
+	 */
+	public Result registerCommand(String command)
+	{
+		return registerCommand(pointer, command);
+	}
+
+	/**
+	 * <p>Registers a Steam launch for your game.</p>
+	 * <p>The registered URI is steam://run-game-id/&lt;id&gt;</p>
+	 * @param steamId Steam ID of your game
+	 * @return The {@link Result} of the operation
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#registersteam">
+	 *     https://discordapp.com/developers/docs/game-sdk/activities#registersteam</a>
+	 */
+	public Result registerSteam(int steamId)
+	{
+		return registerSteam(pointer, steamId);
+	}
+
+	/**
 	 * <p>Updates the user's current presence to a new activity.</p>
 	 * <p>The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.</p>
 	 * @param activity New activity for the user.
@@ -150,6 +175,8 @@ public class ActivityManager
 		acceptRequest(pointer, userId, callback);
 	}
 
+	private native Result registerCommand(long pointer, String command);
+	private native Result registerSteam(long pointer, int steamId);
 	private native void updateActivity(long pointer, long activityPointer, Consumer<Result> callback);
 	private native void clearActivity(long pointer, Consumer<Result> callback);
 	private native void sendRequestReply(long pointer, long userId, int reply, Consumer<Result> callback);
