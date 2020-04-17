@@ -17,4 +17,8 @@ void on_current_user_update(void* event_data);
 // overlay_events
 void on_overlay_toggle(void* event_data, bool locked);
 
+// relationship_events
+void on_relationship_refresh(void* event_data);
+void on_relationship_update(void* event_data, struct DiscordRelationship* relationship);
+
 #endif

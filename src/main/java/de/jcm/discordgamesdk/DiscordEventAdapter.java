@@ -61,4 +61,28 @@ public abstract class DiscordEventAdapter
 	{
 
 	}
+
+	/**
+	 * <p>Fires when there is a new cached version of the user's relationships.</p>
+	 * <p><i>Also</i> fires after initialization of the {@link RelationshipManager} and therefore
+	 * indicates that its methods can be used to fetch relationship information.</p>
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#onrefresh">
+	 *     https://discordapp.com/developers/docs/game-sdk/relationships#onrefresh</a>
+	 */
+	public void onRelationshipRefresh()
+	{
+
+	}
+
+	/**
+	 * Fires when information about a relationship (also user, presence, etc.)
+	 * in the filtered list changes.
+	 * @param relationship New relationship information
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#onrelationshipupdate">
+	 *     https://discordapp.com/developers/docs/game-sdk/relationships#onrelationshipupdate</a>
+	 */
+	public void onRelationshipUpdate(Relationship relationship)
+	{
+
+	}
 }

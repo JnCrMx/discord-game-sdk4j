@@ -2,6 +2,7 @@
 #include <jni.h>
 
 #include "EventHandler.h"
+#include "Utils.h"
 
 // activity_events
 void on_activity_join(void* event_data, const char* secret)
@@ -95,17 +96,56 @@ void on_current_user_update(void* event_data)
 void on_overlay_toggle(void* event_data, bool locked)
 {
 	struct EventData* event_struct = (struct EventData*)event_data;
-	
+
 	JNIEnv* env;
 	JavaVMAttachArgs args;
 	args.version = JNI_VERSION_1_6;
 	args.name = NULL;
 	args.group = NULL;
 	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
-	
+
 	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
 	jmethodID method = (*env)->GetMethodID(env, clazz, "onOverlayToggle", "(Z)V");
 	(*env)->CallVoidMethod(env, event_struct->handler, method, locked);
-	
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+// relationship_events
+void on_relationship_refresh(void* event_data)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onRelationshipRefresh", "()V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_relationship_update(void* event_data, struct DiscordRelationship* relationship)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jobject relationship_object = create_java_relationship(env, *relationship);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onRelationshipUpdate", "(Lde/jcm/discordgamesdk/Relationship;)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, relationship_object);
+
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }

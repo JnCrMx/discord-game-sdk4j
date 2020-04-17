@@ -104,6 +104,12 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getOverlayManager(JNIEnv
 	return (uint64_t) core->get_overlay_manager(core);
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getRelationshipManager(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
+	return (uint64_t) core->get_relationship_manager(core);
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
