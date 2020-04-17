@@ -12,7 +12,7 @@ public enum RelationshipType
 	 */
 	NONE,
 	/**
-	 * The users are friends. <3
+	 * The users are friends. &lt;3
 	 */
 	FRIEND,
 	/**

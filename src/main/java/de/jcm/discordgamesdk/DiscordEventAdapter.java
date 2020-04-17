@@ -42,7 +42,7 @@ public abstract class DiscordEventAdapter
 	 * <p>Fires when the current user changes their user information (avatar, username, etc.).</p>
 	 * <p><i>Also</i> fires after initialization of the {@link UserManager} and therefore indicates
 	 * that {@link UserManager#getCurrentUser()} is ready to be called.</p>
-	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/users#oncurrentuserupdate>
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/users#oncurrentuserupdate">
 	 *     https://discordapp.com/developers/docs/game-sdk/users#oncurrentuserupdate</a>
 	 */
 	public void onCurrentUserUpdate()

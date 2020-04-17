@@ -72,7 +72,7 @@ public class DiscordUser
 
 	/**
 	 * Tells you if the user is a bot.
-	 * @return {@true} if the user is a bot
+	 * @return {@code true} if the user is a bot
 	 */
 	public boolean isBot()
 	{

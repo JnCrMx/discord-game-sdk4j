@@ -46,7 +46,7 @@ public class RelationshipManager
 	 * @param userId ID to identifier the other user
 	 * @return The Relationship between the users
 	 * @throws GameSDKException if something went wrong fetching the relationship information
-	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#get>
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#get">
 	 *     https://discordapp.com/developers/docs/game-sdk/relationships#get</a>
 	 */
 	public Relationship getWith(long userId)

@@ -33,7 +33,7 @@ public class OverlayManager
 	/**
 	 * <p>Checks if the overlay is locked.</p>
 	 * @return {@code true} if the overlay is locked
-	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#islocked>
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#islocked">
 	 *     https://discordapp.com/developers/docs/game-sdk/overlay#islocked</a>
 	 */
 	public boolean isLocked()
