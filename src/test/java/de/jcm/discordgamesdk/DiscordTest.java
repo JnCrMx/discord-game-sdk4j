@@ -100,7 +100,15 @@ public class DiscordTest
 					activity.secrets().setJoinSecret("join");
 					activity.secrets().setSpectateSecret("spectate");
 
-					core.activityManager().updateActivity(activity);
+					core.activityManager().updateActivity(activity, result->
+					{
+						Assertions.assertEquals(Result.OK, result,
+						                        "update_activity failed.");
+
+						core.activityManager().sendInvite(691614879399936078L,
+						                                  ActivityActionType.SPECTATE,
+						                                  "Join me baka!");
+					});
 				}
 
 				for(int i=0; i<1000; i++)
