@@ -38,7 +38,7 @@ public class RelationshipExample
 
 			Activity activity = new Activity();
 
-			// Register the event handle to handle relationship-related events
+			// Register the event handler to handle relationship-related events
 			params.registerEventHandler(new DiscordEventAdapter()
 			{
 				@Override
