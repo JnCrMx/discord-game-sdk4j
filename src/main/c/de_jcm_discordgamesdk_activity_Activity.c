@@ -94,7 +94,7 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getSecrets(
 	return (uint64_t) &(activity->secrets);
 }
 
-JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free(JNIEnv *env, jobject object, jlong pointer)
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free(JNIEnv *env, jclass clazz, jlong pointer)
 {
 	free((void*)pointer);
 }

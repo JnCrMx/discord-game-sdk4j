@@ -21,7 +21,7 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_allocate
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     de_jcm_discordgamesdk_activity_Activity

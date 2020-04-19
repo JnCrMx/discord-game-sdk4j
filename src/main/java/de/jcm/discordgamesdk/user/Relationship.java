@@ -66,48 +66,6 @@ public class Relationship
 				'}';
 	}
 
-	/*
-	This seems to work for freeing allocated native space of Activity,
-	but I'm somehow sure this is REALLY wrong.
-	 */
-	private static final ReferenceQueue<Relationship> QUEUE = new ReferenceQueue<>();
-	private static final ArrayList<RelationshipReference> REFERENCES = new ArrayList<>();
-	private static final Thread QUEUE_THREAD = new Thread(()->{
-		while(true)
-		{
-			try
-			{
-				RelationshipReference reference = (RelationshipReference) QUEUE.remove();
-				reference.getActivity().close();
-				REFERENCES.remove(reference);
-			}
-			catch(InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}, "Relationship-Cleaner");
-	static
-	{
-		QUEUE_THREAD.start();
-	}
-
-	private static class RelationshipReference extends PhantomReference<Relationship>
-	{
-		private Activity activity;
-
-		public RelationshipReference(Relationship referent, ReferenceQueue<? super Relationship> q)
-		{
-			super(referent, q);
-			this.activity = referent.getPresence().getActivity();
-		}
-
-		public Activity getActivity()
-		{
-			return activity;
-		}
-	}
-
 	static Relationship createRelationship(int type, DiscordUser user, int status, long activity)
 	{
 		RelationshipType type1 = RelationshipType.values()[type];
@@ -116,11 +74,7 @@ public class Relationship
 		Activity activity1 = new Activity(activity);
 
 		Presence presence = new Presence(status1, activity1);
-		Relationship relationship = new Relationship(type1, user, presence);
 
-		RelationshipReference reference = new RelationshipReference(relationship, QUEUE);
-		REFERENCES.add(reference);
-
-		return relationship;
+		return new Relationship(type1, user, presence);
 	}
 }
