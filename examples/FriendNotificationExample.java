@@ -95,7 +95,9 @@ public class FriendNotificationExample extends DiscordEventAdapter
 
 			DiscordUser user = relationship.getUser();
 
-			// find difference
+			// find differences
+
+			// online status
 			if(previous.getPresence().getStatus() != relationship.getPresence().getStatus())
 			{
 				String message = null;
@@ -119,6 +121,7 @@ public class FriendNotificationExample extends DiscordEventAdapter
 				                        message, TrayIcon.MessageType.NONE);
 			}
 
+			// playing
 			if(relationship.getPresence().getActivity().getType() == ActivityType.PLAYING &&
 					previous.getPresence().getActivity().getApplicationId() == 0 &&
 					relationship.getPresence().getActivity().getApplicationId() != 0)
@@ -136,6 +139,7 @@ public class FriendNotificationExample extends DiscordEventAdapter
 				                        TrayIcon.MessageType.NONE);
 			}
 			else if(previous.getPresence().getActivity().getType() == ActivityType.PLAYING &&
+					relationship.getPresence().getActivity().getType() == ActivityType.PLAYING &&
 					previous.getPresence().getActivity().getApplicationId() !=
 						relationship.getPresence().getActivity().getApplicationId())
 			{
@@ -146,6 +150,36 @@ public class FriendNotificationExample extends DiscordEventAdapter
 				                        TrayIcon.MessageType.NONE);
 			}
 
+			// streaming
+			if(relationship.getPresence().getActivity().getType() == ActivityType.STREAMING &&
+					previous.getPresence().getActivity().getApplicationId() == 0 &&
+					relationship.getPresence().getActivity().getApplicationId() != 0)
+			{
+				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
+				                        String.format("started streaming %s", relationship.getPresence().getActivity().getName()),
+				                        TrayIcon.MessageType.NONE);
+			}
+			else if(previous.getPresence().getActivity().getType() == ActivityType.STREAMING &&
+					previous.getPresence().getActivity().getApplicationId() != 0 &&
+					relationship.getPresence().getActivity().getApplicationId() == 0)
+			{
+				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
+				                        String.format("stopped streaming %s", previous.getPresence().getActivity().getName()),
+				                        TrayIcon.MessageType.NONE);
+			}
+			else if(previous.getPresence().getActivity().getType() == ActivityType.STREAMING &&
+					relationship.getPresence().getActivity().getType() == ActivityType.STREAMING &&
+					previous.getPresence().getActivity().getApplicationId() !=
+							relationship.getPresence().getActivity().getApplicationId())
+			{
+				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
+				                        String.format("stopped streaming %s and started streaming %s",
+				                                      previous.getPresence().getActivity().getName(),
+				                                      relationship.getPresence().getActivity().getName()),
+				                        TrayIcon.MessageType.NONE);
+			}
+
+			// listening
 			if(previous.getPresence().getActivity().getType() != ActivityType.LISTENING &&
 					relationship.getPresence().getActivity().getType() == ActivityType.LISTENING)
 			{
