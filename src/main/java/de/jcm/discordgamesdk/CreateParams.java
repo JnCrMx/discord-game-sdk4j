@@ -87,7 +87,12 @@ public class CreateParams implements AutoCloseable
 
 	/**
 	 * <p>Frees the allocated native structure.</p>
-	 * <p>You should call this when you do not need the structure anymore.</p>
+	 * <p>You should call this when you do not need the structure anymore.
+	 * Do <b>not</b> call this if you still want to use a {@link Core} created from the params.
+	 * It will cause the JVM to crash with an access violation exception.</p>
+	 * <p>If you a using a <i>try-with-resources</i> block make sure that you only use the created
+	 * {@link Core} - especially {@link Core#runCallbacks()} - <b>inside</b> the block, because
+	 * the CreateParams will be closed by the end of the block.</p>
 	 */
 	@Override
 	public void close()
