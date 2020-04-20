@@ -105,7 +105,7 @@ public class FriendNotificationExample extends DiscordEventAdapter
 						message = "went offline";
 						break;
 					case ONLINE:
-						message = "went online";
+						message = "is now online";
 						break;
 					case IDLE:
 						message = "went AFK";
@@ -116,37 +116,49 @@ public class FriendNotificationExample extends DiscordEventAdapter
 				}
 
 				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
-				                        message, TrayIcon.MessageType.INFO);
+				                        message, TrayIcon.MessageType.NONE);
 			}
+
 			if(relationship.getPresence().getActivity().getType() == ActivityType.PLAYING &&
 					previous.getPresence().getActivity().getApplicationId() == 0 &&
 					relationship.getPresence().getActivity().getApplicationId() != 0)
 			{
 				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
 				                        String.format("started playing %s", relationship.getPresence().getActivity().getName()),
-				                        TrayIcon.MessageType.INFO);
+				                        TrayIcon.MessageType.NONE);
 			}
-			if(previous.getPresence().getActivity().getType() == ActivityType.PLAYING &&
+			else if(previous.getPresence().getActivity().getType() == ActivityType.PLAYING &&
 					previous.getPresence().getActivity().getApplicationId() != 0 &&
 					relationship.getPresence().getActivity().getApplicationId() == 0)
 			{
 				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
 				                        String.format("stopped playing %s", previous.getPresence().getActivity().getName()),
-				                        TrayIcon.MessageType.INFO);
+				                        TrayIcon.MessageType.NONE);
 			}
+			else if(previous.getPresence().getActivity().getType() == ActivityType.PLAYING &&
+					previous.getPresence().getActivity().getApplicationId() !=
+						relationship.getPresence().getActivity().getApplicationId())
+			{
+				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
+				                        String.format("stopped playing %s and started playing %s",
+				                                      previous.getPresence().getActivity().getName(),
+				                                      relationship.getPresence().getActivity().getName()),
+				                        TrayIcon.MessageType.NONE);
+			}
+
 			if(previous.getPresence().getActivity().getType() != ActivityType.LISTENING &&
 					relationship.getPresence().getActivity().getType() == ActivityType.LISTENING)
 			{
 				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
 				                        String.format("started listening to %s", relationship.getPresence().getActivity().getName()),
-				                        TrayIcon.MessageType.INFO);
+				                        TrayIcon.MessageType.NONE);
 			}
-			if(previous.getPresence().getActivity().getType() == ActivityType.LISTENING &&
+			else if(previous.getPresence().getActivity().getType() == ActivityType.LISTENING &&
 					relationship.getPresence().getActivity().getType() != ActivityType.LISTENING)
 			{
 				trayIcon.displayMessage(String.format("%s#%s", user.getUsername(), user.getDiscriminator()),
 				                        String.format("stopped listening to %s", previous.getPresence().getActivity().getName()),
-				                        TrayIcon.MessageType.INFO);
+				                        TrayIcon.MessageType.NONE);
 			}
 
 			cache.replace(relationship.getUser().getUserId(), relationship);
