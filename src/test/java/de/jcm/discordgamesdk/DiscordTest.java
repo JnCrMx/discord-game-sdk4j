@@ -414,7 +414,7 @@ public class DiscordTest
 			params.setClientID(698611073133051974L);
 			try(Core core = new Core(params))
 			{
-				ImageHandle handle = new ImageHandle(ImageType.USER, 313720488306409472L, 256);
+				ImageHandle handle = new ImageHandle(ImageType.USER, 691614879399936078L, 256);
 				core.imageManager().fetch(handle, false, (result, handle1)->
 				{
 					Assertions.assertEquals(Result.OK, result,
