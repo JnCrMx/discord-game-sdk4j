@@ -2,9 +2,6 @@ package de.jcm.discordgamesdk.user;
 
 import de.jcm.discordgamesdk.activity.Activity;
 
-import java.lang.ref.*;
-import java.util.ArrayList;
-
 /**
  * The relationship between a user and the current user.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#data-models-relationship-struct">

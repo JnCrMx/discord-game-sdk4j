@@ -3,7 +3,6 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
-import de.jcm.discordgamesdk.image.ImageDimensions;
 import de.jcm.discordgamesdk.image.ImageHandle;
 import de.jcm.discordgamesdk.image.ImageType;
 import de.jcm.discordgamesdk.user.DiscordUser;
@@ -20,10 +19,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 
 public class DiscordTest
 {
+	/* TODO: Find Java 8 replacement
 	@BeforeAll
 	static void checkPreconditions()
 	{
@@ -49,6 +48,7 @@ public class DiscordTest
 		Assumptions.assumeTrue(ProcessHandle.allProcesses().anyMatch(processDetector),
 		                       "Discord is not running");
 	}
+	*/
 
 	@BeforeAll
 	static void initCore()

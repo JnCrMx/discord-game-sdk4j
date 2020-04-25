@@ -1,5 +1,6 @@
 import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,7 +56,7 @@ public class DownloadNativeLibrary
 				// Open an OutputStream to this file...
 				FileOutputStream fout = new FileOutputStream(temp);
 				// ...and copy the file from the ZIP to it
-				zin.transferTo(fout);
+				IOUtils.copy(zin, fout);    // Java 8 replacement for InputStream.transferTo(OutputStream)
 				fout.close();
 
 				// We are done, so close the input stream

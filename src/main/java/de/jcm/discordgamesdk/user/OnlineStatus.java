@@ -1,7 +1,7 @@
 package de.jcm.discordgamesdk.user;
 
 /**
- * The Discord status of a user (usually party of their {@link Presence}).
+ * The Discord status of a user (usually part of their {@link Presence}).
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#data-models-status-enum">
  *     https://discordapp.com/developers/docs/game-sdk/relationships#data-models-status-enum</a>
  */

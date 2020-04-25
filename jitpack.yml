@@ -1,5 +1,5 @@
 jdk:
-    - openjdk11
+    - openjdk8
 before_install:
     - sh jitpack-download-natives.sh
 install:

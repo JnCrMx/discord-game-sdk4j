@@ -5,6 +5,7 @@ import de.jcm.discordgamesdk.user.OnlineStatus;
 import de.jcm.discordgamesdk.user.Relationship;
 import de.jcm.discordgamesdk.user.RelationshipType;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -143,7 +144,7 @@ public class RelationshipManager
 		{
 			relationships[i] = getAt(i);
 		}
-		return List.of(relationships);
+		return Arrays.asList(relationships);
 	}
 
 	private native void filter(long pointer, Predicate<Relationship> filter);
