@@ -7,7 +7,7 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivitySecrets
 {
-	private long pointer;
+	private final long pointer;
 
 	ActivitySecrets(long pointer)
 	{

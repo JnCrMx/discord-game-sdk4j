@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CreateParams implements AutoCloseable
 {
-	private long pointer;
+	private final long pointer;
 
 	/**
 	 * Allocates a new structure and initializes it with default parameters.

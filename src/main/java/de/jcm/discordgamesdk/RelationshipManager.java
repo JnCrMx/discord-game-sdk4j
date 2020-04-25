@@ -43,7 +43,7 @@ public class RelationshipManager
 			) ||
 					r.getPresence().getActivity().getType() != ActivityType.PLAYING;
 
-	private long pointer;
+	private final long pointer;
 
 	RelationshipManager(long pointer)
 	{

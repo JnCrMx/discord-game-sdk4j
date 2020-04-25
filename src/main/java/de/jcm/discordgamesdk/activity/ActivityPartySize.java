@@ -7,7 +7,7 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivityPartySize
 {
-	private long pointer;
+	private final long pointer;
 
 	ActivityPartySize(long pointer)
 	{

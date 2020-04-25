@@ -9,9 +9,9 @@ import de.jcm.discordgamesdk.activity.Activity;
  */
 public class Relationship
 {
-	private RelationshipType type;
-	private DiscordUser user;
-	private Presence presence;
+	private final RelationshipType type;
+	private final DiscordUser user;
+	private final Presence presence;
 
 	private Relationship(RelationshipType type, DiscordUser user, Presence presence)
 	{

@@ -9,7 +9,7 @@ import java.time.Instant;
  */
 public class ActivityTimestamps
 {
-	private long pointer;
+	private final long pointer;
 
 	ActivityTimestamps(long pointer)
 	{

@@ -41,7 +41,7 @@ public class Activity implements AutoCloseable
 
 	private static class ActivityReference extends PhantomReference<Activity>
 	{
-		private long pointer;
+		private final long pointer;
 
 		public ActivityReference(Activity referent, ReferenceQueue<? super Activity> q)
 		{

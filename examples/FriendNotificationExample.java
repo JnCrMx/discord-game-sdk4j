@@ -23,9 +23,9 @@ import java.util.HashMap;
 public class FriendNotificationExample extends DiscordEventAdapter
 {
 	// use an attribute for storing the Core, so we can use it in our event handling methods
-	private Core core;
+	private final Core core;
 
-	private TrayIcon trayIcon;
+	private final TrayIcon trayIcon;
 
 	public FriendNotificationExample()
 	{
@@ -70,16 +70,14 @@ public class FriendNotificationExample extends DiscordEventAdapter
 		}
 	}
 
-	private HashMap<Long, Relationship> cache = new HashMap<>();
+	private final HashMap<Long, Relationship> cache = new HashMap<>();
 
 	@Override
 	public void onRelationshipRefresh()
 	{
 		core.relationshipManager().filter(RelationshipManager.FRIEND_FILTER);
 
-		core.relationshipManager().asList().forEach(r->{
-			cache.put(r.getUser().getUserId(), r);
-		});
+		core.relationshipManager().asList().forEach(r->cache.put(r.getUser().getUserId(), r));
 
 		// release the Relationships put into filter Predicate
 		System.gc();

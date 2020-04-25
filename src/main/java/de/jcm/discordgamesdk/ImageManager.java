@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
  */
 public class ImageManager
 {
-	private long pointer;
+	private final long pointer;
 
 	ImageManager(long pointer)
 	{

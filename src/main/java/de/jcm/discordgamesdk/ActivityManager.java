@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 public class ActivityManager
 {
-	private long pointer;
+	private final long pointer;
 
 	ActivityManager(long pointer)
 	{

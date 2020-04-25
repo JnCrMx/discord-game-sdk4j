@@ -8,11 +8,11 @@ package de.jcm.discordgamesdk.user;
  */
 public class DiscordUser
 {
-	private long userId;
-	private String username;
-	private String discriminator;
-	private String avatar;
-	private boolean bot;
+	private final long userId;
+	private final String username;
+	private final String discriminator;
+	private final String avatar;
+	private final boolean bot;
 
 	/**
 	 * <p>Create a new Discord user object, holding the data provided as arguments.</p>

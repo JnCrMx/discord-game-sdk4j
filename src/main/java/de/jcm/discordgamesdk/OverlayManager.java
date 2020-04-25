@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  */
 public class OverlayManager
 {
-	private long pointer;
+	private final long pointer;
 
 	OverlayManager(long pointer)
 	{

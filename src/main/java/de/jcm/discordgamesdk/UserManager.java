@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
  */
 public class UserManager
 {
-	private long pointer;
+	private final long pointer;
 
 	/**
 	 * Discord Partner

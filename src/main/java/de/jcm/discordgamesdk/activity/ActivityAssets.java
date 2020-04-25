@@ -9,7 +9,7 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivityAssets
 {
-	private long pointer;
+	private final long pointer;
 
 	ActivityAssets(long pointer)
 	{

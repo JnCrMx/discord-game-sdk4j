@@ -9,8 +9,8 @@ import de.jcm.discordgamesdk.activity.Activity;
  */
 public class Presence
 {
-	private OnlineStatus status;
-	private Activity activity;
+	private final OnlineStatus status;
+	private final Activity activity;
 
 	Presence(OnlineStatus status, Activity activity)
 	{
