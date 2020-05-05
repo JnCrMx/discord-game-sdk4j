@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
  */
 public class UserManager
 {
+	private final Core core;
 	private final long pointer;
 
 	/**
@@ -52,8 +53,9 @@ public class UserManager
 	 */
 	public static final int USER_FLAG_HYPE_SQUAD_HOUSE3 = 256;
 
-	UserManager(long pointer)
+	UserManager(Core core, long pointer)
 	{
+		this.core = core;
 		this.pointer = pointer;
 	}
 
@@ -68,6 +70,9 @@ public class UserManager
 	 */
 	public DiscordUser getCurrentUser()
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = getCurrentUser(pointer);
 		if(ret instanceof Result)
 		{
@@ -89,6 +94,9 @@ public class UserManager
 	 */
 	public void getUser(long userId, @NotNull BiConsumer<Result, DiscordUser> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		getUser(pointer, userId, callback);
 	}
 
@@ -101,6 +109,9 @@ public class UserManager
 	 */
 	public PremiumType getCurrentUserPremiumType()
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = getCurrentUserPremiumType(pointer);
 		if(ret instanceof Result)
 		{
@@ -131,6 +142,9 @@ public class UserManager
 	                                                          USER_FLAG_HYPE_SQUAD_HOUSE2,
 	                                                          USER_FLAG_HYPE_SQUAD_HOUSE3}) int flag)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = currentUserHasFlag(pointer, flag);
 		if(ret instanceof Result)
 		{

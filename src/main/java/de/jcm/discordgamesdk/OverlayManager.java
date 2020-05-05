@@ -12,10 +12,12 @@ import java.util.function.Consumer;
  */
 public class OverlayManager
 {
+	private final Core core;
 	private final long pointer;
 
-	OverlayManager(long pointer)
+	OverlayManager(Core core, long pointer)
 	{
+		this.core = core;
 		this.pointer = pointer;
 	}
 
@@ -27,6 +29,9 @@ public class OverlayManager
 	 */
 	public boolean isEnabled()
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		return isEnabled(pointer);
 	}
 
@@ -38,6 +43,9 @@ public class OverlayManager
 	 */
 	public boolean isLocked()
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		return isLocked(pointer);
 	}
 
@@ -50,6 +58,9 @@ public class OverlayManager
 	 */
 	public void setLocked(boolean locked)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		setLocked(pointer, locked, Core.DEFAULT_CALLBACK);
 	}
 
@@ -63,6 +74,9 @@ public class OverlayManager
 	 */
 	public void setLocked(boolean locked, @NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		setLocked(pointer, locked, callback);
 	}
 
@@ -88,6 +102,9 @@ public class OverlayManager
 	 */
 	public void openActivityInvite(ActivityActionType type, @NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		openActivityInvite(pointer, type.ordinal(), callback);
 	}
 
@@ -113,6 +130,9 @@ public class OverlayManager
 	 */
 	public void openGuildInvite(String code, @NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		openGuildInvite(pointer, code, callback);
 	}
 
@@ -136,6 +156,9 @@ public class OverlayManager
 	 */
 	public void openVoiceSettings(@NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		openVoiceSettings(pointer, callback);
 	}
 

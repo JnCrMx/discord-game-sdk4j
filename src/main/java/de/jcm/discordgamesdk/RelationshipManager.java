@@ -43,10 +43,12 @@ public class RelationshipManager
 			) ||
 					r.getPresence().getActivity().getType() != ActivityType.PLAYING;
 
+	private final Core core;
 	private final long pointer;
 
-	RelationshipManager(long pointer)
+	RelationshipManager(Core core, long pointer)
 	{
+		this.core = core;
 		this.pointer = pointer;
 	}
 
@@ -60,6 +62,9 @@ public class RelationshipManager
 	 */
 	public Relationship getWith(long userId)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = get(pointer, userId);
 		if(ret instanceof Result)
 		{
@@ -79,6 +84,9 @@ public class RelationshipManager
 	 */
 	public void filter(Predicate<Relationship> filter)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		filter(pointer, filter);
 	}
 
@@ -94,6 +102,9 @@ public class RelationshipManager
 	 */
 	public int count()
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = count(pointer);
 		if(ret instanceof Result)
 		{
@@ -118,6 +129,9 @@ public class RelationshipManager
 	 */
 	public Relationship getAt(int index)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = getAt(pointer, index);
 		if(ret instanceof Result)
 		{

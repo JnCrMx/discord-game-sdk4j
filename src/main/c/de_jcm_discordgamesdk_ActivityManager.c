@@ -6,6 +6,12 @@
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerCommand(JNIEnv *env, jobject object, jlong pointer, jstring command)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, command, 0);
@@ -22,6 +28,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerCom
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerSteam(JNIEnv *env, jobject object, jlong pointer, jint steamId)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	enum EDiscordResult result = activity_manager->register_steam(activity_manager, steamId);
@@ -36,6 +48,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ActivityManager_registerSte
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity(JNIEnv *env, jobject object, jlong pointer, jlong activity_pointer, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct DiscordActivity *activity = (struct DiscordActivity*) activity_pointer;
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
@@ -47,6 +65,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_updateActivity
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_clearActivity(JNIEnv *env, jobject object, jlong pointer, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -57,6 +81,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_clearActivity(
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendRequestReply(JNIEnv *env, jobject object, jlong pointer, jlong userId, jint reply, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -67,6 +97,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendRequestRep
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendInvite(JNIEnv *env, jobject object, jlong pointer, jlong userId, jint type, jstring content, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -79,6 +115,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_sendInvite(JNI
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ActivityManager_acceptRequest(JNIEnv *env, jobject object, jlong pointer, jlong userId, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordActivityManager *activity_manager = (struct IDiscordActivityManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));

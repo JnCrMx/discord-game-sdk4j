@@ -6,6 +6,12 @@
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_getCurrentUser(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordUserManager *user_manager = (struct IDiscordUserManager*) pointer;
 	
 	struct DiscordUser user;
@@ -79,6 +85,12 @@ void user_callback(void* data, enum EDiscordResult result, struct DiscordUser* u
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_UserManager_getUser(JNIEnv *env, jobject object, jlong pointer, jlong userId, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordUserManager *user_manager = (struct IDiscordUserManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -89,6 +101,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_UserManager_getUser(JNIEnv *en
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_getCurrentUserPremiumType(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordUserManager *user_manager = (struct IDiscordUserManager*) pointer;
 	
 	enum EDiscordPremiumType premium_type;
@@ -115,6 +133,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_getCurrentUserP
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_UserManager_currentUserHasFlag(JNIEnv *env, jobject object, jlong pointer, jint flag)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordUserManager *user_manager = (struct IDiscordUserManager*) pointer;
 	
 	bool has_flag;

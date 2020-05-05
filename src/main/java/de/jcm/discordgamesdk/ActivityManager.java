@@ -14,10 +14,12 @@ import java.util.function.Consumer;
  */
 public class ActivityManager
 {
+	private final Core core;
 	private final long pointer;
 
-	ActivityManager(long pointer)
+	ActivityManager(Core core, long pointer)
 	{
+		this.core = core;
 		this.pointer = pointer;
 	}
 
@@ -30,6 +32,9 @@ public class ActivityManager
 	 */
 	public Result registerCommand(String command)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		return registerCommand(pointer, command);
 	}
 
@@ -43,6 +48,9 @@ public class ActivityManager
 	 */
 	public Result registerSteam(int steamId)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		return registerSteam(pointer, steamId);
 	}
 
@@ -68,6 +76,9 @@ public class ActivityManager
 	 */
 	public void updateActivity(Activity activity, @NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		updateActivity(pointer, activity.getPointer(), callback);
 	}
 
@@ -91,6 +102,9 @@ public class ActivityManager
 	 */
 	public void clearActivity(@NotNull Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		clearActivity(pointer, callback);
 	}
 
@@ -118,6 +132,9 @@ public class ActivityManager
 	 */
 	public void sendRequestReply(long userId, ActivityJoinRequestReply reply, Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		sendRequestReply(pointer, userId, reply.ordinal(), callback);
 	}
 
@@ -147,6 +164,9 @@ public class ActivityManager
 	 */
 	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		sendInvite(pointer, userId, type.ordinal(), content, callback);
 	}
 
@@ -172,6 +192,9 @@ public class ActivityManager
 	 */
 	public void acceptRequest(long userId, Consumer<Result> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		acceptRequest(pointer, userId, callback);
 	}
 

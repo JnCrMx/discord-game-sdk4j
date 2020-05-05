@@ -40,6 +40,11 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_initDiscordNative(JNIEnv 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create(JNIEnv *env, jobject object, jlong param_pointer)
 {
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) param_pointer;
+	if(!param_pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "param pointer is null");
+		return NULL;
+	}
 	
 	struct IDiscordCore* core;
 	enum EDiscordResult result;
@@ -82,42 +87,84 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create(JNIEnv *env, jo
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_destroy(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	core->destroy(core);
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getActivityManager(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	return (uint64_t) core->get_activity_manager(core);
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getUserManager(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	return (uint64_t) core->get_user_manager(core);
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getOverlayManager(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	return (uint64_t) core->get_overlay_manager(core);
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getRelationshipManager(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	return (uint64_t) core->get_relationship_manager(core);
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getImageManager(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	return (uint64_t) core->get_image_manager(core);
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	core->run_callbacks(core);
 }
@@ -154,7 +201,13 @@ void log_hook(void* data, enum EDiscordLogLevel level, const char* message)
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_setLogHook(JNIEnv *env, jobject object, jlong pointer, jint min_level, jobject hook)
-{	
+{
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
 	
 	JavaVM* jvm = malloc(sizeof(jvm));

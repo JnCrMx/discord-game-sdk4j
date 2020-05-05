@@ -7,12 +7,23 @@
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_allocate(JNIEnv *env, jobject object)
 {
 	struct DiscordCreateParams *params = malloc(sizeof(struct DiscordCreateParams));
+	if(!params)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/OutOfMemoryError"), "cannot allocate CreateParams");
+		return 0;
+	}
 	DiscordCreateParamsSetDefault(params);
 	return (uint64_t) params;
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_free(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	
 	if(params->activity_events)
@@ -26,30 +37,60 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_free(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_setClientID(JNIEnv *env, jobject object, jlong pointer, jlong client_id)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	params->client_id = client_id;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getClientID(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	return params->client_id;
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_setFlags(JNIEnv *env, jobject object, jlong pointer, jlong flags)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	params->flags = flags;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getFlags(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	return params->flags;
 }
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHandler(JNIEnv *env, jobject object, jlong pointer, jobject handler)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct DiscordCreateParams *params = (struct DiscordCreateParams*) pointer;
 	
 	// event_data

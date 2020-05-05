@@ -51,6 +51,12 @@ void image_callback(void* data, enum EDiscordResult result, struct DiscordImageH
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ImageManager_fetch(JNIEnv *env, jobject object, jlong pointer,
 	jint type, jlong id, jint size, jboolean refresh, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordImageManager *image_manager = (struct IDiscordImageManager*) pointer;
 	
 	struct DiscordImageHandle handle;
@@ -65,6 +71,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_ImageManager_fetch(JNIEnv *env
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ImageManager_getDimensions(JNIEnv *env, jobject object, jlong pointer,
 	jint type, jlong id, jint size)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordImageManager *image_manager = (struct IDiscordImageManager*) pointer;
 	
 	struct DiscordImageHandle handle;
@@ -95,6 +107,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ImageManager_getDimensions(
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_ImageManager_getData(JNIEnv *env, jobject object, jlong pointer,
 	jint type, jlong id, jint size, jint data_length)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordImageManager *image_manager = (struct IDiscordImageManager*) pointer;
 	
 	struct DiscordImageHandle handle;

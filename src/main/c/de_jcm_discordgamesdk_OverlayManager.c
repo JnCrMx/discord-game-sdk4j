@@ -6,6 +6,12 @@
 
 JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_OverlayManager_isEnabled(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	bool enabled;
@@ -16,6 +22,12 @@ JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_OverlayManager_isEnabled(J
 
 JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_OverlayManager_isLocked(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return 0;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	bool locked;
@@ -26,6 +38,12 @@ JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_OverlayManager_isLocked(JN
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_setLocked(JNIEnv *env, jobject object, jlong pointer, jboolean locked, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -36,6 +54,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_setLocked(JNIEn
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_openActivityInvite(JNIEnv *env, jobject object, jlong pointer, jint type, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -47,6 +71,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_openActivityInv
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_openGuildInvite(JNIEnv *env, jobject object, jlong pointer, jstring code, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -59,6 +89,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_openGuildInvite
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_OverlayManager_openVoiceSettings(JNIEnv *env, jobject object, jlong pointer, jobject callback)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordOverlayManager *overlay_manager = (struct IDiscordOverlayManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));

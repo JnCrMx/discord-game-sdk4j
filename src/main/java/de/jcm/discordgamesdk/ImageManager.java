@@ -13,10 +13,12 @@ import java.util.function.BiConsumer;
  */
 public class ImageManager
 {
+	private final Core core;
 	private final long pointer;
 
-	ImageManager(long pointer)
+	ImageManager(Core core, long pointer)
 	{
+		this.core = core;
 		this.pointer = pointer;
 	}
 
@@ -30,6 +32,9 @@ public class ImageManager
 	 */
 	public void fetch(ImageHandle handle, boolean refresh, BiConsumer<Result, ImageHandle> callback)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		fetch(pointer,
 		      handle.getType().ordinal(),
 		      handle.getId(),
@@ -48,6 +53,9 @@ public class ImageManager
 	 */
 	public ImageDimensions getDimensions(ImageHandle handle)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = getDimensions(pointer, handle.getType().ordinal(),
 		                           handle.getId(), handle.getSize());
 		if(ret instanceof Result)
@@ -91,6 +99,9 @@ public class ImageManager
 	 */
 	public byte[] getData(ImageHandle handle, int length)
 	{
+		if(core.isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		Object ret = getData(pointer, handle.getType().ordinal(),
 		                           handle.getId(), handle.getSize(), length);
 		if(ret instanceof Result)

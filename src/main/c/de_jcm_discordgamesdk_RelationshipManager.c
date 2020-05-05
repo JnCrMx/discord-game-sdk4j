@@ -57,6 +57,12 @@ bool filter_predicate(void* filter_data, struct DiscordRelationship* relationshi
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_filter(JNIEnv *env, jobject object, jlong pointer, jobject filter)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return;
+	}
+	
 	struct IDiscordRelationshipManager *relationship_manager = (struct IDiscordRelationshipManager*) pointer;
 	
 	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
@@ -67,6 +73,12 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_filter(JNI
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_count(JNIEnv *env, jobject object, jlong pointer)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordRelationshipManager *relationship_manager = (struct IDiscordRelationshipManager*) pointer;
 	
 	int count;
@@ -93,6 +105,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_count(J
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_get(JNIEnv *env, jobject object, jlong pointer, jlong userId)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordRelationshipManager *relationship_manager = (struct IDiscordRelationshipManager*) pointer;
 	
 	struct DiscordRelationship relationship;
@@ -115,6 +133,12 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_get(JNI
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_RelationshipManager_getAt(JNIEnv *env, jobject object, jlong pointer, jint index)
 {
+	if(!pointer)
+	{
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/NullPointerException"), "reference is null");
+		return NULL;
+	}
+	
 	struct IDiscordRelationshipManager *relationship_manager = (struct IDiscordRelationshipManager*) pointer;
 	
 	struct DiscordRelationship relationship;

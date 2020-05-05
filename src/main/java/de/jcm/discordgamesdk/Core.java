@@ -87,6 +87,8 @@ public class Core implements AutoCloseable
 	private RelationshipManager relationshipManager;
 	private ImageManager imageManager;
 
+	private boolean open;
+
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
 	 * sets the log hook to {@link Core#DEFAULT_LOG_HOOK}.
@@ -118,14 +120,15 @@ public class Core implements AutoCloseable
 		{
 			pointer = (long) ret;
 		}
+		this.open = true;
 
 		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
 
-		this.activityManager = new ActivityManager(getActivityManager(pointer));
-		this.userManager = new UserManager(getUserManager(pointer));
-		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
-		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
-		this.imageManager = new ImageManager(getImageManager(pointer));
+		this.activityManager = new ActivityManager(this, getActivityManager(pointer));
+		this.userManager = new UserManager(this, getUserManager(pointer));
+		this.overlayManager = new OverlayManager(this, getOverlayManager(pointer));
+		this.relationshipManager = new RelationshipManager(this, getRelationshipManager(pointer));
+		this.imageManager = new ImageManager(this, getImageManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -224,6 +227,9 @@ public class Core implements AutoCloseable
 	 */
 	public void setLogHook(LogLevel minLevel, @NotNull BiConsumer<LogLevel, String> logHook)
 	{
+		if(isClosed())
+			throw new IllegalStateException("Core has been closed");
+
 		setLogHook(pointer, minLevel.ordinal(), logHook);
 	}
 
@@ -237,7 +243,11 @@ public class Core implements AutoCloseable
 	@Override
 	public void close()
 	{
+		if(isClosed())
+			throw new IllegalStateException("Core has already been closed");
+
 		destroy(pointer);
+		open = false;
 	}
 
 	/**
@@ -248,5 +258,14 @@ public class Core implements AutoCloseable
 	public long getPointer()
 	{
 		return pointer;
+	}
+
+	/**
+	 * Returns whether this Core is closed, i.e. {@link #close()} has been called at some point.
+	 * @return {@code true} is this Core is closed, {@code false} if it is open
+	 */
+	public boolean isClosed()
+	{
+		return !open;
 	}
 }
