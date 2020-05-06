@@ -1,3 +1,4 @@
+#include <string.h>
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_activity_ActivitySecrets.h"
@@ -13,7 +14,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivitySecrets_setMa
 	struct DiscordActivitySecrets *secrets = (struct DiscordActivitySecrets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, secret, 0);
-	strcpy(secrets->match, nativeString);
+	strncpy(secrets->match, nativeString, 127);
+	secrets->match[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, secret, nativeString);
 }
 
@@ -42,7 +44,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivitySecrets_setJo
 	struct DiscordActivitySecrets *secrets = (struct DiscordActivitySecrets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, secret, 0);
-	strcpy(secrets->join, nativeString);
+	strncpy(secrets->join, nativeString, 127);
+	secrets->join[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, secret, nativeString);
 }
 
@@ -70,7 +73,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivitySecrets_setSp
 	struct DiscordActivitySecrets *secrets = (struct DiscordActivitySecrets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, secret, 0);
-	strcpy(secrets->spectate, nativeString);
+	strncpy(secrets->spectate, nativeString, 127);
+	secrets->spectate[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, secret, nativeString);
 }
 

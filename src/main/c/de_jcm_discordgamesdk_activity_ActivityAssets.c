@@ -1,3 +1,4 @@
+#include <string.h>
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_activity_ActivityAssets.h"
@@ -13,7 +14,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivityAssets_setLar
 	struct DiscordActivityAssets *assets = (struct DiscordActivityAssets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, asset_key, 0);
-	strcpy(assets->large_image, nativeString);
+	strncpy(assets->large_image, nativeString, 127);
+	assets->large_image[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, asset_key, nativeString);
 }
 
@@ -41,7 +43,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivityAssets_setLar
 	struct DiscordActivityAssets *assets = (struct DiscordActivityAssets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, text, 0);
-	strcpy(assets->large_text, nativeString);
+	strncpy(assets->large_text, nativeString, 127);
+	assets->large_text[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, text, nativeString);
 }
 
@@ -70,7 +73,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivityAssets_setSma
 	struct DiscordActivityAssets *assets = (struct DiscordActivityAssets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, asset_key, 0);
-	strcpy(assets->small_image, nativeString);
+	strncpy(assets->small_image, nativeString, 127);
+	assets->small_image[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, asset_key, nativeString);
 }
 
@@ -98,7 +102,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivityAssets_setSma
 	struct DiscordActivityAssets *assets = (struct DiscordActivityAssets*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, text, 0);
-	strcpy(assets->small_text, nativeString);
+	strncpy(assets->small_text, nativeString, 127);
+	assets->small_text[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, text, nativeString);
 }
 

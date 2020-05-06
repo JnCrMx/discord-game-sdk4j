@@ -1,3 +1,4 @@
+#include <string.h>
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_activity_ActivityParty.h"
@@ -13,7 +14,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_ActivityParty_setID(J
 	struct DiscordActivityParty *party = (struct DiscordActivityParty*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, id, 0);
-	strcpy(party->id, nativeString);
+	strncpy(party->id, nativeString, 127);
+	party->id[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, id, nativeString);
 }
 

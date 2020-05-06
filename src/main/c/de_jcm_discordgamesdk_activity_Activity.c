@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <discord_game_sdk.h>
 
 #include "de_jcm_discordgamesdk_activity_Activity.h"
@@ -52,7 +53,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_setState(JNI
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, state, 0);
-	strcpy(activity->state, nativeString);
+	strncpy(activity->state, nativeString, 127);
+	activity->state[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, state, nativeString);
 }
 
@@ -80,7 +82,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_setDetails(J
 	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
 	
 	const char *nativeString = (*env)->GetStringUTFChars(env, details, 0);
-	strcpy(activity->details, nativeString);
+	strncpy(activity->details, nativeString, 127);
+	activity->details[127] = 0;
 	(*env)->ReleaseStringUTFChars(env, details, nativeString);
 }
 
