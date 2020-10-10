@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jncrmx</groupId>
 	<artifactId>discord-game-sdk4j</artifactId>
-	<version>0.3</version>
+	<version>0.3.1</version>
 	<name>discord-game-sdk4j</name>
 
     <description>Java bindings for Discord's Game SDK</description>
@@ -91,10 +91,10 @@
                             <target>
                                 <mkdir dir="${project.build.directory}/native"/>
                                 <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
-                                    <arg line="${basedir}/src/main/c"/>
+                                    <arg line="-DCMAKE_BUILD_TYPE=Release ${basedir}/src/main/c"/>
                                 </exec>
                                 <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
-                                    <arg line="--build ."/>
+                                    <arg line="--build . --config Release"/>
                                 </exec>
                             </target>
                         </configuration>
@@ -122,7 +122,7 @@
                                     <filtering>false</filtering>
                                 </resource>
                                 <resource>
-                                    <directory>${project.build.directory}/native/Debug</directory>
+                                    <directory>${project.build.directory}/native/Release</directory>
                                     <includes>
                                         <include>discord_game_sdk_jni.dll</include>
                                     </includes>
