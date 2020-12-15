@@ -16,11 +16,6 @@ public enum ActivityType
 	PLAYING,
 	STREAMING,
 	LISTENING,
-	WATCHING,
-	/**
-	 * <p>The user has a custom presence set.</p>
-	 * <p>This enum value is documented neither in the online documentation
-	 * nor in the C Header files, so this is inducted from some observations.</p>
-	 */
-	CUSTOM
+	CUSTOM,
+	COMPETING
 }
