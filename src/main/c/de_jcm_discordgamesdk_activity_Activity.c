@@ -94,6 +94,20 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getSecrets(
 	return (uint64_t) &(activity->secrets);
 }
 
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_setInstance(JNIEnv *env, jobject object, jlong pointer, jboolean instance)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+
+	activity->instance=instance;
+}
+
+JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getInstance(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct DiscordActivity *activity = (struct DiscordActivity*) pointer;
+
+	return activity->instance;
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_free(JNIEnv *env, jclass clazz, jlong pointer)
 {
 	free((void*)pointer);

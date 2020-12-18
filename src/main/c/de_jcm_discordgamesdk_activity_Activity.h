@@ -119,6 +119,22 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getParty
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getSecrets
   (JNIEnv *, jobject, jlong);
 
+/*
+ * Class:     de_jcm_discordgamesdk_activity_Activity
+ * Method:    setInstance
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_activity_Activity_setInstance
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     de_jcm_discordgamesdk_activity_Activity
+ * Method:    getInstance
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_de_jcm_discordgamesdk_activity_Activity_getInstance
+  (JNIEnv *, jobject, jlong);
+
 #ifdef __cplusplus
 }
 #endif

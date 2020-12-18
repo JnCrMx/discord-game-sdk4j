@@ -234,6 +234,23 @@ public class Activity implements AutoCloseable
 		return secrets;
 	}
 
+	/**
+	 * Sets whether the player is in an instance
+	 * @param instance whether the player is in an instance
+	 */
+	public void setInstance(boolean instance)
+	{
+		setInstance(pointer, instance);
+	}
+	/**
+	 * Gets whether the player is in an instance
+	 * @return {@code true} if the player is in an instance
+	 */
+	public boolean getInstance()
+	{
+		return getInstance(pointer);
+	}
+
 	private native long allocate();
 	private static native void free(long pointer);
 
@@ -254,6 +271,9 @@ public class Activity implements AutoCloseable
 	private native long getParty(long pointer);
 	private native long getSecrets(long pointer);
 
+	private native void setInstance(long pointer, boolean instance);
+	private native boolean getInstance(long pointer);
+
 	/**
 	 * <p>Frees the allocated native structure and therefore also all embedded native structures.</p>
 	 * <p>You should call this when you do not need the structure anymore.</p>
@@ -272,5 +292,21 @@ public class Activity implements AutoCloseable
 	public long getPointer()
 	{
 		return pointer;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Activity@"+pointer+"{" +
+				"applicationId=" + getApplicationId() +
+				", name = " + getName() +
+				", state = " + getState() +
+				", details = " + getDetails() +
+				", type = " + getType() +
+				", timestamps=" + timestamps() +
+				", assets=" + assets() +
+				", party=" + party() +
+				", secrets=" + secrets() +
+				'}';
 	}
 }
