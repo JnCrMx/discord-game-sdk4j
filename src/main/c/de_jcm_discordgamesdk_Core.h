@@ -73,6 +73,14 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getImageManager
 
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getLobbyManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getLobbyManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    runCallbacks
  * Signature: (J)V
  */

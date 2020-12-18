@@ -5,6 +5,8 @@ import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.image.ImageHandle;
 import de.jcm.discordgamesdk.image.ImageType;
+import de.jcm.discordgamesdk.lobby.LobbyTransaction;
+import de.jcm.discordgamesdk.lobby.LobbyType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
 import org.junit.jupiter.api.Assertions;
@@ -107,6 +109,8 @@ public class DiscordTest
 					activity.secrets().setMatchSecret("match");
 					activity.secrets().setJoinSecret("join");
 					activity.secrets().setSpectateSecret("spectate");
+
+					activity.setInstance(true);
 
 					core.activityManager().updateActivity(activity, result->
 					{
@@ -429,6 +433,39 @@ public class DiscordTest
 					{
 						e.printStackTrace();
 					}
+				});
+
+				for(int i = 0; i < 1000; i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	void lobbyTest()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			params.setClientID(698611073133051974L);
+			try(Core core = new Core(params))
+			{
+				LobbyTransaction txn = core.lobbyManager().getLobbyCreateTransaction();
+				System.out.println(txn);
+				txn.setType(LobbyType.PUBLIC);
+				txn.setCapacity(10);
+				core.lobbyManager().createLobby(txn, (result, lobby) -> {
+					System.out.println(result);
+					System.out.println(lobby);
 				});
 
 				for(int i = 0; i < 1000; i++)

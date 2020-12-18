@@ -86,6 +86,7 @@ public class Core implements AutoCloseable
 	private OverlayManager overlayManager;
 	private RelationshipManager relationshipManager;
 	private ImageManager imageManager;
+	private LobbyManager lobbyManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -126,6 +127,7 @@ public class Core implements AutoCloseable
 		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
 		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
 		this.imageManager = new ImageManager(getImageManager(pointer));
+		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -136,6 +138,7 @@ public class Core implements AutoCloseable
 	private native long getOverlayManager(long pointer);
 	private native long getRelationshipManager(long pointer);
 	private native long getImageManager(long pointer);
+	private native long getLobbyManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -201,6 +204,11 @@ public class Core implements AutoCloseable
 	public ImageManager imageManager()
 	{
 		return imageManager;
+	}
+
+	public LobbyManager lobbyManager()
+	{
+		return lobbyManager;
 	}
 
 	/**
