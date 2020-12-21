@@ -21,4 +21,11 @@ void on_overlay_toggle(void* event_data, bool locked);
 void on_relationship_refresh(void* event_data);
 void on_relationship_update(void* event_data, struct DiscordRelationship* relationship);
 
+// lobby_events
+void on_lobby_update(void* event_data, long lobby_id);
+void on_lobby_delete(void* event_data, long lobby_id, int reason);
+void on_member_connect(void* event_data, long lobby_id, long user_id);
+void on_member_update(void* event_data, long lobby_id, long user_id);
+void on_member_disconnect(void* event_data, long lobby_id, long user_id);
+
 #endif

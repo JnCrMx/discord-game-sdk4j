@@ -44,6 +44,41 @@ public class LobbyTransaction
 		}
 	}
 
+	public void setMetadata(String key, String value)
+	{
+		if(key.getBytes().length >= 256)
+			throw new IllegalArgumentException("max key length is 255");
+		if(value.getBytes().length >= 4095)
+			throw new IllegalArgumentException("max value length is 4096");
+
+		Result result = setMetadata(pointer, key, value);
+		if(result != Result.OK)
+		{
+			throw new GameSDKException(result);
+		}
+	}
+
+	public void deleteMetadata(String key)
+	{
+		if(key.getBytes().length >= 256)
+			throw new IllegalArgumentException("max key length is 255");
+
+		Result result = deleteMetadata(pointer, key);
+		if(result != Result.OK)
+		{
+			throw new GameSDKException(result);
+		}
+	}
+
+	public void setLocked(boolean locked)
+	{
+		Result result = setLocked(pointer, locked);
+		if(result != Result.OK)
+		{
+			throw new GameSDKException(result);
+		}
+	}
+
 	private native Result setType(long pointer, int type);
 	private native Result setOwner(long pointer, long ownerId);
 	private native Result setCapacity(long pointer, int capacity);

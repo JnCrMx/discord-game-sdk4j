@@ -5,6 +5,8 @@ import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.image.ImageHandle;
 import de.jcm.discordgamesdk.image.ImageType;
+import de.jcm.discordgamesdk.lobby.Lobby;
+import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
 import de.jcm.discordgamesdk.lobby.LobbyTransaction;
 import de.jcm.discordgamesdk.lobby.LobbyType;
 import de.jcm.discordgamesdk.user.DiscordUser;
@@ -19,8 +21,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 public class DiscordTest
 {
@@ -457,15 +464,104 @@ public class DiscordTest
 		try(CreateParams params = new CreateParams())
 		{
 			params.setClientID(698611073133051974L);
+			params.registerEventHandler(new DiscordEventAdapter()
+			{
+				@Override
+				public void onLobbyUpdate(long lobbyId)
+				{
+					System.out.println("Lobby "+lobbyId+" updated");
+				}
+
+				@Override
+				public void onLobbyDelete(long lobbyId, int reason)
+				{
+					System.out.println("Lobby "+lobbyId+" deleted because of "+reason);
+				}
+
+				@Override
+				public void onMemberConnect(long lobbyId, long userId)
+				{
+					System.out.println("User "+userId+" connected to lobby "+lobbyId);
+				}
+
+				@Override
+				public void onMemberUpdate(long lobbyId, long userId)
+				{
+					System.out.println("User "+userId+" in lobby "+lobbyId+" updated");
+				}
+
+				@Override
+				public void onMemberDisconnect(long lobbyId, long userId)
+				{
+					System.out.println("User "+userId+" disconnected from lobby "+lobbyId);
+				}
+			});
 			try(Core core = new Core(params))
 			{
 				LobbyTransaction txn = core.lobbyManager().getLobbyCreateTransaction();
-				System.out.println(txn);
 				txn.setType(LobbyType.PUBLIC);
 				txn.setCapacity(10);
+				txn.setMetadata("test", "1234");
+				txn.setLocked(false);
 				core.lobbyManager().createLobby(txn, (result, lobby) -> {
-					System.out.println(result);
+					Assertions.assertEquals(Result.OK, result, "create_lobby failed");
+
 					System.out.println(lobby);
+
+					Assertions.assertEquals(LobbyType.PUBLIC, lobby.getType(), "wrong type");
+					Assertions.assertEquals(10, lobby.getCapacity(), "wrong capacity");
+					Assertions.assertEquals("1234",
+					                        core.lobbyManager().getLobbyMetadataValue(lobby, "test"),
+					                        "wrong metadata");
+					Assertions.assertEquals(false, lobby.isLocked(), "wrong lock state");
+
+					LobbyTransaction updateTxn = core.lobbyManager().getLobbyUpdateTransaction(lobby);
+					updateTxn.setCapacity(100);
+					core.lobbyManager().updateLobby(lobby, updateTxn, result1 -> {
+						Assertions.assertEquals(Result.OK, result1, "update_lobby failed");
+						/*core.lobbyManager().deleteLobby(lobby, result2 -> {
+							Assertions.assertEquals(Result.OK, result2, "delete_lobby failed");
+						});*/
+					});
+				});
+
+				for(int i = 0; i < 10000; i++)
+				{
+					core.runCallbacks();
+					try
+					{
+						Thread.sleep(16);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	void lobbyTest2()
+	{
+		try(CreateParams params = new CreateParams())
+		{
+			params.setClientID(698611073133051974L);
+			try(Core core = new Core(params))
+			{
+				LobbySearchQuery searchQuery = core.lobbyManager().getSearchQuery();
+				core.lobbyManager().search(searchQuery, r->{
+					Assertions.assertEquals(Result.OK, r, "search failed");
+
+					List<Lobby> list = core.lobbyManager().getLobbies();
+					list.forEach(System.out::println);
+
+					Optional<Lobby> lobby = list.stream().filter(l->!l.isLocked()).findAny();
+					Assumptions.assumeTrue(lobby.isPresent(), "no suitable lobby found");
+
+					core.lobbyManager().connectLobby(lobby.get().getId(), lobby.get().getSecret(), (result, lobby1) -> {
+						Assertions.assertEquals(Result.OK, result, "connect_lobby failed");
+					});
 				});
 
 				for(int i = 0; i < 1000; i++)

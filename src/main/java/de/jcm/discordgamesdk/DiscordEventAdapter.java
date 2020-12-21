@@ -88,4 +88,29 @@ public abstract class DiscordEventAdapter
 	{
 
 	}
+
+	public void onLobbyUpdate(long lobbyId)
+	{
+
+	}
+
+	public void onLobbyDelete(long lobbyId, int reason)
+	{
+
+	}
+
+	public void onMemberConnect(long lobbyId, long userId)
+	{
+
+	}
+
+	public void onMemberUpdate(long lobbyId, long userId)
+	{
+
+	}
+
+	public void onMemberDisconnect(long lobbyId, long userId)
+	{
+
+	}
 }
