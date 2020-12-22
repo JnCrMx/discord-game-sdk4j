@@ -144,6 +144,22 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_connectLobby
 	lobby_manager->connect_lobby(lobby_manager, lobbyId, lobby_secret, cbd, create_connect_lobby_callback);
 }
 
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_connectLobbyWithActivitySecret
+  (JNIEnv *env, jobject object, jlong pointer, jstring activitySecret, jobject callback)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	const char *nativeSecret = (*env)->GetStringUTFChars(env, activitySecret, 0);
+	DiscordLobbySecret activity_secret;
+	strcpy(activity_secret, nativeSecret);
+	(*env)->ReleaseStringUTFChars(env, activitySecret, nativeSecret);
+
+	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
+	prepare_callback_data(env, callback, cbd);
+
+	lobby_manager->connect_lobby_with_activity_secret(lobby_manager, activity_secret, cbd, create_connect_lobby_callback);
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_disconnectLobby
   (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jobject callback)
 {
@@ -171,6 +187,28 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobby
 			(*env)->NewStringUTF(env, lobby.secret),
 			lobby.capacity, lobby.locked);
 		return lobby_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyActivitySecret
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+	DiscordLobbySecret activity_secret;
+
+	enum EDiscordResult result = lobby_manager->get_lobby_activity_secret(lobby_manager, lobbyId, &activity_secret);
+	if(result == DiscordResult_Ok) // if everything went well, return the lobby
+	{
+		return (*env)->NewStringUTF(env, activity_secret);
 	}
 	else // otherwise return the result
 	{

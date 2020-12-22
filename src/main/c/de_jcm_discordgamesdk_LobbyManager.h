@@ -81,6 +81,14 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobby
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getLobbyActivitySecret
+ * Signature: (JJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyActivitySecret
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
  * Method:    getLobbyMetadataValue
  * Signature: (JJLjava/lang/String;)Ljava/lang/Object;
  */

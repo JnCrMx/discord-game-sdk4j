@@ -5,7 +5,6 @@ import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
 import de.jcm.discordgamesdk.lobby.LobbyTransaction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -117,7 +116,16 @@ public class LobbyManager
 
 	public void connectLobby(long lobbyId, String secret, @NotNull BiConsumer<Result, Lobby> callback)
 	{
+		if(secret.getBytes().length >= 128)
+			throw new IllegalArgumentException("max secret length is 255");
 		connectLobby(pointer, lobbyId, secret, callback);
+	}
+
+	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull BiConsumer<Result, Lobby> callback)
+	{
+		if(activitySecret.getBytes().length >= 128)
+			throw new IllegalArgumentException("max activity secret length is 255");
+		connectLobbyWithActivitySecret(pointer, activitySecret, callback);
 	}
 
 	public void disconnectLobby(long lobbyId, Consumer<Result> callback)
@@ -148,6 +156,23 @@ public class LobbyManager
 		{
 			return (Lobby) ret;
 		}
+	}
+
+	public String getLobbyActivitySecret(long lobbyId)
+	{
+		Object ret = getLobbyActivitySecret(pointer, lobbyId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (String) ret;
+		}
+	}
+	public String getLobbyActivitySecret(Lobby lobby)
+	{
+		return getLobbyActivitySecret(lobby.getId());
 	}
 
 	public String getLobbyMetadataValue(Lobby lobby, String key)
@@ -258,7 +283,7 @@ public class LobbyManager
 	private native void disconnectLobby(long pointer, long lobbyId, Consumer<Result> callback);
 
 	private native Object getLobby(long pointer, long lobbyId);
-
+	private native Object getLobbyActivitySecret(long pointer, long lobbyId);
 	private native Object getLobbyMetadataValue(long pointer, long lobbyId, String key);
 
 	private native Object getSearchQuery(long pointer);
