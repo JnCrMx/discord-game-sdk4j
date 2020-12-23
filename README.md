@@ -54,7 +54,7 @@ If you want to skip the tests (sometimes they fail for really weird reasons), ad
 To build the native libraries from source make sure you have CMake, a compiler that works with CMake (e.g. gcc)
 and a JDK11 installed and properly set up.
 
-Then download [Discord's native library](https://dl-game-sdk.discordapp.net/latest/discord_game_sdk.zip)
+Then download [Discord's native library](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip)
 and extract it to ``./discord_game_sdk/``.
 
 The CMake build system is integrated in Maven, so just execute to following command to
@@ -66,7 +66,7 @@ mvn install
 
 ## Usage
 
-To use the library, you first need to download [Discord's native library](https://dl-game-sdk.discordapp.net/latest/discord_game_sdk.zip).
+To use the library, you first need to download [Discord's native library](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip).
 Extract the ZIP file and remember where you put it.
 
 In code the first step is initializing the Core. To do this you need to pass the path to Discord's native library as an argument.
