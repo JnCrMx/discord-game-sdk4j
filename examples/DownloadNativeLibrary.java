@@ -33,7 +33,7 @@ public class DownloadNativeLibrary
 		String zipPath = "lib/x86_64/"+name+suffix;
 
 		// Open the URL as a ZipInputStream
-		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/latest/discord_game_sdk.zip");
+		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
 		ZipInputStream zin = new ZipInputStream(downloadUrl.openStream());
 
 		// Search for the right file inside the ZIP
