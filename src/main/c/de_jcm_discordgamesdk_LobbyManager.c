@@ -249,6 +249,84 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyMetada
 	}
 }
 
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetadataValue
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId, jstring key)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	const char *nativeKey = (*env)->GetStringUTFChars(env, key, 0);
+	DiscordMetadataKey metadata_key;
+	strcpy(metadata_key, nativeKey);
+	(*env)->ReleaseStringUTFChars(env, key, nativeKey);
+
+	DiscordMetadataValue metadata_value;
+
+	enum EDiscordResult result = lobby_manager->get_member_metadata_value(lobby_manager, lobbyId, userId, metadata_key, &metadata_value);
+	if(result == DiscordResult_Ok) // if everything went well, return the value
+	{
+		return (*env)->NewStringUTF(env, metadata_value);
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetadataKey
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId, jint index)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	DiscordMetadataKey metadata_key;
+
+	enum EDiscordResult result = lobby_manager->get_member_metadata_key(lobby_manager, lobbyId, userId, index, &metadata_key);
+	if(result == DiscordResult_Ok) // if everything went well, return the key
+	{
+		return (*env)->NewStringUTF(env, metadata_key);
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberMetadataCount
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	int count;
+
+	enum EDiscordResult result = lobby_manager->member_metadata_count(lobby_manager, lobbyId, userId, &count);
+	if(result == DiscordResult_Ok) // if everything went well, return the key
+	{
+		jclass Integer_class = (*env)->FindClass(env, "java/lang/Integer");
+		jmethodID valueOf_method = (*env)->GetStaticMethodID(env, Integer_class, "valueOf", "(I)Ljava/lang/Integer;");
+		jobject return_object = (*env)->CallStaticObjectMethod(env, Integer_class, valueOf_method, count);
+
+		return return_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getSearchQuery
   (JNIEnv *env, jobject object, jlong pointer)
 {
@@ -343,4 +421,84 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_disconnectVoice
 	prepare_callback_data(env, callback, cbd);
 
 	lobby_manager->disconnect_voice(lobby_manager, lobbyId, cbd, simple_callback);
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_connectNetwork
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	enum EDiscordResult result = lobby_manager->connect_network(lobby_manager, lobbyId);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_disconnectNetwork
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	enum EDiscordResult result = lobby_manager->disconnect_network(lobby_manager, lobbyId);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_flushNetwork
+  (JNIEnv *env, jobject object, jlong pointer)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	enum EDiscordResult result = lobby_manager->flush_network(lobby_manager);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_openNetworkChannel
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jbyte channelId, jboolean reliable)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	enum EDiscordResult result = lobby_manager->open_network_channel(lobby_manager, lobbyId, channelId, reliable);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_sendNetworkMessage
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId, jbyte channelId, jbyteArray array, jint offset, jint length)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	uint8_t* data = (uint8_t*) malloc(length);
+	(*env)->GetByteArrayRegion(env, array, offset, length, data);
+
+	enum EDiscordResult result = lobby_manager->send_network_message(lobby_manager, lobbyId, userId, channelId, data, length);
+
+	free(data);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
 }

@@ -113,4 +113,9 @@ public abstract class DiscordEventAdapter
 	{
 
 	}
+
+	public void onNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
+	{
+
+	}
 }

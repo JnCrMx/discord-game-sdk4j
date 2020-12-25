@@ -97,6 +97,54 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyMetada
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getLobbyMetadataKey
+ * Signature: (JJI)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyMetadataKey
+  (JNIEnv *, jobject, jlong, jlong, jint);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    lobbyMetadataCount
+ * Signature: (JJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_lobbyMetadataCount
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    memberCount
+ * Signature: (JJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberCount
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getMemberMetadataValue
+ * Signature: (JJJLjava/lang/String;)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetadataValue
+  (JNIEnv *, jobject, jlong, jlong, jlong, jstring);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getMemberMetadataKey
+ * Signature: (JJJI)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetadataKey
+  (JNIEnv *, jobject, jlong, jlong, jlong, jint);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    memberMetadataCount
+ * Signature: (JJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberMetadataCount
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
  * Method:    getSearchQuery
  * Signature: (J)Ljava/lang/Object;
  */
@@ -142,6 +190,46 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_connectVoice
  */
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_disconnectVoice
   (JNIEnv *, jobject, jlong, jlong, jobject);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    connectNetwork
+ * Signature: (JJ)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_connectNetwork
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    disconnectNetwork
+ * Signature: (JJ)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_disconnectNetwork
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    flushNetwork
+ * Signature: (J)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_flushNetwork
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    openNetworkChannel
+ * Signature: (JJBZ)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_openNetworkChannel
+  (JNIEnv *, jobject, jlong, jlong, jbyte, jboolean);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    sendNetworkMessage
+ * Signature: (JJJB[BII)Lde/jcm/discordgamesdk/Result;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_sendNetworkMessage
+  (JNIEnv *, jobject, jlong, jlong, jlong, jbyte, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }

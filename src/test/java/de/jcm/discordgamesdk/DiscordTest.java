@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -463,6 +464,7 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
+			AtomicReference<Core> coreRef = new AtomicReference<>();
 			params.setClientID(698611073133051974L);
 			params.registerEventHandler(new DiscordEventAdapter()
 			{
@@ -488,6 +490,7 @@ public class DiscordTest
 				public void onMemberUpdate(long lobbyId, long userId)
 				{
 					System.out.println("User "+userId+" in lobby "+lobbyId+" updated");
+					System.out.println(coreRef.get().lobbyManager().getMemberMetadata(lobbyId, userId));
 				}
 
 				@Override
@@ -495,9 +498,17 @@ public class DiscordTest
 				{
 					System.out.println("User "+userId+" disconnected from lobby "+lobbyId);
 				}
+
+				@Override
+				public void onNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
+				{
+					System.out.println("Message in "+lobbyId+" channel "+channelId+" from "+userId+": "+data.length+" bytes");
+				}
 			});
 			try(Core core = new Core(params))
 			{
+				coreRef.set(core);
+
 				LobbyTransaction txn = core.lobbyManager().getLobbyCreateTransaction();
 				txn.setType(LobbyType.PUBLIC);
 				txn.setCapacity(10);
@@ -523,6 +534,13 @@ public class DiscordTest
 							Assertions.assertEquals(Result.OK, result2, "delete_lobby failed");
 						});*/
 					});
+
+					Assertions.assertDoesNotThrow(()->core.lobbyManager().connectNetwork(lobby),
+							"connect_network failed");
+
+					core.lobbyManager().openNetworkChannel(lobby, (byte) 0, true);
+
+					//Assertions.assertDoesNotThrow(()->core.lobbyManager().disconnectNetwork(lobby), "disconnect_network failed");
 				});
 
 				for(int i = 0; i < 10000; i++)
@@ -556,11 +574,18 @@ public class DiscordTest
 					List<Lobby> list = core.lobbyManager().getLobbies();
 					list.forEach(System.out::println);
 
-					Optional<Lobby> lobby = list.stream().filter(l->!l.isLocked()).findAny();
-					Assumptions.assumeTrue(lobby.isPresent(), "no suitable lobby found");
+					Optional<Lobby> lobbyOpt = list.stream().filter(l->!l.isLocked()).findAny();
+					Assumptions.assumeTrue(lobbyOpt.isPresent(), "no suitable lobby found");
 
-					core.lobbyManager().connectLobby(lobby.get().getId(), lobby.get().getSecret(), (result, lobby1) -> {
+					Lobby lobby = lobbyOpt.get();
+					core.lobbyManager().connectLobby(lobby.getId(), lobby.getSecret(), (result, lobby1) -> {
 						Assertions.assertEquals(Result.OK, result, "connect_lobby failed");
+
+						core.lobbyManager().connectNetwork(lobby);
+						core.lobbyManager().openNetworkChannel(lobby, (byte) 0, true);
+						core.lobbyManager().sendNetworkMessage(lobby, lobby.getOwnerId(), (byte) 0,
+								"Hallo".getBytes(StandardCharsets.UTF_8));
+						core.lobbyManager().flushNetwork();
 					});
 				});
 

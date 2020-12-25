@@ -27,5 +27,6 @@ void on_lobby_delete(void* event_data, long lobby_id, int reason);
 void on_member_connect(void* event_data, long lobby_id, long user_id);
 void on_member_update(void* event_data, long lobby_id, long user_id);
 void on_member_disconnect(void* event_data, long lobby_id, long user_id);
+void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, int data_length);
 
 #endif

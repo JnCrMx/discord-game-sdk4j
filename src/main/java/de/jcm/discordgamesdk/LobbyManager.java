@@ -6,7 +6,9 @@ import de.jcm.discordgamesdk.lobby.LobbyTransaction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -99,21 +101,6 @@ public class LobbyManager
 		deleteLobby(lobby, Core.DEFAULT_CALLBACK);
 	}
 
-	public String getLobbyMetadataValue(long lobbyId, String key)
-	{
-		if(key.getBytes().length >= 256)
-			throw new IllegalArgumentException("max key length is 255");
-		Object ret = getLobbyMetadataValue(pointer, lobbyId, key);
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (String) ret;
-		}
-	}
-
 	public void connectLobby(long lobbyId, String secret, @NotNull BiConsumer<Result, Lobby> callback)
 	{
 		if(secret.getBytes().length >= 128)
@@ -175,9 +162,93 @@ public class LobbyManager
 		return getLobbyActivitySecret(lobby.getId());
 	}
 
+	public String getLobbyMetadataValue(long lobbyId, String key)
+	{
+		if(key.getBytes().length >= 256)
+			throw new IllegalArgumentException("max key length is 255");
+		Object ret = getLobbyMetadataValue(pointer, lobbyId, key);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (String) ret;
+		}
+	}
 	public String getLobbyMetadataValue(Lobby lobby, String key)
 	{
 		return getLobbyMetadataValue(lobby.getId(), key);
+	}
+
+	public String getMemberMetadataValue(long lobbyId, long userId, String key)
+	{
+		if(key.getBytes().length >= 256)
+			throw new IllegalArgumentException("max key length is 255");
+		Object ret = getMemberMetadataValue(pointer, lobbyId, userId, key);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (String) ret;
+		}
+	}
+	public String getMemberMetadataValue(Lobby lobby, long userId, String key)
+	{
+		return getMemberMetadataValue(lobby.getId(), userId, key);
+	}
+
+	public String getMemberMetadataKey(long lobbyId, long userId, int index)
+	{
+		Object ret = getMemberMetadataKey(pointer, lobbyId, userId, index);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (String) ret;
+		}
+	}
+	public String getMemberMetadataKey(Lobby lobby, long userId, int index)
+	{
+		return getMemberMetadataKey(lobby.getId(), userId, index);
+	}
+
+	public int memberMetadataCount(long lobbyId, long userId)
+	{
+		Object ret = memberMetadataCount(pointer, lobbyId, userId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Integer) ret;
+		}
+	}
+	public int memberMetadataCount(Lobby lobby, long userId)
+	{
+		return memberMetadataCount(lobby.getId(), userId);
+	}
+
+	public Map<String, String> getMemberMetadata(long lobbyId, long userId)
+	{
+		int count = memberMetadataCount(lobbyId, userId);
+		HashMap<String, String> map = new HashMap<>(count);
+		for(int i=0; i<count; i++)
+		{
+			String key = getMemberMetadataKey(lobbyId, userId, i);
+			String value = getMemberMetadataValue(lobbyId, userId, key);
+			map.put(key, value);
+		}
+		return Collections.unmodifiableMap(map);
+	}
+	public Map<String, String> getMemberMetadata(Lobby lobby, long userId)
+	{
+		return getMemberMetadata(lobby.getId(), userId);
 	}
 
 	public LobbySearchQuery getSearchQuery()
@@ -271,6 +342,57 @@ public class LobbyManager
 		disconnectVoice(lobby, Core.DEFAULT_CALLBACK);
 	}
 
+	public void connectNetwork(long lobbyId)
+	{
+		Result result = connectNetwork(pointer, lobbyId);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+	public void connectNetwork(Lobby lobby)
+	{
+		connectNetwork(lobby.getId());
+	}
+
+	public void disconnectNetwork(long lobbyId)
+	{
+		Result result = disconnectNetwork(pointer, lobbyId);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+	public void disconnectNetwork(Lobby lobby)
+	{
+		disconnectNetwork(lobby.getId());
+	}
+
+	public void flushNetwork()
+	{
+		Result result = flushNetwork(pointer);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+
+	public void openNetworkChannel(long lobbyId, byte channelId, boolean reliable)
+	{
+		Result result = openNetworkChannel(pointer, lobbyId, channelId, reliable);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+	public void openNetworkChannel(Lobby lobby, byte channelId, boolean reliable)
+	{
+		openNetworkChannel(lobby.getId(), channelId, reliable);
+	}
+
+	public void sendNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
+	{
+		Result result = sendNetworkMessage(pointer, lobbyId, userId, channelId, data, 0, data.length);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+	public void sendNetworkMessage(Lobby lobby, long userId, byte channelId, byte[] data)
+	{
+		sendNetworkMessage(lobby.getId(), userId, channelId, data);
+	}
+
 	private native Object getLobbyCreateTransaction(long pointer);
 	private native Object getLobbyUpdateTransaction(long pointer, long lobbyId);
 
@@ -285,6 +407,14 @@ public class LobbyManager
 	private native Object getLobby(long pointer, long lobbyId);
 	private native Object getLobbyActivitySecret(long pointer, long lobbyId);
 	private native Object getLobbyMetadataValue(long pointer, long lobbyId, String key);
+	private native Object getLobbyMetadataKey(long pointer, long lobbyId, int index);
+	private native Object lobbyMetadataCount(long pointer, long lobbyId);
+
+	private native Object memberCount(long pointer, long lobbyId);
+
+	private native Object getMemberMetadataValue(long pointer, long lobbyId, long userId, String key);
+	private native Object getMemberMetadataKey(long pointer, long lobbyId, long userId, int index);
+	private native Object memberMetadataCount(long pointer, long lobbyId, long userId);
 
 	private native Object getSearchQuery(long pointer);
 	private native void search(long pointer, long searchQueryPointer, Consumer<Result> callback);
@@ -293,4 +423,10 @@ public class LobbyManager
 
 	private native void connectVoice(long pointer, long lobbyId, Consumer<Result> callback);
 	private native void disconnectVoice(long pointer, long lobbyId, Consumer<Result> callback);
+
+	private native Result connectNetwork(long pointer, long lobbyId);
+	private native Result disconnectNetwork(long pointer, long lobbyId);
+	private native Result flushNetwork(long pointer);
+	private native Result openNetworkChannel(long pointer, long lobbyId, byte channelId, boolean reliable);
+	private native Result sendNetworkMessage(long pointer, long lobbyId, long userId, byte channelId, byte[] data, int offset, int length);
 }
