@@ -524,6 +524,7 @@ public class DiscordTest
 					Assertions.assertEquals("1234",
 					                        core.lobbyManager().getLobbyMetadataValue(lobby, "test"),
 					                        "wrong metadata");
+					System.out.println(core.lobbyManager().getLobbyMetadata(lobby));
 					Assertions.assertEquals(false, lobby.isLocked(), "wrong lock state");
 
 					LobbyTransaction updateTxn = core.lobbyManager().getLobbyUpdateTransaction(lobby);

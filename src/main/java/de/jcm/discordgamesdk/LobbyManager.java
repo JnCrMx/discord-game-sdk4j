@@ -181,6 +181,57 @@ public class LobbyManager
 		return getLobbyMetadataValue(lobby.getId(), key);
 	}
 
+	public String getLobbyMetadataKey(long lobbyId, int index)
+	{
+		Object ret = getLobbyMetadataKey(pointer, lobbyId, index);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (String) ret;
+		}
+	}
+	public String getLobbyMetadataKey(Lobby lobby, int index)
+	{
+		return getLobbyMetadataKey(lobby.getId(), index);
+	}
+
+	public int lobbyMetadataCount(long lobbyId)
+	{
+		Object ret = lobbyMetadataCount(pointer, lobbyId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Integer) ret;
+		}
+	}
+	public int lobbyMetadataCount(Lobby lobby)
+	{
+		return lobbyMetadataCount(lobby.getId());
+	}
+
+	public Map<String, String> getLobbyMetadata(long lobbyId)
+	{
+		int count = lobbyMetadataCount(lobbyId);
+		HashMap<String, String> map = new HashMap<>(count);
+		for(int i=0; i<count; i++)
+		{
+			String key = getLobbyMetadataKey(lobbyId, i);
+			String value = getLobbyMetadataValue(lobbyId, key);
+			map.put(key, value);
+		}
+		return Collections.unmodifiableMap(map);
+	}
+	public Map<String, String> getLobbyMetadata(Lobby lobby)
+	{
+		return getLobbyMetadata(lobby.getId());
+	}
+
 	public String getMemberMetadataValue(long lobbyId, long userId, String key)
 	{
 		if(key.getBytes().length >= 256)
