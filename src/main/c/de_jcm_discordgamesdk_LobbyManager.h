@@ -121,6 +121,22 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberCount
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getMemberUserId
+ * Signature: (JJI)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUserId
+  (JNIEnv *, jobject, jlong, jlong, jint);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getMemberUser
+ * Signature: (JJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUser
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
  * Method:    getMemberMetadataValue
  * Signature: (JJJLjava/lang/String;)Ljava/lang/Object;
  */

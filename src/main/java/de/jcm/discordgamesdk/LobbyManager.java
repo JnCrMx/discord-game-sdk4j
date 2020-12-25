@@ -3,6 +3,7 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.lobby.Lobby;
 import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
 import de.jcm.discordgamesdk.lobby.LobbyTransaction;
+import de.jcm.discordgamesdk.user.DiscordUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -230,6 +231,82 @@ public class LobbyManager
 	public Map<String, String> getLobbyMetadata(Lobby lobby)
 	{
 		return getLobbyMetadata(lobby.getId());
+	}
+
+	public int memberCount(long lobbyId)
+	{
+		Object ret = memberCount(pointer, lobbyId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Integer) ret;
+		}
+	}
+	public int memberCount(Lobby lobby)
+	{
+		return memberCount(lobby.getId());
+	}
+
+	public long getMemberUserId(long lobbyId, int index)
+	{
+		Object ret = getMemberUserId(pointer, lobbyId, index);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Long) ret;
+		}
+	}
+	public long getMemberUserId(Lobby lobby, int index)
+	{
+		return getMemberUserId(lobby.getId(), index);
+	}
+
+	public List<Long> getMemberUserIds(long lobbyId)
+	{
+		List<Long> list = IntStream.range(0, memberCount(lobbyId))
+				.mapToLong(i->getMemberUserId(lobbyId, i))
+				.boxed()
+				.collect(Collectors.toList());
+		return Collections.unmodifiableList(list);
+	}
+	public List<Long> getMemberUserIds(Lobby lobby)
+	{
+		return getMemberUserIds(lobby.getId());
+	}
+
+	public DiscordUser getMemberUser(long lobbyId, long userId)
+	{
+		Object ret = getMemberUser(pointer, lobbyId, userId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (DiscordUser) ret;
+		}
+	}
+	public DiscordUser getMemberUser(Lobby lobby, long userId)
+	{
+		return getMemberUser(lobby.getId(), userId);
+	}
+
+	public List<DiscordUser> getMemberUsers(long lobbyId)
+	{
+		List<DiscordUser> list = getMemberUserIds(lobbyId).stream()
+				.map(l->getMemberUser(lobbyId, l))
+				.collect(Collectors.toList());
+		return Collections.unmodifiableList(list);
+	}
+	public List<DiscordUser> getMemberUsers(Lobby lobby)
+	{
+		return getMemberUsers(lobby.getId());
 	}
 
 	public String getMemberMetadataValue(long lobbyId, long userId, String key)
@@ -462,7 +539,8 @@ public class LobbyManager
 	private native Object lobbyMetadataCount(long pointer, long lobbyId);
 
 	private native Object memberCount(long pointer, long lobbyId);
-
+	private native Object getMemberUserId(long pointer, long lobbyId, int index);
+	private native Object getMemberUser(long pointer, long lobbyId, long userId);
 	private native Object getMemberMetadataValue(long pointer, long lobbyId, long userId, String key);
 	private native Object getMemberMetadataKey(long pointer, long lobbyId, long userId, int index);
 	private native Object memberMetadataCount(long pointer, long lobbyId, long userId);

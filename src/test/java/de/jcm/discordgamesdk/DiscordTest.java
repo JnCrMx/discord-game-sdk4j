@@ -527,6 +527,8 @@ public class DiscordTest
 					System.out.println(core.lobbyManager().getLobbyMetadata(lobby));
 					Assertions.assertEquals(false, lobby.isLocked(), "wrong lock state");
 
+					System.out.println(core.lobbyManager().getMemberUsers(lobby));
+
 					LobbyTransaction updateTxn = core.lobbyManager().getLobbyUpdateTransaction(lobby);
 					updateTxn.setCapacity(100);
 					core.lobbyManager().updateLobby(lobby, updateTxn, result1 -> {

@@ -299,6 +299,91 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_lobbyMetadataC
 	}
 }
 
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberCount
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	int count;
+
+	enum EDiscordResult result = lobby_manager->member_count(lobby_manager, lobbyId, &count);
+	if(result == DiscordResult_Ok) // if everything went well, return the count
+	{
+		jclass Integer_class = (*env)->FindClass(env, "java/lang/Integer");
+		jmethodID valueOf_method = (*env)->GetStaticMethodID(env, Integer_class, "valueOf", "(I)Ljava/lang/Integer;");
+		jobject return_object = (*env)->CallStaticObjectMethod(env, Integer_class, valueOf_method, count);
+
+		return return_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUserId
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jint index)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	DiscordUserId id;
+	enum EDiscordResult result = lobby_manager->get_member_user_id(lobby_manager, lobbyId, index, &id);
+	if(result == DiscordResult_Ok) // if everything went well, return the id
+	{
+		jclass Long_class = (*env)->FindClass(env, "java/lang/Long");
+		jmethodID valueOf_method = (*env)->GetStaticMethodID(env, Long_class, "valueOf", "(J)Ljava/lang/Long;");
+		jobject return_object = (*env)->CallStaticObjectMethod(env, Long_class, valueOf_method, id);
+
+		return return_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUser
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	struct DiscordUser user;
+	enum EDiscordResult result = lobby_manager->get_member_user(lobby_manager, lobbyId, userId, &user);
+	if(result == DiscordResult_Ok) // if everything went well, return the user
+	{
+		jclass user_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/user/DiscordUser");
+		jmethodID user_constructor = (*env)->GetMethodID(env, user_class, "<init>",
+				"(JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V");
+		jobject user_object = (*env)->NewObject(env, user_class, user_constructor,
+				user.id,
+				(*env)->NewStringUTF(env, user.username),
+				(*env)->NewStringUTF(env, user.discriminator),
+				(*env)->NewStringUTF(env, user.avatar),
+				user.bot);
+
+		return user_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetadataValue
   (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId, jstring key)
 {

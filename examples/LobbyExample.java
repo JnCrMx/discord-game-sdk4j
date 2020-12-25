@@ -283,7 +283,8 @@ public class LobbyExample extends JFrame
 
 					center.add(new JSeparator());
 
-					JLabel capacityL = new JLabel("Capacity: "+lobby.getCapacity());
+					int memberCount = core.lobbyManager().memberCount(lobby);
+					JLabel capacityL = new JLabel(memberCount+"/"+lobby.getCapacity());
 					center.add(capacityL);
 
 					center.add(new JSeparator());
@@ -366,8 +367,10 @@ public class LobbyExample extends JFrame
 
 					JButton setAsActivity = new JButton("Set as Activity");
 					setAsActivity.addActionListener(e->{
+						activity.setDetails("Testing lobbies");
+						activity.setState("and having fun!");
 						activity.party().setID(String.valueOf(lobby.getId()));
-						activity.party().size().setCurrentSize(1);
+						activity.party().size().setCurrentSize(core.lobbyManager().memberCount(lobby));
 						activity.party().size().setMaxSize(lobby.getCapacity());
 						activity.secrets().setJoinSecret(core.lobbyManager().getLobbyActivitySecret(lobby));
 						core.activityManager().updateActivity(activity, result->{
@@ -392,23 +395,16 @@ public class LobbyExample extends JFrame
 
 	public static void main(String[] args)
 	{
-		try
+		String discordLibraryPath;
+		if(System.getProperty("os.name").toLowerCase().contains("windows"))
 		{
-			File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
-			if(discordLibrary == null)
-			{
-				System.err.println("Error downloading Discord SDK.");
-				System.exit(-1);
-			}
-			// Initialize the Core
-			Core.init(discordLibrary);
+			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.dll";
 		}
-		catch(IOException e)
+		else
 		{
-			e.printStackTrace();
-			System.err.println("Error downloading Discord SDK.");
-			System.exit(-1);
+			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
 		}
+		Core.init(new File(discordLibraryPath));
 
 		try
 		{
