@@ -469,6 +469,7 @@ public class DiscordTest
 				public void onLobbyUpdate(long lobbyId)
 				{
 					System.out.println("Lobby "+lobbyId+" updated");
+					System.out.println(coreRef.get().lobbyManager().getLobbyMetadata(lobbyId));
 				}
 
 				@Override
@@ -573,7 +574,9 @@ public class DiscordTest
 			params.setClientID(698611073133051974L);
 			try(Core core = new Core(params))
 			{
-				LobbySearchQuery searchQuery = core.lobbyManager().getSearchQuery();
+				LobbySearchQuery searchQuery = core.lobbyManager().getSearchQuery()
+						.filter("metadata.test", LobbySearchQuery.Comparison.EQUAL, LobbySearchQuery.Cast.NUMBER, "1234")
+						.limit(10);
 				core.lobbyManager().search(searchQuery, r->{
 					Assertions.assertEquals(Result.OK, r, "search failed");
 
