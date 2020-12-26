@@ -177,6 +177,14 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_updateMember
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    sendLobbyMessage
+ * Signature: (JJ[BIILjava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_sendLobbyMessage
+  (JNIEnv *, jobject, jlong, jlong, jbyteArray, jint, jint, jobject);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
  * Method:    getSearchQuery
  * Signature: (J)Ljava/lang/Object;
  */

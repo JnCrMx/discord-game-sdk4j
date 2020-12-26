@@ -498,6 +498,12 @@ public class DiscordTest
 				}
 
 				@Override
+				public void onLobbyMessage(long lobbyId, long userId, byte[] data)
+				{
+					System.out.println("Message in "+lobbyId+" from "+userId+": "+data.length+" bytes \""+new String(data)+"\"");
+				}
+
+				@Override
 				public void onNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
 				{
 					System.out.println("Message in "+lobbyId+" channel "+channelId+" from "+userId+": "+data.length+" bytes");
@@ -540,6 +546,10 @@ public class DiscordTest
 					memberTxn.setMetadata("test", "12345678");
 					core.lobbyManager().updateMember(lobby, lobby.getOwnerId(), memberTxn, result1 -> {
 						Assertions.assertEquals(Result.OK, result1, "update_lobby failed");
+					});
+
+					core.lobbyManager().sendLobbyMessage(lobby, "Hello World".getBytes(StandardCharsets.UTF_8), result1 -> {
+						Assertions.assertEquals(Result.OK, result1, "send_lobby_message failed");
 					});
 
 					Assertions.assertDoesNotThrow(()->core.lobbyManager().connectNetwork(lobby),

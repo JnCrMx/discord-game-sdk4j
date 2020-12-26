@@ -108,6 +108,7 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHand
 	lobby_events->on_member_connect = on_member_connect;
 	lobby_events->on_member_update = on_member_update;
 	lobby_events->on_member_disconnect = on_member_disconnect;
+	lobby_events->on_lobby_message = on_lobby_message;
 	lobby_events->on_network_message = on_network_message;
 
 	params->lobby_events = lobby_events;

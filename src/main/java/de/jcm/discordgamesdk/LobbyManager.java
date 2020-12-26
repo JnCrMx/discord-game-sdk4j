@@ -413,6 +413,23 @@ public class LobbyManager
 		updateMember(lobby, userId, transaction, Core.DEFAULT_CALLBACK);
 	}
 
+	public void sendLobbyMessage(long lobbyId, byte[] data, Consumer<Result> callback)
+	{
+		sendLobbyMessage(pointer, lobbyId, data, 0, data.length, callback);
+	}
+	public void sendLobbyMessage(long lobbyId, byte[] data)
+	{
+		sendLobbyMessage(lobbyId, data, Core.DEFAULT_CALLBACK);
+	}
+	public void sendLobbyMessage(Lobby lobby, byte[] data, Consumer<Result> callback)
+	{
+		sendLobbyMessage(lobby.getId(), data, callback);
+	}
+	public void sendLobbyMessage(Lobby lobby, byte[] data)
+	{
+		sendLobbyMessage(lobby, data, Core.DEFAULT_CALLBACK);
+	}
+
 	public LobbySearchQuery getSearchQuery()
 	{
 		Object ret = getSearchQuery(pointer);
@@ -580,6 +597,8 @@ public class LobbyManager
 	private native Object getMemberMetadataKey(long pointer, long lobbyId, long userId, int index);
 	private native Object memberMetadataCount(long pointer, long lobbyId, long userId);
 	private native void updateMember(long pointer, long lobbyId, long userId, long transactionPointer, Consumer<Result> callback);
+
+	private native void sendLobbyMessage(long pointer, long lobbyId, byte[] data, int offset, int length, Consumer<Result> callback);
 
 	private native Object getSearchQuery(long pointer);
 	private native void search(long pointer, long searchQueryPointer, Consumer<Result> callback);

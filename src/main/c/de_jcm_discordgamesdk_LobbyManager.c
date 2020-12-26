@@ -500,6 +500,21 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_updateMember
 	lobby_manager->update_member(lobby_manager, lobbyId, userId, transaction, cbd, simple_callback);
 }
 
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_sendLobbyMessage
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jbyteArray array, jint offset, jint length, jobject callback)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+
+	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
+	prepare_callback_data(env, callback, cbd);
+
+	uint8_t* data = (uint8_t*) malloc(length);
+	(*env)->GetByteArrayRegion(env, array, offset, length, data);
+
+	lobby_manager->send_lobby_message(lobby_manager, lobbyId, data, length, cbd, simple_callback);
+	free(data);
+}
+
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getSearchQuery
   (JNIEnv *env, jobject object, jlong pointer)
 {
