@@ -119,6 +119,11 @@ public abstract class DiscordEventAdapter
 
 	}
 
+	public void onSpeaking(long lobbyId, long userId, boolean speaking)
+	{
+
+	}
+
 	public void onNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
 	{
 
