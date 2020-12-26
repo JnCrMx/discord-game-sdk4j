@@ -87,6 +87,7 @@ public class Core implements AutoCloseable
 	private RelationshipManager relationshipManager;
 	private ImageManager imageManager;
 	private LobbyManager lobbyManager;
+	private NetworkManager networkManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -128,6 +129,7 @@ public class Core implements AutoCloseable
 		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
 		this.imageManager = new ImageManager(getImageManager(pointer));
 		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
+		this.networkManager = new NetworkManager(getNetworkManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -139,6 +141,7 @@ public class Core implements AutoCloseable
 	private native long getRelationshipManager(long pointer);
 	private native long getImageManager(long pointer);
 	private native long getLobbyManager(long pointer);
+	private native long getNetworkManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -209,6 +212,11 @@ public class Core implements AutoCloseable
 	public LobbyManager lobbyManager()
 	{
 		return lobbyManager;
+	}
+
+	public NetworkManager networkManager()
+	{
+		return networkManager;
 	}
 
 	/**

@@ -128,4 +128,14 @@ public abstract class DiscordEventAdapter
 	{
 
 	}
+
+	public void onMessage(long peerId, byte channelId, byte[] data)
+	{
+
+	}
+
+	public void onRouteUpdate(String routeData)
+	{
+
+	}
 }
