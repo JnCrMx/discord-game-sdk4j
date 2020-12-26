@@ -5,10 +5,7 @@ import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.image.ImageHandle;
 import de.jcm.discordgamesdk.image.ImageType;
-import de.jcm.discordgamesdk.lobby.Lobby;
-import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
-import de.jcm.discordgamesdk.lobby.LobbyTransaction;
-import de.jcm.discordgamesdk.lobby.LobbyType;
+import de.jcm.discordgamesdk.lobby.*;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
 import org.junit.jupiter.api.Assertions;
@@ -536,6 +533,12 @@ public class DiscordTest
 						/*core.lobbyManager().deleteLobby(lobby, result2 -> {
 							Assertions.assertEquals(Result.OK, result2, "delete_lobby failed");
 						});*/
+					});
+
+					LobbyMemberTransaction memberTxn = core.lobbyManager().getMemberUpdateTransaction(lobby, lobby.getOwnerId());
+					memberTxn.setMetadata("test", "12345678");
+					core.lobbyManager().updateMember(lobby, lobby.getOwnerId(), memberTxn, result1 -> {
+						Assertions.assertEquals(Result.OK, result1, "update_lobby failed");
 					});
 
 					Assertions.assertDoesNotThrow(()->core.lobbyManager().connectNetwork(lobby),

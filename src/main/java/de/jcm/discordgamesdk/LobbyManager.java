@@ -1,6 +1,7 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.lobby.Lobby;
+import de.jcm.discordgamesdk.lobby.LobbyMemberTransaction;
 import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
 import de.jcm.discordgamesdk.lobby.LobbyTransaction;
 import de.jcm.discordgamesdk.user.DiscordUser;
@@ -49,10 +50,26 @@ public class LobbyManager
 			return (LobbyTransaction) ret;
 		}
 	}
-
 	public LobbyTransaction getLobbyUpdateTransaction(Lobby lobby)
 	{
 		return getLobbyUpdateTransaction(lobby.getId());
+	}
+
+	public LobbyMemberTransaction getMemberUpdateTransaction(long lobbyId, long userId)
+	{
+		Object ret = getMemberUpdateTransaction(pointer, lobbyId, userId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (LobbyMemberTransaction) ret;
+		}
+	}
+	public LobbyMemberTransaction getMemberUpdateTransaction(Lobby lobby, long userId)
+	{
+		return getMemberUpdateTransaction(lobby.getId(), userId);
 	}
 
 	public void createLobby(LobbyTransaction transaction, @NotNull BiConsumer<Result, Lobby> callback)
@@ -379,6 +396,23 @@ public class LobbyManager
 		return getMemberMetadata(lobby.getId(), userId);
 	}
 
+	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
+	{
+		updateMember(pointer, lobbyId, userId, transaction.getPointer(), callback);
+	}
+	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction)
+	{
+		updateMember(lobbyId, userId, transaction, Core.DEFAULT_CALLBACK);
+	}
+	public void updateMember(Lobby lobby, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
+	{
+		updateMember(lobby.getId(), userId, transaction, callback);
+	}
+	public void updateMember(Lobby lobby, long userId, LobbyMemberTransaction transaction)
+	{
+		updateMember(lobby, userId, transaction, Core.DEFAULT_CALLBACK);
+	}
+
 	public LobbySearchQuery getSearchQuery()
 	{
 		Object ret = getSearchQuery(pointer);
@@ -523,6 +557,7 @@ public class LobbyManager
 
 	private native Object getLobbyCreateTransaction(long pointer);
 	private native Object getLobbyUpdateTransaction(long pointer, long lobbyId);
+	private native Object getMemberUpdateTransaction(long pointer, long lobbyId, long userId);
 
 	private native void createLobby(long pointer, long transactionPointer, BiConsumer<Result, Lobby> callback);
 	private native void updateLobby(long pointer, long lobbyId, long transactionPointer, Consumer<Result> callback);
@@ -544,6 +579,7 @@ public class LobbyManager
 	private native Object getMemberMetadataValue(long pointer, long lobbyId, long userId, String key);
 	private native Object getMemberMetadataKey(long pointer, long lobbyId, long userId, int index);
 	private native Object memberMetadataCount(long pointer, long lobbyId, long userId);
+	private native void updateMember(long pointer, long lobbyId, long userId, long transactionPointer, Consumer<Result> callback);
 
 	private native Object getSearchQuery(long pointer);
 	private native void search(long pointer, long searchQueryPointer, Consumer<Result> callback);

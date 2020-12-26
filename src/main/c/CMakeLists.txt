@@ -19,6 +19,7 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_Core.c
 			de_jcm_discordgamesdk_ImageManager.c
 			de_jcm_discordgamesdk_lobby_LobbyTransaction.c
+			de_jcm_discordgamesdk_lobby_LobbyMemberTransaction.c
 			de_jcm_discordgamesdk_LobbyManager.c
 			de_jcm_discordgamesdk_OverlayManager.c
 			de_jcm_discordgamesdk_RelationshipManager.c

@@ -25,6 +25,14 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyUpdate
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    getMemberUpdateTransaction
+ * Signature: (JJJ)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUpdateTransaction
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
  * Method:    createLobby
  * Signature: (JJLjava/util/function/BiConsumer;)V
  */
@@ -158,6 +166,14 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberMetad
  */
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberMetadataCount
   (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_LobbyManager
+ * Method:    updateMember
+ * Signature: (JJJJLjava/util/function/Consumer;)V
+ */
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_updateMember
+  (JNIEnv *, jobject, jlong, jlong, jlong, jlong, jobject);
 
 /*
  * Class:     de_jcm_discordgamesdk_LobbyManager

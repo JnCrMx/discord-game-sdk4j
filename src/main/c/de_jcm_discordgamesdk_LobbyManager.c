@@ -93,6 +93,32 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getLobbyUpdate
 	}
 }
 
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getMemberUpdateTransaction
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+	struct IDiscordLobbyMemberTransaction *transaction;
+
+	enum EDiscordResult result = lobby_manager->get_member_update_transaction(lobby_manager, lobbyId, userId, &transaction);
+	if(result == DiscordResult_Ok) // if everything went well, return the transaction
+	{
+		jclass transaction_class = (*env)->FindClass(env, "de/jcm/discordgamesdk/lobby/LobbyMemberTransaction");
+		jmethodID transaction_constructor = (*env)->GetMethodID(env, transaction_class, "<init>", "(J)V");
+		jobject transaction_object = (*env)->NewObject(env, transaction_class, transaction_constructor,
+			(uint64_t) transaction);
+		return transaction_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_createLobby
   (JNIEnv *env, jobject object, jlong pointer, jlong transactionPointer, jobject callback)
 {
@@ -460,6 +486,18 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_memberMetadata
 
 		return result_object;
 	}
+}
+
+JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_LobbyManager_updateMember
+  (JNIEnv *env, jobject object, jlong pointer, jlong lobbyId, jlong userId, jlong transactionPointer, jobject callback)
+{
+	struct IDiscordLobbyManager *lobby_manager = (struct IDiscordLobbyManager*) pointer;
+	struct IDiscordLobbyMemberTransaction *transaction = (struct IDiscordLobbyMemberTransaction*) transactionPointer;
+
+	struct CallbackData* cbd = malloc(sizeof(struct CallbackData));
+	prepare_callback_data(env, callback, cbd);
+
+	lobby_manager->update_member(lobby_manager, lobbyId, userId, transaction, cbd, simple_callback);
 }
 
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_LobbyManager_getSearchQuery
