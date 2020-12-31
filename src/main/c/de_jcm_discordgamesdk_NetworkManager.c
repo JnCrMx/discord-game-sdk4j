@@ -67,6 +67,21 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_updatePeer
 	return result_object;
 }
 
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_closePeer
+  (JNIEnv *env, jobject object, jlong pointer, jlong peerId)
+{
+	struct IDiscordNetworkManager *network_manager = (struct IDiscordNetworkManager*) pointer;
+
+	enum EDiscordResult result = network_manager->close_peer(network_manager, peerId);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_openChannel
   (JNIEnv *env, jobject object, jlong pointer, jlong peerId, jbyte channelId, jboolean reliable)
 {
@@ -81,6 +96,22 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_openChannel
 
 	return result_object;
 }
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_closeChannel
+  (JNIEnv *env, jobject object, jlong pointer, jlong peerId, jbyte channelId)
+{
+	struct IDiscordNetworkManager *network_manager = (struct IDiscordNetworkManager*) pointer;
+
+	enum EDiscordResult result = network_manager->close_channel(network_manager, peerId, channelId);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
 JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_NetworkManager_sendMessage
   (JNIEnv *env, jobject object, jlong pointer, jlong peerId, jbyte channelId, jbyteArray array, jint offset, jint length)
 {

@@ -35,9 +35,23 @@ public class NetworkManager
 			throw new GameSDKException(result);
 	}
 
+	public void closePeer(long peerId)
+	{
+		Result result = closePeer(pointer, peerId);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+
 	public void openChannel(long peerId, byte channelId, boolean reliable)
 	{
 		Result result = openChannel(pointer, peerId, channelId, reliable);
+		if(result != Result.OK)
+			throw new GameSDKException(result);
+	}
+
+	public void closeChannel(long peerId, byte channelId)
+	{
+		Result result = closeChannel(pointer, peerId, channelId);
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
