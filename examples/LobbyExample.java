@@ -296,6 +296,15 @@ public class LobbyExample extends JFrame
 
 				JPanel east = new JPanel();
 				{
+					JButton metadataButton = new JButton("Get metadata");
+					metadataButton.addActionListener(e->{
+						String data = core.lobbyManager().getLobbyMetadata(lobby).entrySet().stream()
+						                  .map(entry->entry.getKey()+" = "+entry.getValue())
+						                  .collect(Collectors.joining("\n"));
+						JOptionPane.showMessageDialog(null, data, "Metadata", JOptionPane.PLAIN_MESSAGE);
+					});
+					east.add(metadataButton);
+
 					JButton connectButton = new JButton("Connect");
 					connectButton.addActionListener(e->{
 						core.lobbyManager().connectLobby(lobby.getId(), lobby.getSecret(), (result, lobby1) -> {
@@ -419,7 +428,7 @@ public class LobbyExample extends JFrame
 		LobbyExample frame = new LobbyExample();
 
 		createParams = new CreateParams();
-		createParams.setClientID(698611073133051974L);
+		createParams.setClientID(792838852557537310L);
 		createParams.registerEventHandler(frame.eventAdapter);
 		core = new Core(createParams);
 
