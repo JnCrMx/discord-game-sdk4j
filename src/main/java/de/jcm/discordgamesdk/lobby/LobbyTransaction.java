@@ -1,8 +1,28 @@
 package de.jcm.discordgamesdk.lobby;
 
 import de.jcm.discordgamesdk.GameSDKException;
+import de.jcm.discordgamesdk.LobbyManager;
 import de.jcm.discordgamesdk.Result;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
+import java.util.function.BiConsumer;
+
+/**
+ * A transaction used to create or update a Lobby.
+ * <p>
+ * An instance of this can only be provided via {@link LobbyManager#getLobbyCreateTransaction()}
+ * and {@link LobbyManager#getLobbyUpdateTransaction(Lobby)}.
+ * <p>
+ * The instance should be used to do <i>only one</i> creation or update an should be discarded
+ * after that.
+ * <p>
+ * Closing or freeing the instance does not seem to be required or even possible.
+ * @see LobbyManager#getLobbyCreateTransaction()
+ * @see LobbyManager#getLobbyUpdateTransaction(Lobby)
+ * @see LobbyManager#createLobby(LobbyTransaction, BiConsumer)
+ * @see LobbyManager#updateLobby(Lobby, LobbyTransaction)
+ */
 public class LobbyTransaction
 {
 	private final long pointer;
@@ -12,12 +32,29 @@ public class LobbyTransaction
 		this.pointer = pointer;
 	}
 
+	/**
+	 * Returns a pointer to the native structure backing this transaction.
+	 * <p>
+	 * This method should <b>never</b> be called outside intern code.
+	 * @return A native pointer.
+	 */
 	public long getPointer()
 	{
 		return pointer;
 	}
 
-	public void setType(LobbyType type)
+	/**
+	 * Sets the type (public, private) of the Lobby created/updated by this transaction.
+	 * <p>
+	 * Public Lobbies can be found via {@link LobbyManager#search(LobbySearchQuery)}
+	 * while private Lobbies cannot. You can only join them via their ID and secret
+	 * or their activity secret (a concatenation of ID and secret) which can be obtained
+	 * with {@link LobbyManager#getLobbyActivitySecret(Lobby)}
+	 * @param type The type of the Lobby.
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see Lobby#getType()
+	 */
+	public void setType(@NotNull LobbyType type)
 	{
 		Result result = setType(pointer, type.ordinal()+1);
 		if(result != Result.OK)
@@ -26,6 +63,15 @@ public class LobbyTransaction
 		}
 	}
 
+	/**
+	 * Sets the owner of the updated Lobby to a new user specified by their Discord User ID.
+	 * <p>
+	 * This is only allowed in an update transaction obtained with {@link LobbyManager#getLobbyUpdateTransaction(Lobby)}.
+	 * In a create transaction this value is at best ignored, but might cause some errors, so do <b>not</b> set it.
+	 * @param ownerId The user ID of the new owner of the Lobby.
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see Lobby#getOwnerId()
+	 */
 	public void setOwner(long ownerId)
 	{
 		Result result = setOwner(pointer, ownerId);
@@ -35,7 +81,15 @@ public class LobbyTransaction
 		}
 	}
 
-	public void setCapacity(int capacity)
+	/**
+	 * Sets a the capacity (how many users can connect to the Lobby at the same time) of the created/updated Lobby.
+	 * <p>
+	 * If the capacity is set too hight or too low, a create or update operation will fail
+	 * with a {@link Result#INTERNAL_ERROR}.
+	 * @param capacity The capacity, a positive integer ranging from 1 to 1024.
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 */
+	public void setCapacity(@Range(from = 1, to = 1024) int capacity)
 	{
 		Result result = setCapacity(pointer, capacity);
 		if(result != Result.OK)
@@ -44,11 +98,26 @@ public class LobbyTransaction
 		}
 	}
 
-	public void setMetadata(String key, String value)
+	/**
+	 * Sets a metadata for the created/updated Lobby.
+	 * This can either set a new value of the key or replace the existing one.
+	 * <p>
+	 * Metadata can be used for filtering and sorting in a {@link LobbySearchQuery}
+	 * and to provide additional information.
+	 * @param key A metadata key, max. 255 bytes
+	 * @param value A metadata value, max. 4095 bytes
+	 * @throws IllegalArgumentException if key or value are too long
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see #deleteMetadata(String)
+	 * @see LobbyManager#getLobbyMetadata(Lobby)
+	 * @see LobbySearchQuery#filter(String, LobbySearchQuery.Comparison, LobbySearchQuery.Cast, String)
+	 * @see LobbySearchQuery#sort(String, LobbySearchQuery.Cast, String)
+	 */
+	public void setMetadata(@NotNull String key, @NotNull String value)
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
-		if(value.getBytes().length >= 4095)
+		if(value.getBytes().length >= 4096)
 			throw new IllegalArgumentException("max value length is 4096");
 
 		Result result = setMetadata(pointer, key, value);
@@ -58,7 +127,14 @@ public class LobbyTransaction
 		}
 	}
 
-	public void deleteMetadata(String key)
+	/**
+	 * Sets an existing metadata entry to be deleted.
+	 * @param key Key of the metadata entry to delete, max. 255 bytes
+	 * @throws IllegalArgumentException if the key is too long
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see #setMetadata(String, String)
+	 */
+	public void deleteMetadata(@NotNull String key)
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
@@ -70,6 +146,14 @@ public class LobbyTransaction
 		}
 	}
 
+	/**
+	 * Sets whether the Lobby created/updated by this transaction is locked,
+	 * so no new players can join it.
+	 * <p>
+	 * Attempting to join a locked Lobby will result in a {@link Result#LOBBY_FULL}.
+	 * @param locked {@code true} if the Lobby is locked
+	 * @throws GameSDKException if anything goes wrong on the native side
+	 */
 	public void setLocked(boolean locked)
 	{
 		Result result = setLocked(pointer, locked);
