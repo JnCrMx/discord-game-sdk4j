@@ -14,12 +14,16 @@ import de.jcm.discordgamesdk.Result;
  * Closing or freeing the instance does not seem to be required or even possible.
  * @see LobbyManager#getSearchQuery()
  * @see LobbyManager#search(LobbySearchQuery)
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchquery-struct">
+ *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchquery-struct</a>
  */
 public class LobbySearchQuery
 {
 	/**
 	 * Comparison operators for filtering Lobbies.
 	 * @see #filter(String, Comparison, Cast, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchcomparison-enum">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchcomparison-enum</a>
 	 */
 	public enum Comparison
 	{
@@ -61,6 +65,8 @@ public class LobbySearchQuery
 	 * Hints on how a value should be interpreted for filtering and sorting.
 	 * @see #filter(String, Comparison, Cast, String)
 	 * @see #sort(String, Cast, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchcast-enum">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchcast-enum</a>
 	 */
 	public enum Cast
 	{
@@ -86,6 +92,8 @@ public class LobbySearchQuery
 	 * Distance of a Lobby relative to the current user's own position.
 	 * Used for filtering.
 	 * @see #distance(Distance)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchdistance-enum">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchdistance-enum</a>
 	 */
 	public enum Distance
 	{
@@ -155,6 +163,8 @@ public class LobbySearchQuery
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see Comparison
 	 * @see Cast
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchqueryfilter">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchqueryfilter</a>
 	 */
 	public LobbySearchQuery filter(String key, Comparison comparison, Cast cast, String value)
 	{
@@ -190,6 +200,8 @@ public class LobbySearchQuery
 	 * @throws IllegalArgumentException if key or value are too long
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see Cast
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerysort">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerysort</a>
 	 */
 	public LobbySearchQuery sort(String key, Cast cast, String baseValue)
 	{
@@ -206,6 +218,8 @@ public class LobbySearchQuery
 	 * @param limit Limit for the number of Lobbies to find.
 	 * @return {@code this} for chained method calls.
 	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerylimit">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerylimit</a>
 	 */
 	public LobbySearchQuery limit(int limit)
 	{
@@ -223,6 +237,8 @@ public class LobbySearchQuery
 	 * @return {@code this} for chained method calls.
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see Distance
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerydistance">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbysearchquerydistance</a>
 	 */
 	public LobbySearchQuery distance(Distance distance)
 	{

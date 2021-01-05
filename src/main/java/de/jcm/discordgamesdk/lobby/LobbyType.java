@@ -6,6 +6,8 @@ import java.util.function.BiConsumer;
 
 /**
  * The type or "privacy setting" of a {@link Lobby}.
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbytype-enum">
+ *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbytype-enum</a>
  */
 public enum LobbyType
 {

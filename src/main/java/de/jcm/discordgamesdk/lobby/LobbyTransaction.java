@@ -22,6 +22,8 @@ import java.util.function.BiConsumer;
  * @see LobbyManager#getLobbyUpdateTransaction(Lobby)
  * @see LobbyManager#createLobby(LobbyTransaction, BiConsumer)
  * @see LobbyManager#updateLobby(Lobby, LobbyTransaction)
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbytransaction-struct">
+ *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbytransaction-struct</a>
  */
 public class LobbyTransaction
 {
@@ -53,6 +55,8 @@ public class LobbyTransaction
 	 * @param type The type of the Lobby.
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see Lobby#getType()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsettype">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsettype</a>
 	 */
 	public void setType(@NotNull LobbyType type)
 	{
@@ -71,6 +75,8 @@ public class LobbyTransaction
 	 * @param ownerId The user ID of the new owner of the Lobby.
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see Lobby#getOwnerId()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetowner">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetowner</a>
 	 */
 	public void setOwner(long ownerId)
 	{
@@ -88,6 +94,8 @@ public class LobbyTransaction
 	 * with a {@link Result#INTERNAL_ERROR}.
 	 * @param capacity The capacity, a positive integer ranging from 1 to 1024.
 	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetcapacity">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetcapacity</a>
 	 */
 	public void setCapacity(@Range(from = 1, to = 1024) int capacity)
 	{
@@ -112,6 +120,8 @@ public class LobbyTransaction
 	 * @see LobbyManager#getLobbyMetadata(Lobby)
 	 * @see LobbySearchQuery#filter(String, LobbySearchQuery.Comparison, LobbySearchQuery.Cast, String)
 	 * @see LobbySearchQuery#sort(String, LobbySearchQuery.Cast, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetmetadata">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetmetadata</a>
 	 */
 	public void setMetadata(@NotNull String key, @NotNull String value)
 	{
@@ -133,6 +143,8 @@ public class LobbyTransaction
 	 * @throws IllegalArgumentException if the key is too long
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see #setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactiondeletemetadata">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactiondeletemetadata</a>
 	 */
 	public void deleteMetadata(@NotNull String key)
 	{
@@ -157,6 +169,8 @@ public class LobbyTransaction
 	 * as it cannot be connected to using ID and secret.
 	 * @param locked {@code true} if the Lobby is locked
 	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetlocked">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetlocked</a>
 	 */
 	public void setLocked(boolean locked)
 	{

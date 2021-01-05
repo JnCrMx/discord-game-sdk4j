@@ -10,6 +10,8 @@ import java.util.function.BiConsumer;
 
 /**
  * Data holding structure representing a Discord Lobby created via the {@link LobbyManager}.
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobby-struct">
+ *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobby-struct</a>
  */
 public class Lobby
 {

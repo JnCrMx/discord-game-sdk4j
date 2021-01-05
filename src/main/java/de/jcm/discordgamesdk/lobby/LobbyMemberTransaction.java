@@ -13,7 +13,9 @@ import de.jcm.discordgamesdk.Result;
  * <p>
  * Closing or freeing the instance does not seem to be required or even possible.
  * @see LobbyManager#getMemberUpdateTransaction(Lobby, long)
- * @see LobbyManager#updateMember(Lobby, long, LobbyMemberTransaction) 
+ * @see LobbyManager#updateMember(Lobby, long, LobbyMemberTransaction)
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbymembertransaction-struct">
+ *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbymembertransaction-struct</a>
  */
 public class LobbyMemberTransaction
 {
@@ -47,6 +49,8 @@ public class LobbyMemberTransaction
 	 * @param value A metadata value, max. 4095 bytes
 	 * @throws IllegalArgumentException if key or value are too long
 	 * @throws GameSDKException if anything goes wrong on the native side
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbymembertransactionsetmetadata">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbymembertransactionsetmetadata</a>
 	 */
 	public void setMetadata(String key, String value)
 	{
@@ -68,6 +72,8 @@ public class LobbyMemberTransaction
 	 * @throws IllegalArgumentException if the key is too long
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 * @see #setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbymembertransactiondeletemetadata">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbymembertransactiondeletemetadata</a>
 	 */
 	public void deleteMetadata(String key)
 	{
