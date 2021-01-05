@@ -7,7 +7,7 @@ import de.jcm.discordgamesdk.Result;
 /**
  * A transaction used to update metadata for a Member of an existing Lobby.
  * <p>
- * An instance of this can only be provided via {@link LobbyManager#getMemberUpdateTransaction(Lobby, long)}.
+ * An instance of this can only be obtained by {@link LobbyManager#getMemberUpdateTransaction(Lobby, long)}.
  * <p>
  * The instance should be used to do <i>only one</i> update an should be discarded after that.
  * <p>
@@ -53,7 +53,7 @@ public class LobbyMemberTransaction
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
 		if(value.getBytes().length >= 4096)
-			throw new IllegalArgumentException("max value length is 4096");
+			throw new IllegalArgumentException("max value length is 4095");
 
 		Result result = setMetadata(pointer, key, value);
 		if(result != Result.OK)

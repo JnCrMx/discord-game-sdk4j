@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 /**
  * A transaction used to create or update a Lobby.
  * <p>
- * An instance of this can only be provided via {@link LobbyManager#getLobbyCreateTransaction()}
+ * An instance of this can only be obtained by {@link LobbyManager#getLobbyCreateTransaction()}
  * and {@link LobbyManager#getLobbyUpdateTransaction(Lobby)}.
  * <p>
  * The instance should be used to do <i>only one</i> creation or update an should be discarded
@@ -118,7 +118,7 @@ public class LobbyTransaction
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
 		if(value.getBytes().length >= 4096)
-			throw new IllegalArgumentException("max value length is 4096");
+			throw new IllegalArgumentException("max value length is 4095");
 
 		Result result = setMetadata(pointer, key, value);
 		if(result != Result.OK)
@@ -151,6 +151,10 @@ public class LobbyTransaction
 	 * so no new players can join it.
 	 * <p>
 	 * Attempting to join a locked Lobby will result in a {@link Result#LOBBY_FULL}.
+	 * <p>
+	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery)}.
+	 * Therefore it acts like a "stronger" version of {@link LobbyType#PRIVATE}
+	 * as it cannot be connected to using ID and secret.
 	 * @param locked {@code true} if the Lobby is locked
 	 * @throws GameSDKException if anything goes wrong on the native side
 	 */

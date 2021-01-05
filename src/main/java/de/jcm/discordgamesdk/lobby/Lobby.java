@@ -121,6 +121,10 @@ public class Lobby
 	 * Returns whether this Lobby is locked meaning that no new players can join it.
 	 * <p>
 	 * Attempting to join a locked Lobby will result in a {@link Result#LOBBY_FULL}.
+	 * <p>
+	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery)}.
+	 * Therefore it acts like a "stronger" version of {@link LobbyType#PRIVATE}
+	 * as it cannot be connected to using ID and secret.
 	 * @return {@code true} if this Lobby is locked.
 	 * @see LobbyTransaction#setLocked(boolean) 
 	 */
