@@ -4,6 +4,7 @@ import de.jcm.discordgamesdk.lobby.Lobby;
 import de.jcm.discordgamesdk.lobby.LobbyMemberTransaction;
 import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
 import de.jcm.discordgamesdk.lobby.LobbyTransaction;
+import de.jcm.discordgamesdk.lobby.LobbyType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Manager to create and manage Discord Lobbies.
+ * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies">
+ *     https://discord.com/developers/docs/game-sdk/lobbies</a>
+ */
 public class LobbyManager
 {
 	private final long pointer;
@@ -25,6 +31,18 @@ public class LobbyManager
 		this.pointer = pointer;
 	}
 
+	/**
+	 * Gets a {@link LobbyTransaction} that can be used to
+	 * create a new Discord Lobby.
+	 * <p>
+	 * Together with {@link #getLobbyUpdateTransaction(Lobby)} this
+	 * is the <b>only</b> way to obtain an instance of a {@link LobbyTransaction}.
+	 * Do <b>not</b> attempt to create it in any other way.
+	 * @return A {@link LobbyTransaction} that can be used to create a new Lobby.
+	 * @see #createLobby(LobbyTransaction, BiConsumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbycreatetransaction">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbycreatetransaction</a>
+	 */
 	public LobbyTransaction getLobbyCreateTransaction()
 	{
 		Object ret = getLobbyCreateTransaction(pointer);
@@ -38,6 +56,20 @@ public class LobbyManager
 		}
 	}
 
+	/**
+	 * Gets a {@link LobbyTransaction} that can be used to
+	 * update an existing Discord Lobby.
+	 * <p>
+	 * Together with {@link #getLobbyCreateTransaction()} this
+	 * is the <b>only</b> way to obtain an instance of a {@link LobbyTransaction}.
+	 * Do <b>not</b> attempt to create it in any other way.
+	 * @param lobbyId ID of the Lobby that the created transaction is supposed to update
+	 * @return A {@link LobbyTransaction} that can be used to update the specified Lobby.
+	 * @see #getLobbyUpdateTransaction(Lobby)
+	 * @see #updateLobby(long, LobbyTransaction) 
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyupdatetransaction">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyupdatetransaction</a>
+	 */
 	public LobbyTransaction getLobbyUpdateTransaction(long lobbyId)
 	{
 		Object ret = getLobbyUpdateTransaction(pointer, lobbyId);
@@ -50,11 +82,40 @@ public class LobbyManager
 			return (LobbyTransaction) ret;
 		}
 	}
+
+	/**
+	 * Gets a {@link LobbyTransaction} that can be used to update an existing Discord Lobby.
+	 * <p>
+	 * Together with {@link #getLobbyCreateTransaction()} this
+	 * is the <b>only</b> way to obtain an instance of a {@link LobbyTransaction}.
+	 * Do <b>not</b> attempt to create it in any other way.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby Lobby that the created transaction is supposed to update
+	 * @return A {@link LobbyTransaction} that can be used to update the specified Lobby.
+	 * @see #getLobbyUpdateTransaction(long)
+	 * @see #updateLobby(Lobby, LobbyTransaction) 
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyupdatetransaction">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyupdatetransaction</a>
+	 */
 	public LobbyTransaction getLobbyUpdateTransaction(Lobby lobby)
 	{
 		return getLobbyUpdateTransaction(lobby.getId());
 	}
 
+	/**
+	 * Gets a {@link LobbyMemberTransaction} that can be used to update metadata for a member of a Lobby.
+	 * <p>
+	 * This is the <b>only</b> way to obtain an instance of a {@link LobbyMemberTransaction}.
+	 * Do <b>not</b> attempt to create it in any other way.
+	 * @param lobbyId ID of the Lobby to which the member is currently connected
+	 * @param userId User ID of the member that should be updated
+	 * @return A {@link LobbyMemberTransaction} that can be used to update the specified member in the specified Lobby.
+	 * @see #getMemberUpdateTransaction(Lobby, long)
+	 * @see #updateMember(long, long, LobbyMemberTransaction) 
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberupdatetransaction">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberupdatetransaction</a>
+	 */
 	public LobbyMemberTransaction getMemberUpdateTransaction(long lobbyId, long userId)
 	{
 		Object ret = getMemberUpdateTransaction(pointer, lobbyId, userId);
@@ -67,15 +128,62 @@ public class LobbyManager
 			return (LobbyMemberTransaction) ret;
 		}
 	}
+
+	/**
+	 * Gets a {@link LobbyMemberTransaction} that can be used to update metadata for a member of a Lobby.
+	 * <p>
+	 * This is the <b>only</b> way to obtain an instance of a {@link LobbyMemberTransaction}.
+	 * Do <b>not</b> attempt to create it in any other way.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby Lobby to which the member is currently connected
+	 * @param userId User ID of the member that should be updated
+	 * @return A {@link LobbyMemberTransaction} that can be used to update the specified member in the specified Lobby.
+	 * @see #getMemberUpdateTransaction(long, long) 
+	 * @see #updateMember(Lobby, long, LobbyMemberTransaction) 
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberupdatetransaction">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberupdatetransaction</a>
+	 */
 	public LobbyMemberTransaction getMemberUpdateTransaction(Lobby lobby, long userId)
 	{
 		return getMemberUpdateTransaction(lobby.getId(), userId);
 	}
 
+	/**
+	 * Creates a new Discord Lobby based on a {@link LobbyTransaction}.
+	 * The current user gets automatically connected to it.
+	 * <p>
+	 * {@link LobbyTransaction#setOwner(long)} must <b>not</b> be set;
+	 * it is only allowed when updating a Lobby.
+	 * @param transaction A {@link LobbyTransaction} that specifies the properties of the Lobby
+	 * @param callback A callback to return the {@link Result} and created {@link Lobby} to
+	 * @see #createLobby(LobbyTransaction, Consumer)    
+	 * @see #getLobbyCreateTransaction()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#createlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#createlobby</a>
+	 */
 	public void createLobby(LobbyTransaction transaction, @NotNull BiConsumer<Result, Lobby> callback)
 	{
 		createLobby(pointer, transaction.getPointer(), callback);
 	}
+
+	/**
+	 * Creates a new Discord Lobby based on a {@link LobbyTransaction}.
+	 * The current user gets automatically connected to it.
+	 * <p>
+	 * {@link LobbyTransaction#setOwner(long)} must <b>not</b> be set;
+	 * it is only allowed when updating a Lobby.
+	 * <p>
+	 * When completed the {@link Result} is checked using the {@link Core#DEFAULT_CALLBACK} and
+	 * if it completes normally (which is the case if result is {@link Result#OK})
+	 * the created Lobby is passed to the provided callback.
+	 * @param transaction A {@link LobbyTransaction} that specifies the properties of the Lobby
+	 * @param callback A callback to return the created {@link Lobby} to
+	 * @see #createLobby(LobbyTransaction, BiConsumer)
+	 * @see #getLobbyCreateTransaction()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#createlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#createlobby</a>
+	 */
 	public void createLobby(LobbyTransaction transaction, @NotNull Consumer<Lobby> callback)
 	{
 		createLobby(transaction, (result, lobby) ->
@@ -85,45 +193,252 @@ public class LobbyManager
 		});
 	}
 
+	/**
+	 * Updates an existing Discord Lobby according to a {@link LobbyTransaction}.
+	 * A {@link DiscordEventAdapter#onLobbyUpdate(long)} will be fired for all members of the Lobby.
+	 * <p>
+	 * This function is rate-limited to 10 updates every 5 seconds.
+	 * Use the transaction for batching updates in order to avoid hitting the limit.
+	 * <p>
+	 * Other than for a creation, {@link LobbyTransaction#setOwner(long)} may be set for an update.
+	 * @param lobbyId ID of the Lobby to update
+	 * @param transaction Transaction specifying what should be updated
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #updateLobby(long, LobbyTransaction)
+	 * @see #getLobbyUpdateTransaction(long)
+	 * @see DiscordEventAdapter#onLobbyUpdate(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
+	 */
 	public void updateLobby(long lobbyId, LobbyTransaction transaction, @NotNull Consumer<Result> callback)
 	{
 		updateLobby(pointer, lobbyId, transaction.getPointer(), callback);
 	}
+
+	/**
+	 * Updates an existing Discord Lobby according to a {@link LobbyTransaction}.
+	 * A {@link DiscordEventAdapter#onLobbyUpdate(long)} will be fired for all members of the Lobby.
+	 * <p>
+	 * This function is rate-limited to 10 updates every 5 seconds.
+	 * Use the transaction for batching updates in order to avoid hitting the limit.
+	 * <p>
+	 * Other than for a creation, {@link LobbyTransaction#setOwner(long)} may be set for an update.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby to update
+	 * @param transaction Transaction specifying what should be updated
+	 * @see #updateLobby(long, LobbyTransaction, Consumer)
+	 * @see #getLobbyUpdateTransaction(long)
+	 * @see DiscordEventAdapter#onLobbyUpdate(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
+	 */
 	public void updateLobby(long lobbyId, LobbyTransaction transaction)
 	{
 		updateLobby(lobbyId, transaction, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Updates an existing Discord Lobby according to a {@link LobbyTransaction}.
+	 * A {@link DiscordEventAdapter#onLobbyUpdate(long)} will be fired for all members of the Lobby.
+	 * <p>
+	 * This function is rate-limited to 10 updates every 5 seconds.
+	 * Use the transaction for batching updates in order to avoid hitting the limit.
+	 * <p>
+	 * Other than for a creation, {@link LobbyTransaction#setOwner(long)} may be set for an update.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to update
+	 * @param transaction Transaction specifying what should be updated
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #updateLobby(Lobby, LobbyTransaction)
+	 * @see #getLobbyUpdateTransaction(Lobby)
+	 * @see DiscordEventAdapter#onLobbyUpdate(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
+	 */
 	public void updateLobby(Lobby lobby, LobbyTransaction transaction, @NotNull Consumer<Result> callback)
 	{
 		updateLobby(lobby.getId(), transaction, callback);
 	}
+
+	/**
+	 * Updates an existing Discord Lobby according to a {@link LobbyTransaction}.
+	 * A {@link DiscordEventAdapter#onLobbyUpdate(long)} will be fired for all members of the Lobby.
+	 * <p>
+	 * This function is rate-limited to 10 updates every 5 seconds.
+	 * Use the transaction for batching updates in order to avoid hitting the limit.
+	 * <p>
+	 * Other than for a creation, {@link LobbyTransaction#setOwner(long)} may be set for an update.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to update
+	 * @param transaction Transaction specifying what should be updated
+	 * @see #updateLobby(Lobby, LobbyTransaction, Consumer)
+	 * @see #getLobbyUpdateTransaction(Lobby)
+	 * @see DiscordEventAdapter#onLobbyUpdate(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
+	 */
 	public void updateLobby(Lobby lobby, LobbyTransaction transaction)
 	{
 		updateLobby(lobby, transaction, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Deletes an existing Lobby.
+	 * All members will automatically get disconnected from the Lobby.
+	 * A {@link DiscordEventAdapter#onLobbyDelete(long, int)} will be fired for all members of the Lobby.
+	 * @param lobbyId ID of the lobby to delete
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #deleteLobby(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
+	 */
 	public void deleteLobby(long lobbyId, @NotNull Consumer<Result> callback)
 	{
 		deleteLobby(pointer, lobbyId, callback);
 	}
+
+	/**
+	 * Deletes an existing Lobby.
+	 * All members will automatically get disconnected from the Lobby.
+	 * A {@link DiscordEventAdapter#onLobbyDelete(long, int)} will be fired for all members of the Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the lobby to delete
+	 * @see #deleteLobby(long, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
+	 */
 	public void deleteLobby(long lobbyId)
 	{
 		deleteLobby(pointer, lobbyId, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Deletes an existing Lobby.
+	 * All members will automatically get disconnected from the Lobby.
+	 * A {@link DiscordEventAdapter#onLobbyDelete(long, int)} will be fired for all members of the Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The lobby to delete
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #deleteLobby(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
+	 */
 	public void deleteLobby(Lobby lobby, @NotNull Consumer<Result> callback)
 	{
 		deleteLobby(lobby.getId(), callback);
 	}
+
+	/**
+	 * Deletes an existing Lobby.
+	 * All members will automatically get disconnected from the Lobby.
+	 * A {@link DiscordEventAdapter#onLobbyDelete(long, int)} will be fired for all members of the Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The lobby to delete
+	 * @see #deleteLobby(Lobby, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
+	 */
 	public void deleteLobby(Lobby lobby)
 	{
 		deleteLobby(lobby, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Connects the current user to a Lobby by its ID and secret.
+	 * If the connection succeeds the Lobby is fetched and returned.
+	 * <p>
+	 * The user can be connected to up to 5 different Lobbies at the same time.
+	 * A Lobby cannot be connected to (= joined) if it is full,
+	 * locked or the user is already connected to 5 Lobbies.
+	 * <p>
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * For {@link LobbyType#PRIVATE} Lobbies you need to obtain them on an different way (e.g. user input).
+	 * <p>
+	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
+	 * consider using {@link #connectLobbyWithActivitySecret(String, BiConsumer)} instead of parsing it manually.
+	 * @param lobbyId The ID of the Lobby you want to connect to
+	 * @param secret The secret of the Lobby, max. 255 bytes
+	 * @param callback Callback to return the {@link Result} and fetched {@link Lobby} object to
+	 * @throws IllegalArgumentException if the secret is too long
+	 * @see #connectLobby(long, String, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
+	 */
 	public void connectLobby(long lobbyId, String secret, @NotNull BiConsumer<Result, Lobby> callback)
 	{
-		if(secret.getBytes().length >= 128)
+		if(secret.getBytes().length >= 256)
 			throw new IllegalArgumentException("max secret length is 255");
 		connectLobby(pointer, lobbyId, secret, callback);
+	}
+
+	/**
+	 * Connects the current user to a Lobby by its ID and secret.
+	 * If the connection succeeds the Lobby is fetched and returned.
+	 * <p>
+	 * The user can be connected to up to 5 different Lobbies at the same time.
+	 * A Lobby cannot be connected to (= joined) if it is full,
+	 * locked or the user is already connected to 5 Lobbies.
+	 * <p>
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * For {@link LobbyType#PRIVATE} Lobbies you need to obtain them on an different way (e.g. user input).
+	 * <p>
+	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
+	 * consider using {@link #connectLobbyWithActivitySecret(String, BiConsumer)} instead of parsing it manually.
+	 * <p>
+	 * When completed the {@link Result} is checked using the {@link Core#DEFAULT_CALLBACK} and
+	 * if it completes normally (which is the case if result is {@link Result#OK})
+	 * the joined Lobby is passed to the provided callback.
+	 * @param lobbyId The ID of the Lobby you want to connect to
+	 * @param secret The secret of the Lobby, max. 255 bytes
+	 * @param callback Callback to return the fetched {@link Lobby} object to
+	 * @throws IllegalArgumentException if the secret is too long
+	 * @see #connectLobby(long, String, BiConsumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
+	 */
+	public void connectLobby(long lobbyId, String secret, @NotNull Consumer<Lobby> callback)
+	{
+		connectLobby(lobbyId, secret, (result, lobby) ->
+		{
+			Core.DEFAULT_CALLBACK.accept(result);
+			callback.accept(lobby);
+		});
+	}
+
+	/**
+	 * Connects the current user to a Lobby by its ID and secret.
+	 * If the connection succeeds the Lobby is fetched and returned.
+	 * <p>
+	 * The user can be connected to up to 5 different Lobbies at the same time.
+	 * A Lobby cannot be connected to (= joined) if it is full,
+	 * locked or the user is already connected to 5 Lobbies.
+	 * <p>
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * <p>
+	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
+	 * consider using {@link #connectLobbyWithActivitySecret(String, BiConsumer)} instead of parsing it manually.
+	 * <p>
+	 * The Lobby ID and the secret are simply obtained by {@link Lobby#getId()} and {@link Lobby#getSecret()}.
+	 * @param lobby Lobby to connect to
+	 * @param callback Callback to return the fetched {@link Lobby} object to
+	 * @throws IllegalArgumentException if the secret is too long
+	 * @see #connectLobby(long, String, BiConsumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
+	 */
+	public void connectLobby(Lobby lobby, @NotNull BiConsumer<Result, Lobby> callback)
+	{
+		connectLobby(lobby.getId(), lobby.getSecret(), callback);
 	}
 
 	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull BiConsumer<Result, Lobby> callback)

@@ -206,6 +206,13 @@ public class Core implements AutoCloseable
 		return imageManager;
 	}
 
+	/**
+	 * <p>Returns the {@link LobbyManager} associated with this core.</p>
+	 * <p>A LobbyManager is used to create, manage and connect to Discord Lobbies.</p>
+	 * @return A {@link LobbyManager}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getlobbymanager">
+	 *     https://discord.com/developers/docs/game-sdk/discord#getlobbymanager</a>
+	 */
 	public LobbyManager lobbyManager()
 	{
 		return lobbyManager;
