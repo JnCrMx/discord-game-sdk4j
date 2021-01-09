@@ -31,9 +31,10 @@ public class Lobby
 	 * @param id Snowflake ID of the Lobby
 	 * @param type Type (public, private) of the Lobby.
 	 * @param ownerId ID of the user that own the Lobby.
-	 * @param secret Secret that is required to join the Lobby.
+	 * @param secret Secret that is required to join the Lobby, max. 127 bytes.
 	 * @param capacity Maximum count of players that this Lobby can hold.
 	 * @param locked Whether this Lobby is locked, so no new players can join.
+	 * @throws IllegalArgumentException if the secret is too long
 	 */
 	public Lobby(long id, int type, long ownerId, @NotNull String secret, @Range(from = 1, to = 1024) int capacity, boolean locked)
 	{
@@ -43,6 +44,9 @@ public class Lobby
 		this.secret = secret;
 		this.capacity = capacity;
 		this.locked = locked;
+
+		if(this.secret.getBytes().length >= 128)
+			throw new IllegalArgumentException("max secret length is 127");
 	}
 
 	/**
@@ -93,7 +97,7 @@ public class Lobby
 	 * It is unclear in which context this is really a "secret" as it can be obtained via
 	 * {@link LobbyManager#getLobby(long)} for public Lobbies after searching for them with
 	 * {@link LobbyManager#search(LobbySearchQuery)}.
-	 * @return The secret of this Lobby.
+	 * @return The secret of this Lobby, max. 127 bytes in length
 	 * @see LobbyManager#getLobbyActivitySecret(Lobby)
 	 */
 	@NotNull

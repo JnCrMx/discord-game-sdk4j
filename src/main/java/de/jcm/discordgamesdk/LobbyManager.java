@@ -1,5 +1,6 @@
 package de.jcm.discordgamesdk;
 
+import de.jcm.discordgamesdk.activity.ActivitySecrets;
 import de.jcm.discordgamesdk.lobby.Lobby;
 import de.jcm.discordgamesdk.lobby.LobbyMemberTransaction;
 import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
@@ -367,7 +368,7 @@ public class LobbyManager
 	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
 	 * consider using {@link #connectLobbyWithActivitySecret(String, BiConsumer)} instead of parsing it manually.
 	 * @param lobbyId The ID of the Lobby you want to connect to
-	 * @param secret The secret of the Lobby, max. 255 bytes
+	 * @param secret The secret of the Lobby, max. 127 bytes
 	 * @param callback Callback to return the {@link Result} and fetched {@link Lobby} object to
 	 * @throws IllegalArgumentException if the secret is too long
 	 * @see #connectLobby(long, String, Consumer)
@@ -376,8 +377,8 @@ public class LobbyManager
 	 */
 	public void connectLobby(long lobbyId, String secret, @NotNull BiConsumer<Result, Lobby> callback)
 	{
-		if(secret.getBytes().length >= 256)
-			throw new IllegalArgumentException("max secret length is 255");
+		if(secret.getBytes().length >= 128)
+			throw new IllegalArgumentException("max secret length is 127");
 		connectLobby(pointer, lobbyId, secret, callback);
 	}
 
@@ -399,7 +400,7 @@ public class LobbyManager
 	 * if it completes normally (which is the case if result is {@link Result#OK})
 	 * the joined Lobby is passed to the provided callback.
 	 * @param lobbyId The ID of the Lobby you want to connect to
-	 * @param secret The secret of the Lobby, max. 255 bytes
+	 * @param secret The secret of the Lobby, max. 127 bytes
 	 * @param callback Callback to return the fetched {@link Lobby} object to
 	 * @throws IllegalArgumentException if the secret is too long
 	 * @see #connectLobby(long, String, BiConsumer)
@@ -441,30 +442,143 @@ public class LobbyManager
 		connectLobby(lobby.getId(), lobby.getSecret(), callback);
 	}
 
+	/**
+	 * Connects the current user to a Lobby by its Activity secret.
+	 * If the connection succeeds the Lobby is fetched and returned.
+	 * <p>
+	 * The user can be connected to up to 5 different Lobbies at the same time.
+	 * A Lobby cannot be connected to (= joined) if it is full,
+	 * locked or the user is already connected to 5 Lobbies.
+	 * <p>
+	 * An Activity secret is a concatenation of the Lobby ID and secret (separated with ':').
+	 * It can be obtained of an existing Lobby by {@link #getLobbyActivitySecret(Lobby)}.
+	 * The parsing of the Activity secret is done internally by Discord,
+	 * so a change of its structure will not impact this function.
+	 * Therefore it is recommended to prefer this function over manually parsing
+	 * the Activity secret.
+	 * For connecting with Lobby ID and secret use {@link #connectLobby(long, String, BiConsumer)}.
+	 * Do <b>not</b> concat them manually into an Activity secret!
+	 * @param activitySecret The Activity secret for the Lobby you want to connect to, max. 127 bytes
+	 * @param callback Callback to return the result and fetched {@link Lobby} object to
+	 * @throws IllegalArgumentException if the Activity secret is too long
+	 * @see #connectLobbyWithActivitySecret(String, Consumer)
+	 * @see #getLobbyActivitySecret(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret</a>
+	 */
 	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull BiConsumer<Result, Lobby> callback)
 	{
 		if(activitySecret.getBytes().length >= 128)
-			throw new IllegalArgumentException("max activity secret length is 255");
+			throw new IllegalArgumentException("max activity secret length is 127");
 		connectLobbyWithActivitySecret(pointer, activitySecret, callback);
 	}
 
+	/**
+	 * Connects the current user to a Lobby by its Activity secret.
+	 * If the connection succeeds the Lobby is fetched and returned.
+	 * <p>
+	 * The user can be connected to up to 5 different Lobbies at the same time.
+	 * A Lobby cannot be connected to (= joined) if it is full,
+	 * locked or the user is already connected to 5 Lobbies.
+	 * <p>
+	 * An Activity secret is a concatenation of the Lobby ID and secret (separated with ':').
+	 * It can be obtained of an existing Lobby by {@link #getLobbyActivitySecret(Lobby)}.
+	 * The parsing of the Activity secret is done internally by Discord,
+	 * so a change of its structure will not impact this function.
+	 * Therefore it is recommended to prefer this function over manually parsing
+	 * the Activity secret.
+	 * For connecting with Lobby ID and secret use {@link #connectLobby(long, String, BiConsumer)}.
+	 * Do <b>not</b> concat them manually into an Activity secret!
+	 * <p>
+	 * When completed the {@link Result} is checked using the {@link Core#DEFAULT_CALLBACK} and
+	 * if it completes normally (which is the case if result is {@link Result#OK})
+	 * the joined Lobby is passed to the provided callback.
+	 * @param activitySecret The Activity secret for the Lobby you want to connect to, max. 127 bytes
+	 * @param callback Callback to return the fetched {@link Lobby} object to
+	 * @throws IllegalArgumentException if the Activity secret is too long
+	 * @see #connectLobbyWithActivitySecret(String, Consumer)
+	 * @see #getLobbyActivitySecret(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret</a>
+	 */
+	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull Consumer<Lobby> callback)
+	{
+		connectLobbyWithActivitySecret(pointer, activitySecret, (result, lobby) ->
+		{
+			Core.DEFAULT_CALLBACK.accept(result);
+			callback.accept(lobby);
+		});
+	}
+
+	/**
+	 * Disconnects the current user from a Lobby.
+	 * @param lobbyId ID of the Lobby to disconnect from.
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #disconnectLobby(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby</a>
+	 */
 	public void disconnectLobby(long lobbyId, Consumer<Result> callback)
 	{
 		disconnectLobby(pointer, lobbyId, callback);
 	}
+
+	/**
+	 * Disconnects the current user from a Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby to disconnect from.
+	 * @see #disconnectLobby(long, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby</a>
+	 */
 	public void disconnectLobby(long lobbyId)
 	{
 		disconnectLobby(lobbyId, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Disconnects the current user from a Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to disconnect from.
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #disconnectLobby(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby</a>
+	 */
 	public void disconnectLobby(Lobby lobby, Consumer<Result> callback)
 	{
 		disconnectLobby(lobby.getId(), callback);
 	}
+
+	/**
+	 * Disconnects the current user from a Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to disconnect from.
+	 * @see #disconnectLobby(Lobby, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectlobby</a>
+	 */
 	public void disconnectLobby(Lobby lobby)
 	{
 		disconnectLobby(lobby, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Gets the Lobby object for a Lobby with the specified ID.
+	 * <p>
+	 * The Lobby must be "fetched" before; either as part of a {@link #search(LobbySearchQuery)} or
+	 * because the current user is connected to it.
+	 * @param lobbyId ID of the requested Lobby
+	 * @return A Lobby object for the given ID
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobby">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobby</a>
+	 */
 	public Lobby getLobby(long lobbyId)
 	{
 		Object ret = getLobby(pointer, lobbyId);
@@ -478,6 +592,31 @@ public class LobbyManager
 		}
 	}
 
+	/**
+	 * Gets the Activity secret for a Lobby.
+	 * <p>
+	 * An Activity secret is a concatenation of the ID and secret of the Lobby,
+	 * separated by '{@code :}'.
+	 * <p>
+	 * <i>Warning: This format is handled internally by Discord and
+	 * is therefore subject to sudden and unexpected changes.
+	 * Do <b>not</b> rely on the format of the Activity secret.</i>
+	 * <p>
+	 * The Activity secret is supposed to be used for Rich Presence Invites and
+	 * can be set for an Activity using {@link ActivitySecrets#setJoinSecret(String)}.
+	 * The joining client will receive the Activity secret in
+	 * {@link DiscordEventAdapter#onActivityJoin(String)} and should
+	 * use it with {@link #connectLobbyWithActivitySecret(String, BiConsumer)}
+	 * to connect to the Lobby.
+	 * @param lobbyId ID of the Lobby to get the Activity secret for
+	 * @return The Activity secret for this Lobby, max. 127 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyActivitySecret(Lobby)
+	 * @see ActivitySecrets#setJoinSecret(String)
+	 * @see #connectLobbyWithActivitySecret(String, BiConsumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyactivitysecret">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyactivitysecret</a>
+	 */
 	public String getLobbyActivitySecret(long lobbyId)
 	{
 		Object ret = getLobbyActivitySecret(pointer, lobbyId);
@@ -490,6 +629,34 @@ public class LobbyManager
 			return (String) ret;
 		}
 	}
+
+	/**
+	 * Gets the Activity secret for a Lobby.
+	 * <p>
+	 * An Activity secret is a concatenation of the ID and secret of the Lobby,
+	 * separated by '{@code :}'.
+	 * <p>
+	 * <i>Warning: This format is handled internally by Discord and
+	 * is therefore subject to sudden and unexpected changes.
+	 * Do <b>not</b> rely on the format of the Activity secret.</i>
+	 * <p>
+	 * The Activity secret is supposed to be used for Rich Presence Invites and
+	 * can be set for an Activity using {@link ActivitySecrets#setJoinSecret(String)}.
+	 * The joining client will receive the Activity secret in
+	 * {@link DiscordEventAdapter#onActivityJoin(String)} and should
+	 * use it with {@link #connectLobbyWithActivitySecret(String, BiConsumer)}
+	 * to connect to the Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the Activity secret for
+	 * @return The Activity secret for this Lobby, max. 127 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyActivitySecret(long) 
+	 * @see ActivitySecrets#setJoinSecret(String)
+	 * @see #connectLobbyWithActivitySecret(String, BiConsumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyactivitysecret">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyactivitysecret</a>
+	 */
 	public String getLobbyActivitySecret(Lobby lobby)
 	{
 		return getLobbyActivitySecret(lobby.getId());
