@@ -8,6 +8,7 @@ import de.jcm.discordgamesdk.lobby.LobbyTransaction;
 import de.jcm.discordgamesdk.lobby.LobbyType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -662,6 +663,18 @@ public class LobbyManager
 		return getLobbyActivitySecret(lobby.getId());
 	}
 
+	/**
+	 * Gets the metadata value associated with a given metadata key for a Lobby.
+	 * @param lobbyId ID of the Lobby to get the metadata of
+	 * @param key Key of the metadata entry, max. 255 bytes
+	 * @return The associated value, max. 4095 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadataValue(Lobby, String)
+	 * @see #getLobbyMetadata(long)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatavalue">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatavalue</a>
+	 */
 	public String getLobbyMetadataValue(long lobbyId, String key)
 	{
 		if(key.getBytes().length >= 256)
@@ -676,11 +689,42 @@ public class LobbyManager
 			return (String) ret;
 		}
 	}
+
+	/**
+	 * Gets the metadata value associated with a given metadata key for a Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the metadata of
+	 * @param key Key of the metadata entry, max. 255 bytes
+	 * @return The associated value, max. 4095 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadataValue(long, String)
+	 * @see #getLobbyMetadata(Lobby)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatavalue">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatavalue</a>
+	 */
 	public String getLobbyMetadataValue(Lobby lobby, String key)
 	{
 		return getLobbyMetadataValue(lobby.getId(), key);
 	}
 
+	/**
+	 * Gets the key for a metadata entry at a given index.
+	 * <p>
+	 * Use {@link #lobbyMetadataCount(long)} to get the numbers of entries available.
+	 * @param lobbyId ID of the Lobby to get the metadata of
+	 * @param index Index of the key, must be {@literal >=} 0
+	 *              and {@literal <} {@link #lobbyMetadataCount(long)}
+	 * @return The key, max. 255 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadataKey(Lobby, int)
+	 * @see #lobbyMetadataCount(long)
+	 * @see #getLobbyMetadata(long)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatakey">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatakey</a>
+	 */
 	public String getLobbyMetadataKey(long lobbyId, int index)
 	{
 		Object ret = getLobbyMetadataKey(pointer, lobbyId, index);
@@ -693,11 +737,45 @@ public class LobbyManager
 			return (String) ret;
 		}
 	}
+
+	/**
+	 * Gets the key for a metadata entry at a given index.
+	 * <p>
+	 * Use {@link #lobbyMetadataCount(Lobby)} to get the numbers of entries available.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the metadata of
+	 * @param index Index of the key, must be {@literal >=} 0
+	 *              and {@literal <} {@link #lobbyMetadataCount(Lobby)}
+	 * @return The key, max. 255 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadataKey(Lobby, int)
+	 * @see #lobbyMetadataCount(Lobby)
+	 * @see #getLobbyMetadata(Lobby)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatakey">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbymetadatakey</a>
+	 */
 	public String getLobbyMetadataKey(Lobby lobby, int index)
 	{
 		return getLobbyMetadataKey(lobby.getId(), index);
 	}
 
+	/**
+	 * Gets the number of available metadata entries for a given Lobby.
+	 * This method can e.g. be used for iterating over the metadata.
+	 * <p>
+	 * If you want to get all metadata (as key/value pairs), simply
+	 * use {@link #getLobbyMetadata(long)}.
+	 * @param lobbyId ID of the Lobby to get the metadata for
+	 * @return The number of metadata entries
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #lobbyMetadataCount(Lobby)
+	 * @see #getLobbyMetadata(long)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbymetadatacount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbymetadatacount</a>
+	 */
 	public int lobbyMetadataCount(long lobbyId)
 	{
 		Object ret = lobbyMetadataCount(pointer, lobbyId);
@@ -710,11 +788,57 @@ public class LobbyManager
 			return (Integer) ret;
 		}
 	}
+
+	/**
+	 * Gets the number of available metadata entries for a given Lobby.
+	 * This method can e.g. be used for iterating over the metadata.
+	 * <p>
+	 * If you want to get all metadata (as key/value pairs), simply
+	 * use {@link #getLobbyMetadata(long)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the metadata for
+	 * @return The number of metadata entries
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #lobbyMetadataCount(long)
+	 * @see #getLobbyMetadata(Lobby)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbymetadatacount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbymetadatacount</a>
+	 */
 	public int lobbyMetadataCount(Lobby lobby)
 	{
 		return lobbyMetadataCount(lobby.getId());
 	}
 
+	/**
+	 * Gets all available metadata (as key/value pairs) for a given Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get the number of available entries with {@link #memberCount(long)}
+	 *    <li>Create a {@link HashMap} for storing the metadata
+	 *    <li>For each entry {@code (i = 0; i < count; i++)} do:
+	 *    <ol>
+	 *        <li>Get the key with {@link #getLobbyMetadataKey(long, int)}
+	 *        <li>Get the corresponding value with {@link #getLobbyMetadataValue(long, String)}
+	 *        <li>Store them in the Map
+	 *    </ol>
+	 *    <li>Return an <i>unmodifiable</i> view of the Map with {@link Collections#unmodifiableMap(Map)}
+	 * </ol>
+	 * <p>
+	 * The metadata is returned as an <i>unmodifiable</i> {@link HashMap}
+	 * (as per {@link Collections#unmodifiableMap(Map)})
+	 * to indicate that modifying the metadata will not affect the Lobby
+	 * at all.
+	 * To modify the metadata of a Lobby use {@link #updateLobby(long, LobbyTransaction)}
+	 * and {@link LobbyTransaction#setMetadata(String, String)}.
+	 * @param lobbyId ID of the Lobby to get the metadata for.
+	 * @return The metadata of the Lobby as an <i>unmodifiable</i> {@link HashMap}
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadata(Lobby) 
+	 * @see LobbyTransaction#setMetadata(String, String) 
+	 */
 	public Map<String, String> getLobbyMetadata(long lobbyId)
 	{
 		int count = lobbyMetadataCount(lobbyId);
@@ -727,6 +851,37 @@ public class LobbyManager
 		}
 		return Collections.unmodifiableMap(map);
 	}
+
+	/**
+	 * Gets all available metadata (as key/value pairs) for a given Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get the number of available entries with {@link #memberCount(long)}
+	 *    <li>Create a {@link HashMap} for storing the metadata
+	 *    <li>For each entry {@code (i = 0; i < count; i++)} do:
+	 *    <ol>
+	 *        <li>Get the key with {@link #getLobbyMetadataKey(long, int)}
+	 *        <li>Get the corresponding value with {@link #getLobbyMetadataValue(long, String)}
+	 *        <li>Store them in the Map
+	 *    </ol>
+	 *    <li>Return an <i>unmodifiable</i> view of the Map with {@link Collections#unmodifiableMap(Map)}
+	 * </ol>
+	 * <p>
+	 * The metadata is returned as an <i>unmodifiable</i> {@link HashMap}
+	 * (as per {@link Collections#unmodifiableMap(Map)})
+	 * to indicate that modifying the metadata will not affect the Lobby
+	 * at all.
+	 * To modify the metadata of a Lobby use {@link #updateLobby(Lobby, LobbyTransaction)}
+	 * and {@link LobbyTransaction#setMetadata(String, String)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the metadata for.
+	 * @return The metadata of the Lobby as an <i>unmodifiable</i> {@link HashMap}
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLobbyMetadata(Lobby)
+	 * @see LobbyTransaction#setMetadata(String, String)
+	 */
 	public Map<String, String> getLobbyMetadata(Lobby lobby)
 	{
 		return getLobbyMetadata(lobby.getId());
