@@ -1,14 +1,9 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.ActivitySecrets;
-import de.jcm.discordgamesdk.lobby.Lobby;
-import de.jcm.discordgamesdk.lobby.LobbyMemberTransaction;
-import de.jcm.discordgamesdk.lobby.LobbySearchQuery;
-import de.jcm.discordgamesdk.lobby.LobbyTransaction;
-import de.jcm.discordgamesdk.lobby.LobbyType;
+import de.jcm.discordgamesdk.lobby.*;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -1424,18 +1419,100 @@ public class LobbyManager
 		updateMember(lobby, userId, transaction, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Sends a message to all members of a Lobby.
+	 * The current user must be connected to the Lobby.
+	 * The message is received in {@link DiscordEventAdapter#onLobbyMessage(long, long, byte[])}.
+	 * <p>
+	 * This function is rate-limited at 10 messages per 5 seconds.
+	 * <p>
+	 * It is not recommended to use this function together built-in Lobby networking
+	 * layer.
+	 * If you are using the built-in layer prefer
+	 * {@link #sendNetworkMessage(long, long, byte, byte[])} over this function.
+	 * @param lobbyId ID of the Lobby to send the message to
+	 * @param data Message data to send
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #sendLobbyMessage(long, byte[])
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage</a>
+	 */
 	public void sendLobbyMessage(long lobbyId, byte[] data, Consumer<Result> callback)
 	{
 		sendLobbyMessage(pointer, lobbyId, data, 0, data.length, callback);
 	}
+
+	/**
+	 * Sends a message to all members of a Lobby.
+	 * The current user must be connected to the Lobby.
+	 * The message is received in {@link DiscordEventAdapter#onLobbyMessage(long, long, byte[])}.
+	 * <p>
+	 * This function is rate-limited at 10 messages per 5 seconds.
+	 * <p>
+	 * It is not recommended to use this function together built-in Lobby networking
+	 * layer.
+	 * If you are using the built-in layer prefer
+	 * {@link #sendNetworkMessage(long, long, byte, byte[])} over this function.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby to send the message to
+	 * @param data Message data to send
+	 * @see #sendLobbyMessage(long, byte[])
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage</a>
+	 */
 	public void sendLobbyMessage(long lobbyId, byte[] data)
 	{
 		sendLobbyMessage(lobbyId, data, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Sends a message to all members of a Lobby.
+	 * The current user must be connected to the Lobby.
+	 * The message is received in {@link DiscordEventAdapter#onLobbyMessage(long, long, byte[])}.
+	 * <p>
+	 * This function is rate-limited at 10 messages per 5 seconds.
+	 * <p>
+	 * It is not recommended to use this function together built-in Lobby networking
+	 * layer.
+	 * If you are using the built-in layer prefer
+	 * {@link #sendNetworkMessage(long, long, byte, byte[])} over this function.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to send the message to
+	 * @param data Message data to send
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #sendLobbyMessage(long, byte[])
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage</a>
+	 */
 	public void sendLobbyMessage(Lobby lobby, byte[] data, Consumer<Result> callback)
 	{
 		sendLobbyMessage(lobby.getId(), data, callback);
 	}
+
+
+	/**
+	 * Sends a message to all members of a Lobby.
+	 * The current user must be connected to the Lobby.
+	 * The message is received in {@link DiscordEventAdapter#onLobbyMessage(long, long, byte[])}.
+	 * <p>
+	 * This function is rate-limited at 10 messages per 5 seconds.
+	 * <p>
+	 * It is not recommended to use this function together built-in Lobby networking
+	 * layer.
+	 * If you are using the built-in layer prefer
+	 * {@link #sendNetworkMessage(long, long, byte, byte[])} over this function.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to send the message to
+	 * @param data Message data to send
+	 * @see #sendLobbyMessage(long, byte[])
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendlobbymessage</a>
+	 */
 	public void sendLobbyMessage(Lobby lobby, byte[] data)
 	{
 		sendLobbyMessage(lobby, data, Core.DEFAULT_CALLBACK);
