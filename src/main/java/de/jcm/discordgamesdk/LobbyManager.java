@@ -1518,6 +1518,20 @@ public class LobbyManager
 		sendLobbyMessage(lobby, data, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Returns a new {@link LobbySearchQuery}.
+	 * A search query is used with {@link #search(LobbySearchQuery)} to search for
+	 * other available and Discord lobbies.
+	 * <p>
+	 * This method is the only way of obtaining an instance of {@link LobbySearchQuery}.
+	 * Do <b>not</b> attempt to create an instance in any other way.
+	 * @return A {@link LobbySearchQuery}
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #search(LobbySearchQuery)
+	 * @see #getSearchQuery()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getsearchquery">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getsearchquery</a>
+	 */
 	public LobbySearchQuery getSearchQuery()
 	{
 		Object ret = getSearchQuery(pointer);
@@ -1531,20 +1545,97 @@ public class LobbyManager
 		}
 	}
 
+	/**
+	 * Searches available Lobbies according to the given {@link LobbySearchQuery}.
+	 * Only Lobbies that are {@link LobbyType#PUBLIC}, not {@link Lobby#isLocked()} and
+	 * meet the criteria of the search query are found by this method.
+	 * <p>
+	 * The callback fires when the search is completed and
+	 * a stable list of Lobbies is available.
+	 * There is no need to access the search results inside the
+	 * callback, but it helps with timing.
+	 * <p>
+	 * You can access the found Lobbies using the following methods:
+	 * <ul>
+	 *      <li>{@link #lobbyCount()} - number of found Lobbies
+	 *      <li>{@link #getLobbyId(int)} - Lobby ID by index in result list
+	 *      <li>{@link #getLobby(long)} - Lobby object in result list by ID
+	 *      <li>{@link #getLobbies()} - all Lobby objects in result list
+	 * </ul>
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * Be careful about timing,
+	 * so you don't try to access the search result, before it is ready.
+	 * @param query A {@link LobbySearchQuery} specifying additional criteria and sorting
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #search(LobbySearchQuery)
+	 * @see #getSearchQuery()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#search">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#search</a>
+	 */
 	public void search(LobbySearchQuery query, Consumer<Result> callback)
 	{
 		search(pointer, query.getPointer(), callback);
 	}
+
+	/**
+	 * Searches available Lobbies according to the given {@link LobbySearchQuery}.
+	 * Only Lobbies that are {@link LobbyType#PUBLIC}, not {@link Lobby#isLocked()} and
+	 * meet the criteria of the search query are found by this method.
+	 * <p>
+	 * The callback fires when the search is completed and
+	 * a stable list of Lobbies is available.
+	 * There is no need to access the search results inside the
+	 * callback, but it helps with timing.
+	 * <p>
+	 * You can access the found Lobbies using the following methods:
+	 * <ul>
+	 *      <li>{@link #lobbyCount()} - number of found Lobbies
+	 *      <li>{@link #getLobbyId(int)} - Lobby ID by index in result list
+	 *      <li>{@link #getLobby(long)} - Lobby object in result list by ID
+	 *      <li>{@link #getLobbies()} - all Lobby objects in result list
+	 * </ul>
+	 * @param query A {@link LobbySearchQuery} specifying additional criteria and sorting
+	 * @see #search(LobbySearchQuery)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#search">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#search</a>
+	 */
 	public void search(LobbySearchQuery query)
 	{
 		search(query, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Gets the number of Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * <p>
+	 * If you want a list of found Lobbies use either
+	 * {@link #getLobbyIds()} or {@link #getLobbies()}.
+	 * @return A positive integer or {@code 0} if no Lobbies were found
+	 * @see #search(LobbySearchQuery)
+	 * @see #getLobbyId(int)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbycount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbycount</a>
+	 */
 	public int lobbyCount()
 	{
 		return lobbyCount(pointer);
 	}
 
+	/**
+	 * Gets the ID of the Lobby at the given index in the {@link #search(LobbySearchQuery)} result.
+	 * Use {@link #lobbyCount()} the get the number of Lobbies in the result.
+	 * <p>
+	 * If you want a list of found Lobbies use either
+	 * {@link #getLobbyIds()} or {@link #getLobbies()}.
+	 * @param index Index of the Lobby, must be {@literal >=} 0
+	 *              and {@literal <} {@link #lobbyCount()}
+	 * @return A Discord Lobby ID
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #search(LobbySearchQuery)
+	 * @see #lobbyCount()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyid">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyid</a>
+	 */
 	public long getLobbyId(int index)
 	{
 		Object ret = getLobbyId(pointer, index);
@@ -1558,6 +1649,24 @@ public class LobbyManager
 		}
 	}
 
+	/**
+	 * Gets a list of the IDs of all Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get the number of Lobbies with {@link #lobbyCount()}
+	 *    <li>Stream the indices with {@link IntStream#range(int, int)}
+	 *    <li>Map each index to the Lobby ID with {@link #getLobbyId(int)}
+	 *    <li>Box the IDs and collect them into a List
+	 *    <li>Return an <i>unmodifiable</i> view of the List with {@link Collections#unmodifiableList(List)}
+	 * </ol>
+	 * <p>
+	 * The list is <i>unmodifiable</i> to indicate that changing it will not affect the Lobbies
+	 * or the search result, which is stored by Discord.
+	 * @return An <i>unmodifiable</i> list containing Discord Lobby IDs
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #search(LobbySearchQuery)
+	 */
 	public List<Long> getLobbyIds()
 	{
 		List<Long> list = IntStream.range(0, lobbyCount())
@@ -1567,6 +1676,22 @@ public class LobbyManager
 		return Collections.unmodifiableList(list);
 	}
 
+	/**
+	 * Gets a list of all Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get a list of the Lobby IDs with {@link #getLobbyIds()} and stream it
+	 *    <li>Map each ID to the Lobby object with {@link #getLobby(long)}
+	 *    <li>Collect the stream into a list and return an <i>unmodifiable</i> view of the it
+	 * </ol>
+	 * <p>
+	 * The list is <i>unmodifiable</i> to indicate that changing it will not affect the Lobbies
+	 * or the search result, which is stored by Discord.
+	 * @return An <i>unmodifiable</i> list containing {@link Lobby} objects
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #search(LobbySearchQuery)
+	 */
 	public List<Lobby> getLobbies()
 	{
 		List<Lobby> list = getLobbyIds().stream()
