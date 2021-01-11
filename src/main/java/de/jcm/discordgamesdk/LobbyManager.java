@@ -1562,10 +1562,6 @@ public class LobbyManager
 	 *      <li>{@link #getLobby(long)} - Lobby object in result list by ID
 	 *      <li>{@link #getLobbies()} - all Lobby objects in result list
 	 * </ul>
-	 * <p>
-	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
-	 * Be careful about timing,
-	 * so you don't try to access the search result, before it is ready.
 	 * @param query A {@link LobbySearchQuery} specifying additional criteria and sorting
 	 * @param callback Callback to process the returned {@link Result}
 	 * @see #search(LobbySearchQuery)
@@ -1595,6 +1591,10 @@ public class LobbyManager
 	 *      <li>{@link #getLobby(long)} - Lobby object in result list by ID
 	 *      <li>{@link #getLobbies()} - all Lobby objects in result list
 	 * </ul>
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * Be careful about timing,
+	 * so you don't try to access the search result, before it is ready.
 	 * @param query A {@link LobbySearchQuery} specifying additional criteria and sorting
 	 * @see #search(LobbySearchQuery)
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#search">
@@ -1700,35 +1700,145 @@ public class LobbyManager
 		return Collections.unmodifiableList(list);
 	}
 
+	/**
+	 * Connects the current user to the voice channel of a given Lobby.
+	 * <p>
+	 * The user can see a list of other users connected to the Lobby
+	 * in their Discord Overlay.
+	 * The window to adjust voice settings can be opened with
+	 * {@link OverlayManager#openVoiceSettings(Consumer)}.
+	 * @param lobbyId ID of the Lobby whose voice channel to connect to
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #connectVoice(long)
+	 * @see #disconnectVoice(long, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
+	 */
 	public void connectVoice(long lobbyId, @NotNull Consumer<Result> callback)
 	{
 		connectVoice(pointer, lobbyId, callback);
 	}
+
+	/**
+	 * Connects the current user to the voice channel of a given Lobby.
+	 * <p>
+	 * The user can see a list of other users connected to the Lobby
+	 * in their Discord Overlay.
+	 * The window to adjust voice settings can be opened with
+	 * {@link OverlayManager#openVoiceSettings()}.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby whose voice channel to connect to
+	 * @see #connectVoice(long, Consumer)
+	 * @see #disconnectVoice(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
+	 */
 	public void connectVoice(long lobbyId)
 	{
 		connectVoice(pointer, lobbyId, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Connects the current user to the voice channel of a given Lobby.
+	 * <p>
+	 * The user can see a list of other users connected to the Lobby
+	 * in their Discord Overlay.
+	 * The window to adjust voice settings can be opened with
+	 * {@link OverlayManager#openVoiceSettings(Consumer)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whose voice channel to connect to
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #connectVoice(Lobby)
+	 * @see #disconnectVoice(Lobby, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
+	 */
 	public void connectVoice(Lobby lobby, @NotNull Consumer<Result> callback)
 	{
 		connectVoice(lobby.getId(), callback);
 	}
+
+	/**
+	 * Connects the current user to the voice channel of a given Lobby.
+	 * <p>
+	 * The user can see a list of other users connected to the Lobby
+	 * in their Discord Overlay.
+	 * The window to adjust voice settings can be opened with
+	 * {@link OverlayManager#openVoiceSettings()}.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whole voice channel to connect to
+	 * @see #connectVoice(Lobby, Consumer)
+	 * @see #disconnectVoice(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
+	 */
 	public void connectVoice(Lobby lobby)
 	{
 		connectVoice(lobby, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Disconnects the current user from the voice channel of a given Lobby.
+	 * @param lobbyId ID of the Lobby whose voice channel to disconnect from
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #disconnectVoice(long)
+	 * @see #connectVoice(long, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
+	 */
 	public void disconnectVoice(long lobbyId, @NotNull Consumer<Result> callback)
 	{
 		disconnectVoice(pointer, lobbyId, callback);
 	}
+
+	/**
+	 * Disconnects the current user from the voice channel of a given Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby whose voice channel to disconnect from
+	 * @see #disconnectVoice(long, Consumer)
+	 * @see #connectVoice(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
+	 */
 	public void disconnectVoice(long lobbyId)
 	{
 		disconnectVoice(pointer, lobbyId, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Disconnects the current user from the voice channel of a given Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whose voice channel to disconnect from
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #disconnectVoice(Lobby)
+	 * @see #connectVoice(Lobby, Consumer)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
+	 */
 	public void disconnectVoice(Lobby lobby, @NotNull Consumer<Result> callback)
 	{
 		disconnectVoice(lobby.getId(), callback);
 	}
+
+	/**
+	 * Disconnects the current user from the voice channel of a given Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whose voice channel to disconnect from
+	 * @see #disconnectVoice(Lobby, Consumer)
+	 * @see #connectVoice(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
+	 */
 	public void disconnectVoice(Lobby lobby)
 	{
 		disconnectVoice(lobby, Core.DEFAULT_CALLBACK);
