@@ -816,7 +816,7 @@ public class LobbyManager
 	 * <p>
 	 * This is done in the following way:
 	 * <ol>
-	 *    <li>Get the number of available entries with {@link #memberCount(long)}
+	 *    <li>Get the number of available entries with {@link #lobbyMetadataCount(long)}
 	 *    <li>Create a {@link HashMap} for storing the metadata
 	 *    <li>For each entry {@code (i = 0; i < count; i++)} do:
 	 *    <ol>
@@ -857,7 +857,7 @@ public class LobbyManager
 	 * <p>
 	 * This is done in the following way:
 	 * <ol>
-	 *    <li>Get the number of available entries with {@link #memberCount(long)}
+	 *    <li>Get the number of available entries with {@link #lobbyMetadataCount(long)}
 	 *    <li>Create a {@link HashMap} for storing the metadata
 	 *    <li>For each entry {@code (i = 0; i < count; i++)} do:
 	 *    <ol>
@@ -887,6 +887,17 @@ public class LobbyManager
 		return getLobbyMetadata(lobby.getId());
 	}
 
+	/**
+	 * Gets the number of users that are currently connected to a Lobby.
+	 * This method can e.g. be used for iterating over the members.
+	 * @param lobbyId ID of the Lobby to get the member count of
+	 * @return A positive integer
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #memberCount(Lobby)
+	 * @see #getMemberUsers(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#membercount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#membercount</a>
+	 */
 	public int memberCount(long lobbyId)
 	{
 		Object ret = memberCount(pointer, lobbyId);
@@ -899,11 +910,42 @@ public class LobbyManager
 			return (Integer) ret;
 		}
 	}
+
+	/**
+	 * Gets the number of users that are currently connected to a Lobby.
+	 * This method can e.g. be used for iterating over the members.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the member count of
+	 * @return A positive integer
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #memberCount(long)
+	 * @see #getMemberUsers(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#membercount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#membercount</a>
+	 */
 	public int memberCount(Lobby lobby)
 	{
 		return memberCount(lobby.getId());
 	}
 
+	/**
+	 * Gets the Discord user ID of a member by their index in the member list.
+	 * <p>
+	 * Use {@link #getMemberUserIds(long)} for a list of all user IDs and
+	 * {@link #getMemberUsers(long)} for a list of all user objects.
+	 * @param lobbyId ID of the Lobby to get the members of
+	 * @param index Index of the member in the member list, must be {@literal >=} 0
+	 *              and {@literal <} {@link #memberCount(long)}
+	 * @return A Discord user ID
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUserId(Lobby, int)
+	 * @see #memberCount(long)
+	 * @see #getMemberUserIds(long)
+	 * @see #getMemberUsers(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberuserid">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberuserid</a>
+	 */
 	public long getMemberUserId(long lobbyId, int index)
 	{
 		Object ret = getMemberUserId(pointer, lobbyId, index);
@@ -916,11 +958,49 @@ public class LobbyManager
 			return (Long) ret;
 		}
 	}
+
+	/**
+	 * Gets the Discord user ID of a member by their index in the member list.
+	 * <p>
+	 * Use {@link #getMemberUserIds(long)} for a list of all user IDs and
+	 * {@link #getMemberUsers(long)} for a list of all user objects.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the members of
+	 * @param index Index of the member in the member list, must be {@literal >=} 0
+	 *              and {@literal <} {@link #memberCount(Lobby)}
+	 * @return A Discord user ID
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUserId(long, int)
+	 * @see #memberCount(Lobby)
+	 * @see #getMemberUserIds(Lobby)
+	 * @see #getMemberUsers(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberuserid">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberuserid</a>
+	 */
 	public long getMemberUserId(Lobby lobby, int index)
 	{
 		return getMemberUserId(lobby.getId(), index);
 	}
 
+	/**
+	 * Gets a list of the IDs of all users connected to a given Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get the number of members with {@link #memberCount(long)}
+	 *    <li>Stream the indices with {@link IntStream#range(int, int)}
+	 *    <li>Map each index to the user ID with {@link #getMemberUserId(long, int)}
+	 *    <li>Box the IDs and collect them into a List
+	 *    <li>Return an <i>unmodifiable</i> view of the List with {@link Collections#unmodifiableList(List)}
+	 * </ol>
+	 * <p>
+	 * The list is <i>unmodifiable</i> to indicate that changing it will not affect the Lobby.
+	 * @param lobbyId ID of the Lobby to get the members of
+	 * @return An <i>unmodifiable</i> list containing Discord user IDs
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUserIds(Lobby)
+	 */
 	public List<Long> getMemberUserIds(long lobbyId)
 	{
 		List<Long> list = IntStream.range(0, memberCount(lobbyId))
@@ -929,11 +1009,45 @@ public class LobbyManager
 				.collect(Collectors.toList());
 		return Collections.unmodifiableList(list);
 	}
+
+	/**
+	 * Gets a list of the IDs of all users connected to a given Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *    <li>Get the number of members with {@link #memberCount(long)}
+	 *    <li>Stream the indices with {@link IntStream#range(int, int)}
+	 *    <li>Map each index to the user ID with {@link #getMemberUserId(long, int)}
+	 *    <li>Box the IDs and collect them into a List
+	 *    <li>Return an <i>unmodifiable</i> view of the List with {@link Collections#unmodifiableList(List)}
+	 * </ol>
+	 * <p>
+	 * The list is <i>unmodifiable</i> to indicate that changing it will not affect the Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the members of
+	 * @return An <i>unmodifiable</i> list containing Discord user IDs
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUserIds(long)
+	 */
 	public List<Long> getMemberUserIds(Lobby lobby)
 	{
 		return getMemberUserIds(lobby.getId());
 	}
 
+	/**
+	 * Gets a user object for a member of a Lobby by their user ID.
+	 * To get a list of all user objects use {@link #getMemberUsers(long)}.
+	 * @param lobbyId ID of the Lobby to get the member of
+	 * @param userId User ID of the member
+	 * @return A {@link DiscordUser} object
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUser(Lobby, long)
+	 * @see #getMemberUserId(long, int)
+	 * @see #getMemberUsers(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberuser">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberuser</a>
+	 */
 	public DiscordUser getMemberUser(long lobbyId, long userId)
 	{
 		Object ret = getMemberUser(pointer, lobbyId, userId);
@@ -946,11 +1060,45 @@ public class LobbyManager
 			return (DiscordUser) ret;
 		}
 	}
+
+	/**
+	 * Gets a user object for a member of a Lobby by their user ID.
+	 * To get a list of all user objects use {@link #getMemberUsers(long)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the member of
+	 * @param userId User ID of the member
+	 * @return A {@link DiscordUser} object
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUser(long, long)
+	 * @see #getMemberUserId(Lobby, int)
+	 * @see #getMemberUsers(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmemberuser">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmemberuser</a>
+	 */
 	public DiscordUser getMemberUser(Lobby lobby, long userId)
 	{
 		return getMemberUser(lobby.getId(), userId);
 	}
 
+	/**
+	 * Gets a list of user objects for the members of a Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *     <li>Get a list of the users IDs with {@link #getMemberUserIds(long)} and stream it
+	 *     <li>Map each user ID to the user object with {@link #getMemberUser(long, long)}
+	 *     <li>Collect the stream into a list and return an <i>unmodifiable</i> view of it
+	 * </ol>
+	 * <p>
+	 * The returned list is <i>unmodifiable</i> to indicate that
+	 * changing it will not affect the Lobby or its members.
+	 * @param lobbyId ID of the Lobby to get the members of
+	 * @return An <i>unmodifiable</i> list containing Discord user objects
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUsers(Lobby)
+	 * @see #getMemberUserIds(long)
+	 */
 	public List<DiscordUser> getMemberUsers(long lobbyId)
 	{
 		List<DiscordUser> list = getMemberUserIds(lobbyId).stream()
@@ -958,11 +1106,46 @@ public class LobbyManager
 				.collect(Collectors.toList());
 		return Collections.unmodifiableList(list);
 	}
+
+	/**
+	 * Gets a list of user objects for the members of a Lobby.
+	 * <p>
+	 * This is done in the following way:
+	 * <ol>
+	 *     <li>Get a list of the users IDs with {@link #getMemberUserIds(long)} and stream it
+	 *     <li>Map each user ID to the user object with {@link #getMemberUser(long, long)}
+	 *     <li>Collect the stream into a list and return an <i>unmodifiable</i> view of it
+	 * </ol>
+	 * <p>
+	 * The returned list is <i>unmodifiable</i> to indicate that
+	 * changing it will not affect the Lobby or its members.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to get the members of
+	 * @return An <i>unmodifiable</i> list containing Discord user objects
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberUsers(long)
+	 * @see #getMemberUserIds(Lobby)
+	 */
 	public List<DiscordUser> getMemberUsers(Lobby lobby)
 	{
 		return getMemberUsers(lobby.getId());
 	}
 
+	/**
+	 * Gets a member metadata value for a given Lobby, member and metadata key.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @param key Metadata key, max. 255 bytes
+	 * @return A metadata value, max. 4095 bytes
+	 * @throws IllegalArgumentException if the key is too long
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadataValue(Lobby, long, String)
+	 * @see #getMemberMetadata(long, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatavalue">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatavalue</a>
+	 */
 	public String getMemberMetadataValue(long lobbyId, long userId, String key)
 	{
 		if(key.getBytes().length >= 256)
@@ -977,11 +1160,45 @@ public class LobbyManager
 			return (String) ret;
 		}
 	}
+
+	/**
+	 * Gets a member metadata value for a given Lobby, member and metadata key.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @param key Metadata key, max. 255 bytes
+	 * @return A metadata value, max. 4095 bytes
+	 * @throws IllegalArgumentException if the key is too long
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadataValue(long, long, String)
+	 * @see #getMemberMetadata(Lobby, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatavalue">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatavalue</a>
+	 */
 	public String getMemberMetadataValue(Lobby lobby, long userId, String key)
 	{
 		return getMemberMetadataValue(lobby.getId(), userId, key);
 	}
 
+	/**
+	 * Gets the key for a member metadata entry at a given index.
+	 * <p>
+	 * Use {@link #memberMetadataCount(long, long)} to get the numbers of entries available.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @param index Index of the key, must be {@literal >=} 0
+	 *              and {@literal <} {@link #memberMetadataCount(long, long)}
+	 * @return The key, max. 255 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadataKey(Lobby, long, int)
+	 * @see #memberMetadataCount(long, long)
+	 * @see #getMemberMetadata(long, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatakey">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatakey</a>
+	 */
 	public String getMemberMetadataKey(long lobbyId, long userId, int index)
 	{
 		Object ret = getMemberMetadataKey(pointer, lobbyId, userId, index);
@@ -994,11 +1211,47 @@ public class LobbyManager
 			return (String) ret;
 		}
 	}
+
+	/**
+	 * Gets the key for a member metadata entry at a given index.
+	 * <p>
+	 * Use {@link #memberMetadataCount(long, long)} to get the numbers of entries available.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @param index Index of the key, must be {@literal >=} 0
+	 *              and {@literal <} {@link #memberMetadataCount(long, long)}
+	 * @return The key, max. 255 bytes
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadataKey(long, long, int)
+	 * @see #memberMetadataCount(Lobby, long)
+	 * @see #getMemberMetadata(Lobby, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatakey">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#getmembermetadatakey</a>
+	 */
 	public String getMemberMetadataKey(Lobby lobby, long userId, int index)
 	{
 		return getMemberMetadataKey(lobby.getId(), userId, index);
 	}
 
+	/**
+	 * Gets the number of available metadata entries for a given member in a Lobby.
+	 * This method can e.g. be used for iterating over the metadata.
+	 * <p>
+	 * If you want to get all metadata (as key/value pairs), simply
+	 * use {@link #getMemberMetadata(long, long)}.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @return The number of metadata entries
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #memberMetadataCount(Lobby, long)
+	 * @see #getMemberMetadata(long, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#membermetadatacount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#membermetadatacount</a>
+	 */
 	public int memberMetadataCount(long lobbyId, long userId)
 	{
 		Object ret = memberMetadataCount(pointer, lobbyId, userId);
@@ -1011,11 +1264,47 @@ public class LobbyManager
 			return (Integer) ret;
 		}
 	}
+
+	/**
+	 * Gets the number of available metadata entries for a given member in a Lobby.
+	 * This method can e.g. be used for iterating over the metadata.
+	 * <p>
+	 * If you want to get all metadata (as key/value pairs), simply
+	 * use {@link #getMemberMetadata(long, long)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @return The number of metadata entries
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #memberMetadataCount(long, long)
+	 * @see #getMemberMetadata(Lobby, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#membermetadatacount">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#membermetadatacount</a>
+	 */
 	public int memberMetadataCount(Lobby lobby, long userId)
 	{
 		return memberMetadataCount(lobby.getId(), userId);
 	}
 
+	/**
+	 * Gets all metadata entries for a given member of a given Lobby.
+	 * This methods uses roughly the same procedure as {@link #getLobbyMetadata(long)}.
+	 * <p>
+	 * The metadata is returned as an <i>unmodifiable</i> {@link HashMap}
+	 * (as per {@link Collections#unmodifiableMap(Map)})
+	 * to indicate that modifying the metadata will not affect
+	 * the Lobby or the member at all.
+	 * To modify the metadata of a member use {@link #updateMember(long, long, LobbyMemberTransaction)}}
+	 * and {@link LobbyMemberTransaction#setMetadata(String, String)}.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @return The metadata of the member as an <i>unmodifiable</i> {@link HashMap}
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadata(Lobby, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 */
 	public Map<String, String> getMemberMetadata(long lobbyId, long userId)
 	{
 		int count = memberMetadataCount(lobbyId, userId);
@@ -1028,23 +1317,108 @@ public class LobbyManager
 		}
 		return Collections.unmodifiableMap(map);
 	}
+
+	/**
+	 * Gets all metadata entries for a given member of a given Lobby.
+	 * This methods uses roughly the same procedure as {@link #getLobbyMetadata(Lobby)}.
+	 * <p>
+	 * The metadata is returned as an <i>unmodifiable</i> {@link HashMap}
+	 * (as per {@link Collections#unmodifiableMap(Map)})
+	 * to indicate that modifying the metadata will not affect
+	 * the Lobby or the member at all.
+	 * To modify the metadata of a member use {@link #updateMember(Lobby, long, LobbyMemberTransaction)}}
+	 * and {@link LobbyMemberTransaction#setMetadata(String, String)}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @return The metadata of the member as an <i>unmodifiable</i> {@link HashMap}
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getMemberMetadata(long, long)
+	 * @see LobbyMemberTransaction#setMetadata(String, String)
+	 */
 	public Map<String, String> getMemberMetadata(Lobby lobby, long userId)
 	{
 		return getMemberMetadata(lobby.getId(), userId);
 	}
 
+	/**
+	 * Updates the information for a given member according to a {@link LobbyMemberTransaction}.
+	 * <p>
+	 * A {@link DiscordEventAdapter#onMemberUpdate(long, long)}
+	 * will be fired for all members of the Lobby.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @param transaction Transaction specifying what to update
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #updateMember(long, long, LobbyMemberTransaction)
+	 * @see #getMemberUpdateTransaction(Lobby, long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatemember">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatemember</a>
+	 */
 	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
 	{
 		updateMember(pointer, lobbyId, userId, transaction.getPointer(), callback);
 	}
+
+	/**
+	 * Updates the information for a given member according to a {@link LobbyMemberTransaction}.
+	 * <p>
+	 * A {@link DiscordEventAdapter#onMemberUpdate(long, long)}
+	 * will be fired for all members of the Lobby..
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * @param lobbyId ID of the Lobby of the member
+	 * @param userId User ID of the member
+	 * @param transaction Transaction specifying what to update
+	 * @see #updateMember(long, long, LobbyMemberTransaction, Consumer)
+	 * @see #getMemberUpdateTransaction(Lobby, long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatemember">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatemember</a>
+	 */
 	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction)
 	{
 		updateMember(lobbyId, userId, transaction, Core.DEFAULT_CALLBACK);
 	}
+
+	/**
+	 * Updates the information for a given member according to a {@link LobbyMemberTransaction}.
+	 * <p>
+	 * A {@link DiscordEventAdapter#onMemberUpdate(long, long)}
+	 * will be fired for all members of the Lobby.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @param transaction Transaction specifying what to update
+	 * @param callback Callback to process the returned {@link Result}
+	 * @see #updateMember(Lobby, long, LobbyMemberTransaction)
+	 * @see #getMemberUpdateTransaction(Lobby, long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatemember">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatemember</a>
+	 */
 	public void updateMember(Lobby lobby, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
 	{
 		updateMember(lobby.getId(), userId, transaction, callback);
 	}
+
+	/**
+	 * Updates the information for a given member according to a {@link LobbyMemberTransaction}.
+	 * <p>
+	 * A {@link DiscordEventAdapter#onMemberUpdate(long, long)}
+	 * will be fired for all members of the Lobby.
+	 * <p>
+	 * The {@link Core#DEFAULT_CALLBACK} is used to handle the returned {@link Result}.
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member
+	 * @param userId User ID of the member
+	 * @param transaction Transaction specifying what to update
+	 * @see #updateMember(Lobby, long, LobbyMemberTransaction, Consumer)
+	 * @see #getMemberUpdateTransaction(Lobby, long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatemember">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatemember</a>
+	 */
 	public void updateMember(Lobby lobby, long userId, LobbyMemberTransaction transaction)
 	{
 		updateMember(lobby, userId, transaction, Core.DEFAULT_CALLBACK);
