@@ -86,6 +86,7 @@ public class Core implements AutoCloseable
 	private OverlayManager overlayManager;
 	private RelationshipManager relationshipManager;
 	private ImageManager imageManager;
+	private LobbyManager lobbyManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -126,6 +127,7 @@ public class Core implements AutoCloseable
 		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
 		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
 		this.imageManager = new ImageManager(getImageManager(pointer));
+		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -136,6 +138,7 @@ public class Core implements AutoCloseable
 	private native long getOverlayManager(long pointer);
 	private native long getRelationshipManager(long pointer);
 	private native long getImageManager(long pointer);
+	private native long getLobbyManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -201,6 +204,18 @@ public class Core implements AutoCloseable
 	public ImageManager imageManager()
 	{
 		return imageManager;
+	}
+
+	/**
+	 * <p>Returns the {@link LobbyManager} associated with this core.</p>
+	 * <p>A LobbyManager is used to create, manage and connect to Discord Lobbies.</p>
+	 * @return A {@link LobbyManager}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getlobbymanager">
+	 *     https://discord.com/developers/docs/game-sdk/discord#getlobbymanager</a>
+	 */
+	public LobbyManager lobbyManager()
+	{
+		return lobbyManager;
 	}
 
 	/**

@@ -149,3 +149,152 @@ void on_relationship_update(void* event_data, struct DiscordRelationship* relati
 
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }
+
+// lobby_events
+void on_lobby_update(void* event_data, long lobby_id)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onLobbyUpdate", "(J)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_lobby_delete(void* event_data, long lobby_id, int reason)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onLobbyDelete", "(JI)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, reason);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_member_connect(void* event_data, long lobby_id, long user_id)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onMemberConnect", "(JJ)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_member_update(void* event_data, long lobby_id, long user_id)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onMemberUpdate", "(JJ)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_member_disconnect(void* event_data, long lobby_id, long user_id)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onMemberDisconnect", "(JJ)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_lobby_message(void* event_data, long lobby_id, long user_id, uint8_t* data, int data_length)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onLobbyMessage", "(JJ[B)V");
+
+	jbyteArray array = (*env)->NewByteArray(env, data_length);
+	(*env)->SetByteArrayRegion(env, array, 0, data_length, data);
+
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id, array);
+}
+
+void on_speaking(void* event_data, long lobby_id, long user_id, bool speaking)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onSpeaking", "(JJZ)V");
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id, speaking);
+
+	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
+}
+
+void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, int data_length)
+{
+	struct EventData* event_struct = (struct EventData*)event_data;
+
+	JNIEnv* env;
+	JavaVMAttachArgs args;
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = NULL;
+	(*(event_struct->jvm))->AttachCurrentThread(event_struct->jvm, (void**)&env, &args);
+
+	jclass clazz = (*env)->GetObjectClass(env, event_struct->handler);
+	jmethodID method = (*env)->GetMethodID(env, clazz, "onNetworkMessage", "(JJB[B)V");
+
+	jbyteArray array = (*env)->NewByteArray(env, data_length);
+	(*env)->SetByteArrayRegion(env, array, 0, data_length, data);
+
+	(*env)->CallVoidMethod(env, event_struct->handler, method, lobby_id, user_id, channel_id, array);
+}

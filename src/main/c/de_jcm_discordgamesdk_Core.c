@@ -116,6 +116,12 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getImageManager(JNIEnv *
 	return (uint64_t) core->get_image_manager(core);
 }
 
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getLobbyManager(JNIEnv *env, jobject object, jlong pointer)
+{
+	struct IDiscordCore* core = (struct IDiscordCore*) pointer;
+	return (uint64_t) core->get_lobby_manager(core);
+}
+
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_runCallbacks(JNIEnv *env, jobject object, jlong pointer)
 {
 	struct IDiscordCore* core = (struct IDiscordCore*) pointer;

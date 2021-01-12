@@ -21,6 +21,8 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_free(JNIEnv *env,
 		free(params->user_events);
 	if(params->overlay_events)
 		free(params->overlay_events);
+	if(params->lobby_events)
+		free(params->lobby_events);
 	free(params);
 }
 
@@ -96,6 +98,21 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHand
 	relationship_events->on_relationship_update = on_relationship_update;
 
 	params->relationship_events = relationship_events;
+
+	// lobby_events
+	struct IDiscordLobbyEvents *lobby_events = malloc(sizeof(struct IDiscordLobbyEvents));
+	memset(lobby_events, 0, sizeof(struct IDiscordLobbyEvents));
+
+	lobby_events->on_lobby_update = on_lobby_update;
+	lobby_events->on_lobby_delete = on_lobby_delete;
+	lobby_events->on_member_connect = on_member_connect;
+	lobby_events->on_member_update = on_member_update;
+	lobby_events->on_member_disconnect = on_member_disconnect;
+	lobby_events->on_lobby_message = on_lobby_message;
+	lobby_events->on_speaking = on_speaking;
+	lobby_events->on_network_message = on_network_message;
+
+	params->lobby_events = lobby_events;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getDefaultFlags(JNIEnv *env, jclass clazz)
