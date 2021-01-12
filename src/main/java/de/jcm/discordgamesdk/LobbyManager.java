@@ -1844,28 +1844,144 @@ public class LobbyManager
 		disconnectVoice(lobby, Core.DEFAULT_CALLBACK);
 	}
 
+	/**
+	 * Connects to the networking layer of a given Lobby.
+	 * The current users must be already connected to the Lobby itself.
+	 * <p>
+	 * This also automatically sets certain member metadata later
+	 * ("{@code $peer_id}" and "{@code $route}") to communicate
+	 * networking parameters.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(long, String, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(long)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(long, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(long, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
+	 * </ol>
+	 * @param lobbyId ID of the Lobby whose networking layer to connect to
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #connectNetwork(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectnetwork">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectnetwork</a>
+	 */
 	public void connectNetwork(long lobbyId)
 	{
 		Result result = connectNetwork(pointer, lobbyId);
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
+
+	/**
+	 * Connects to the networking layer of a given Lobby.
+	 * The current users must be already connected to the Lobby itself.
+	 * <p>
+	 * This also automatically sets certain member metadata later
+	 * ("{@code $peer_id}" and "{@code $route}") to communicate
+	 * networking parameters.
+	 * Hence a {@link DiscordEventAdapter#onMemberUpdate(long, long)}
+	 * will be fired, but does not have to be handled manually.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(Lobby, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(Lobby)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(Lobby, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(Lobby, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
+	 * </ol>
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whose networking layer to connect to
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #connectNetwork(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectnetwork">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectnetwork</a>
+	 */
 	public void connectNetwork(Lobby lobby)
 	{
 		connectNetwork(lobby.getId());
 	}
 
+	/**
+	 * Disconnects from the networking layer of a given Lobby.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(long, String, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(long)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(long, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(long, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
+	 * </ol>
+	 * @param lobbyId ID of the Lobby whose networking layer to disconnect from
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #disconnectNetwork(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectnetwork">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectnetwork</a>
+	 */
 	public void disconnectNetwork(long lobbyId)
 	{
 		Result result = disconnectNetwork(pointer, lobbyId);
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
+
+	/**
+	 * Disconnects from the networking layer of a given Lobby.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(Lobby, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(Lobby)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(Lobby, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(Lobby, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
+	 * </ol>
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby whose networking layer to disconnect from
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #disconnectNetwork(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectnetwork">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectnetwork</a>
+	 */
 	public void disconnectNetwork(Lobby lobby)
 	{
 		disconnectNetwork(lobby.getId());
 	}
 
+	/**
+	 * Flushes the Lobby networking layer.
+	 * <p>
+	 * This should be called after sending all messages and therefore
+	 * at the end of a (game) "tick".
+	 * Try to avoid calling this function inside a Discord callback,
+	 * which has been observed to be problematic for the networking layer.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(long, String, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(long)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(long, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(long, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
+	 * </ol>
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#flushnetwork">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#flushnetwork</a>
+	 */
 	public void flushNetwork()
 	{
 		Result result = flushNetwork(pointer);
@@ -1873,23 +1989,139 @@ public class LobbyManager
 			throw new GameSDKException(result);
 	}
 
+	/**
+	 * Opens a network channel to all members of a given Lobby.
+	 * <p>
+	 * You need to be connected to be Lobby's network before
+	 * opening a channel (see {@link #connectNetwork(long)}).
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(long, String, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(long)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(long, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(long, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
+	 * </ol>
+	 * @param lobbyId ID of the Lobby to open a channel in
+	 * @param channelId ID of the new network channel (can be any {@code byte})
+	 * @param reliable Whether the channel should be reliable
+	 *                 (e.g. is intended for important data)
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #openNetworkChannel(Lobby, byte, boolean)
+	 * @see #connectNetwork(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#opennetworkchannel">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#opennetworkchannel</a>
+	 */
 	public void openNetworkChannel(long lobbyId, byte channelId, boolean reliable)
 	{
 		Result result = openNetworkChannel(pointer, lobbyId, channelId, reliable);
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
+
+	/**
+	 * Opens a network channel to all members of a given Lobby.
+	 * <p>
+	 * You need to be connected to be Lobby's network before
+	 * opening a channel (see {@link #connectNetwork(Lobby)}).
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(Lobby, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(Lobby)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(Lobby, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(Lobby, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
+	 * </ol>
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby to open a channel in
+	 * @param channelId ID of the new network channel (can be any {@code byte})
+	 * @param reliable Whether the channel should be reliable
+	 *                 (e.g. is intended for important data)
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #openNetworkChannel(long, byte, boolean)
+	 * @see #connectNetwork(Lobby)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#opennetworkchannel">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#opennetworkchannel</a>
+	 */
 	public void openNetworkChannel(Lobby lobby, byte channelId, boolean reliable)
 	{
 		openNetworkChannel(lobby.getId(), channelId, reliable);
 	}
 
+	/**
+	 * Sends a network message to a given member of a given Lobby on a given channel.
+	 * <p>
+	 * You need to open a channel before sending messages over it
+	 * (see {@link #openNetworkChannel(long, byte, boolean)}).
+	 * Also make sure to call {@link #flushNetwork()} somewhere
+	 * or your messages won't be sent.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(long, String, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(long)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(long, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(long, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
+	 * </ol>
+	 * @param lobbyId ID of the Lobby of the member and where the networking happens
+	 * @param userId User ID of the member/receiver of the message
+	 * @param channelId ID of the opened channel to send the message on
+	 * @param data The message
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #sendNetworkMessage(Lobby, long, byte, byte[])
+	 * @see #openNetworkChannel(long, byte, boolean)
+	 * @see #flushNetwork()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendnetworkmessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendnetworkmessage</a>
+	 */
 	public void sendNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
 	{
 		Result result = sendNetworkMessage(pointer, lobbyId, userId, channelId, data, 0, data.length);
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
+
+	/**
+	 * Sends a network message to a given member of a given Lobby on a given channel.
+	 * <p>
+	 * You need to open a channel before sending messages over it
+	 * (see {@link #openNetworkChannel(Lobby, byte, boolean)}).
+	 * Also make sure to call {@link #flushNetwork()} somewhere
+	 * or your messages won't be sent.
+	 * <p>
+	 * Basic networking structure:
+	 * <ol>
+	 *     <li>Connect to the Lobby with {@link #connectLobby(Lobby, BiConsumer)}
+	 *     <li>Connect to the Lobby's networking layer with {@link #connectNetwork(Lobby)}
+	 *     <li>Open some channels with {@link #openNetworkChannel(Lobby, byte, boolean)}
+	 *     <li>Send messages with {@link #sendNetworkMessage(Lobby, long, byte, byte[])}
+	 *     <li>Repeatedly flush the networking layer with {@link #flushNetwork()}
+	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
+	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
+	 * </ol>
+	 * <p>
+	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
+	 * @param lobby The Lobby of the member and where the networking happens
+	 * @param userId User ID of the member/receiver of the message
+	 * @param channelId ID of the opened channel to send the message on
+	 * @param data The message
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #sendNetworkMessage(long, long, byte, byte[])
+	 * @see #openNetworkChannel(Lobby, byte, boolean)
+	 * @see #flushNetwork()
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#sendnetworkmessage">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#sendnetworkmessage</a>
+	 */
 	public void sendNetworkMessage(Lobby lobby, long userId, byte channelId, byte[] data)
 	{
 		sendNetworkMessage(lobby.getId(), userId, channelId, data);
