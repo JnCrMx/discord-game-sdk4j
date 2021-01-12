@@ -1862,6 +1862,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * @param lobbyId ID of the Lobby whose networking layer to connect to
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
 	 * @see #connectNetwork(Lobby)
@@ -1895,6 +1900,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * <p>
 	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
 	 * @param lobby The Lobby whose networking layer to connect to
@@ -1921,6 +1931,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * @param lobbyId ID of the Lobby whose networking layer to disconnect from
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
 	 * @see #disconnectNetwork(Lobby)
@@ -1947,6 +1962,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * <p>
 	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
 	 * @param lobby The Lobby whose networking layer to disconnect from
@@ -1978,6 +1998,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#flushnetwork">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#flushnetwork</a>
@@ -2005,6 +2030,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * @param lobbyId ID of the Lobby to open a channel in
 	 * @param channelId ID of the new network channel (can be any {@code byte})
 	 * @param reliable Whether the channel should be reliable
@@ -2038,6 +2068,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * <p>
 	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
 	 * @param lobby The Lobby to open a channel in
@@ -2057,6 +2092,7 @@ public class LobbyManager
 
 	/**
 	 * Sends a network message to a given member of a given Lobby on a given channel.
+	 * A message is received in {@link DiscordEventAdapter#onNetworkMessage(long, long, byte, byte[])}.
 	 * <p>
 	 * You need to open a channel before sending messages over it
 	 * (see {@link #openNetworkChannel(long, byte, boolean)}).
@@ -2073,6 +2109,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(long)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(long)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * @param lobbyId ID of the Lobby of the member and where the networking happens
 	 * @param userId User ID of the member/receiver of the message
 	 * @param channelId ID of the opened channel to send the message on
@@ -2093,6 +2134,7 @@ public class LobbyManager
 
 	/**
 	 * Sends a network message to a given member of a given Lobby on a given channel.
+	 * A message is received in {@link DiscordEventAdapter#onNetworkMessage(long, long, byte, byte[])}.
 	 * <p>
 	 * You need to open a channel before sending messages over it
 	 * (see {@link #openNetworkChannel(Lobby, byte, boolean)}).
@@ -2109,6 +2151,11 @@ public class LobbyManager
 	 *     <li>When you are done, disconnect from the networking layer with {@link #disconnectNetwork(Lobby)}
 	 *     <li>Finally, disconnect from the Lobby with {@link #disconnectLobby(Lobby)}
 	 * </ol>
+	 * See <a href="https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#integrated-networking</a> and
+	 * <a href="https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way">
+	 *     https://discord.com/developers/docs/game-sdk/lobbies#example-networking-the-easy-way</a>
+	 * for more details and examples.
 	 * <p>
 	 * This method simply obtains the ID of the given Lobby with {@link Lobby#getId()}.
 	 * @param lobby The Lobby of the member and where the networking happens
