@@ -55,12 +55,12 @@ public class Activity implements AutoCloseable
 		}
 	}
 
-	private long pointer;
+	private final long pointer;
 
-	private ActivityTimestamps timestamps;
-	private ActivityAssets assets;
-	private ActivityParty party;
-	private ActivitySecrets secrets;
+	private final ActivityTimestamps timestamps;
+	private final ActivityAssets assets;
+	private final ActivityParty party;
+	private final ActivitySecrets secrets;
 
 	/**
 	 * Allocates a new Activity structure.

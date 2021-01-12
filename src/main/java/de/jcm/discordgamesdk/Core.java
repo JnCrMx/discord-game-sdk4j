@@ -79,14 +79,14 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
-	private long pointer;
+	private final long pointer;
 
-	private ActivityManager activityManager;
-	private UserManager userManager;
-	private OverlayManager overlayManager;
-	private RelationshipManager relationshipManager;
-	private ImageManager imageManager;
-	private LobbyManager lobbyManager;
+	private final ActivityManager activityManager;
+	private final UserManager userManager;
+	private final OverlayManager overlayManager;
+	private final RelationshipManager relationshipManager;
+	private final ImageManager imageManager;
+	private final LobbyManager lobbyManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and

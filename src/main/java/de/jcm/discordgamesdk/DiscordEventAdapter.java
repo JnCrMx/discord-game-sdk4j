@@ -110,8 +110,7 @@ public abstract class DiscordEventAdapter
 
 	/**
 	 * Fires when a Lobby the current user is connected to is deleted.
-	 * This happens when the Lobby owner calls {@link LobbyManager#deleteLobby(long)}
-	 * or leaves their own Lobby.
+	 * This happens when the Lobby owner calls {@link LobbyManager#deleteLobby(long)}.
 	 * @param lobbyId ID of the Lobby that has been deleted
 	 * @param reason Reason for deletion, an undocumented system message
 	 * @see LobbyManager#deleteLobby(long)

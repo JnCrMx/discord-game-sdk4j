@@ -169,7 +169,7 @@ void on_lobby_update(void* event_data, long lobby_id)
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }
 
-void on_lobby_delete(void* event_data, long lobby_id, int reason)
+void on_lobby_delete(void* event_data, long lobby_id, uint32_t reason)
 {
 	struct EventData* event_struct = (struct EventData*)event_data;
 
@@ -241,7 +241,7 @@ void on_member_disconnect(void* event_data, long lobby_id, long user_id)
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }
 
-void on_lobby_message(void* event_data, long lobby_id, long user_id, uint8_t* data, int data_length)
+void on_lobby_message(void* event_data, long lobby_id, long user_id, uint8_t* data, uint32_t data_length)
 {
 	struct EventData* event_struct = (struct EventData*)event_data;
 
@@ -279,7 +279,7 @@ void on_speaking(void* event_data, long lobby_id, long user_id, bool speaking)
 	(*(event_struct->jvm))->DetachCurrentThread(event_struct->jvm);
 }
 
-void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, int data_length)
+void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, uint32_t data_length)
 {
 	struct EventData* event_struct = (struct EventData*)event_data;
 
