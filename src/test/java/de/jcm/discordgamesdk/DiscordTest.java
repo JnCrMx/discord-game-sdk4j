@@ -21,11 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 
 public class DiscordTest
 {
@@ -535,7 +532,7 @@ public class DiscordTest
 					                        core.lobbyManager().getLobbyMetadataValue(lobby, "test"),
 					                        "wrong metadata");
 					System.out.println(core.lobbyManager().getLobbyMetadata(lobby));
-					Assertions.assertEquals(false, lobby.isLocked(), "wrong lock state");
+					Assertions.assertFalse(lobby.isLocked(), "wrong lock state");
 
 					System.out.println(core.lobbyManager().getMemberUsers(lobby));
 
@@ -543,9 +540,6 @@ public class DiscordTest
 					updateTxn.setCapacity(100);
 					core.lobbyManager().updateLobby(lobby, updateTxn, result1 -> {
 						Assertions.assertEquals(Result.OK, result1, "update_lobby failed");
-						/*core.lobbyManager().deleteLobby(lobby, result2 -> {
-							Assertions.assertEquals(Result.OK, result2, "delete_lobby failed");
-						});*/
 					});
 
 					LobbyMemberTransaction memberTxn = core.lobbyManager().getMemberUpdateTransaction(lobby, lobby.getOwnerId());
@@ -564,8 +558,6 @@ public class DiscordTest
 							"connect_network failed");
 
 					core.lobbyManager().openNetworkChannel(lobby, (byte) 0, true);
-
-					//Assertions.assertDoesNotThrow(()->core.lobbyManager().disconnectNetwork(lobby), "disconnect_network failed");
 				});
 
 				for(int i = 0; i < 10000; i++)

@@ -16,7 +16,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +46,7 @@ public class LobbyExample extends JFrame
 		return t -> seen.add(keyExtractor.apply(t));
 	}
 
-	public DiscordEventAdapter eventAdapter = new DiscordEventAdapter()
+	public final DiscordEventAdapter eventAdapter = new DiscordEventAdapter()
 	{
 		@Override
 		public void onLobbyUpdate(long lobbyId)
@@ -72,16 +71,19 @@ public class LobbyExample extends JFrame
 		@Override
 		public void onMemberConnect(long lobbyId, long userId)
 		{
+			// Add some code here
 		}
 
 		@Override
 		public void onMemberUpdate(long lobbyId, long userId)
 		{
+			// Add some code here
 		}
 
 		@Override
 		public void onMemberDisconnect(long lobbyId, long userId)
 		{
+			// Add some code here
 		}
 
 		@Override
