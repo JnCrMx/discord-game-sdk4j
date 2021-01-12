@@ -5,6 +5,7 @@ import de.jcm.discordgamesdk.lobby.*;
 import de.jcm.discordgamesdk.user.DiscordUser;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -187,18 +188,16 @@ public class NetworkExample extends DiscordEventAdapter
 		}
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		String discordLibraryPath;
-		if(System.getProperty("os.name").toLowerCase().contains("windows"))
+		File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
+		if(discordLibrary == null)
 		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.dll";
+			System.err.println("Error downloading Discord SDK.");
+			System.exit(-1);
 		}
-		else
-		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
-		}
-		Core.init(new File(discordLibraryPath));
+		// Initialize the Core
+		Core.init(discordLibrary);
 
 		try
 		{

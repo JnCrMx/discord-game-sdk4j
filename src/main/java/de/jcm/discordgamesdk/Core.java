@@ -87,7 +87,7 @@ public class Core implements AutoCloseable
 	private RelationshipManager relationshipManager;
 	private ImageManager imageManager;
 	private LobbyManager lobbyManager;
-	private NetworkManager networkManager;
+	private final NetworkManager networkManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -214,6 +214,15 @@ public class Core implements AutoCloseable
 		return lobbyManager;
 	}
 
+	/**
+	 * Returns the {@link NetworkManager} associated with this core.
+	 * <p>
+	 * A NetworkManager can be used to open network channels over
+	 * Discord on which you can send arbitrary messages.
+	 * @return A {@link NetworkManager}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager">
+	 *     https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager</a>
+	 */
 	public NetworkManager networkManager()
 	{
 		return networkManager;

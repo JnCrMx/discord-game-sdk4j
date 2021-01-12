@@ -32,7 +32,7 @@ void on_speaking(void* event_data, long lobby_id, long user_id, bool speaking);
 void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, int data_length);
 
 // network_events
-void on_message(void* event_data, long peer_id, uint8_t channel_id, uint8_t* data, int data_length);
+void on_message(void* event_data, DiscordNetworkPeerId peer_id, DiscordNetworkChannelId channel_id, uint8_t* data, uint32_t data_length);
 void on_route_update(void* event_data, const char* route_data);
 
 #endif
