@@ -179,12 +179,5 @@
             <artifactId>native-utils</artifactId>
             <version>e6a394896</version>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-            <!-- only required for examples -->
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>

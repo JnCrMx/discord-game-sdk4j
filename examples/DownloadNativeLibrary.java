@@ -1,11 +1,10 @@
 import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -53,11 +52,8 @@ public class DownloadNativeLibrary
 				File temp = new File(tempDir, name+suffix);
 				temp.deleteOnExit();
 
-				// Open an OutputStream to this file...
-				FileOutputStream fout = new FileOutputStream(temp);
-				// ...and copy the file from the ZIP to it
-				IOUtils.copy(zin, fout);    // Java 8 replacement for InputStream.transferTo(OutputStream)
-				fout.close();
+				// Copy the file in the ZIP to our temporary file
+				Files.copy(zin, temp.toPath());
 
 				// We are done, so close the input stream
 				zin.close();
