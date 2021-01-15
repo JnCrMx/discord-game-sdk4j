@@ -113,6 +113,15 @@ JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_CreateParams_registerEventHand
 	lobby_events->on_network_message = on_network_message;
 
 	params->lobby_events = lobby_events;
+
+	// network_events
+	struct IDiscordNetworkEvents *network_events = malloc(sizeof(struct IDiscordNetworkEvents));
+	memset(network_events, 0, sizeof(struct IDiscordNetworkEvents));
+
+	network_events->on_message = on_message;
+	network_events->on_route_update = on_route_update;
+
+	params->network_events = network_events;
 }
 
 JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_CreateParams_getDefaultFlags(JNIEnv *env, jclass clazz)

@@ -228,4 +228,37 @@ public abstract class DiscordEventAdapter
 	{
 
 	}
+
+	/**
+	 * Fires when you receive a message from another user/peer.
+	 * Only fires if you already have an open channel for that peer
+	 * (see {@link NetworkManager#openChannel(long, byte, boolean)}.
+	 * @param peerId Peer ID of the sender
+	 * @param channelId ID of the channel the message was sent on
+	 * @param data The message/data sent
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/networking#onmessage">
+	 *     https://discord.com/developers/docs/game-sdk/networking#onmessage</a>
+	 */
+	public void onMessage(long peerId, byte channelId, byte[] data)
+	{
+
+	}
+
+	/**
+	 * Fires when your current networking route changes.
+	 * <p>
+	 * You probably want to notify all peer you are connect to
+	 * about the new route, so they can call
+	 * {@link NetworkManager#updatePeer(long, String)} accordingly.
+	 * <p>
+	 * One way of broadcasting your route is through Lobby member metadata
+	 * (see {@link LobbyMemberTransaction#setMetadata(String, String)}).
+	 * @param routeData Your new route
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/networking#onrouteupdate">
+	 *     https://discord.com/developers/docs/game-sdk/networking#onrouteupdate</a>
+	 */
+	public void onRouteUpdate(String routeData)
+	{
+
+	}
 }
