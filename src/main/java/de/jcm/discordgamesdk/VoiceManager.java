@@ -1,6 +1,7 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.voice.VoiceInputMode;
+import org.jetbrains.annotations.Range;
 
 import java.util.function.Consumer;
 
@@ -45,6 +46,12 @@ public class VoiceManager
 
 	/**
 	 * Sets a new voice input mode for the current user.
+	 * <p>
+	 * Discord checks the validity of the {@link VoiceInputMode#getShortcut()} and
+	 * e.g. removes illegal keys (no error is thrown).
+	 * However, the plausibility is not checked, allowing shortcuts to
+	 * contain the same key multiple times and to be composed of as many
+	 * keys as you can fit into the string (max length is 255 bytes).
 	 * @param inputMode The new voice input mode
 	 * @param callback Callback to process the returned {@link Result}
 	 * @see #setInputMode(VoiceInputMode)
@@ -142,6 +149,98 @@ public class VoiceManager
 	public void setSelfDeaf(boolean selfDeaf)
 	{
 		Result result = setSelfDeaf(pointer, selfDeaf);
+		if(result != Result.OK)
+		{
+			throw new GameSDKException(result);
+		}
+	}
+
+	/**
+	 * Checks if a user with a given ID is locally muted by the current user.
+	 * @param userId ID of the user to check
+	 * @return {@code true} if the user is locally muted
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #setLocalMute(long, boolean)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord-voice#islocalmute">
+	 *     https://discord.com/developers/docs/game-sdk/discord-voice#islocalmute</a>
+	 */
+	public boolean isLocalMute(long userId)
+	{
+		Object ret = isLocalMute(pointer, userId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Boolean) ret;
+		}
+	}
+
+	/**
+	 * Locally mutes or unmutes the user with the given ID.
+	 * @param userId ID of the user to (un)mute
+	 * @param mute {@code true} to mute the user, {@code false} to unmute the user
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #isLocalMute(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord-voice#setlocalmute">
+	 *     https://discord.com/developers/docs/game-sdk/discord-voice#setlocalmute</a>
+	 */
+	public void setLocalMute(long userId, boolean mute)
+	{
+		Result result = setLocalMute(pointer, userId, mute);
+		if(result != Result.OK)
+		{
+			throw new GameSDKException(result);
+		}
+	}
+
+	/**
+	 * Gets the local volume adjustment for the user with the given ID.
+	 * <p>
+	 * A volume of {@code 100} is default.
+	 * A volume lower than that means that the volume for the given user
+	 * is reduced (a volume of {@code 0} means no sound at all).
+	 * If the volume is higher than the default, it is boosted
+	 * (up to {@code 200} which is the maximal boost).
+	 * @param userId ID of the user to get the volume adjustment for
+	 * @return The volume adjustment in percent, an integer in percent between 0 and 200
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #setLocalVolume(long, int)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord-voice#getlocalvolume">
+	 *     https://discord.com/developers/docs/game-sdk/discord-voice#getlocalvolume</a>
+	 */
+	public int getLocalVolume(long userId)
+	{
+		Object ret = getLocalVolume(pointer, userId);
+		if(ret instanceof Result)
+		{
+			throw new GameSDKException((Result) ret);
+		}
+		else
+		{
+			return (Integer) ret;
+		}
+	}
+
+	/**
+	 * Adjust the volume for a given user id locally.
+	 * <p>
+	 * A volume of {@code 100} is default.
+	 * A volume lower than that means that the volume for the given user
+	 * is reduced (a volume of {@code 0} means no sound at all).
+	 * If the volume is higher than the default, it is boosted
+	 * (up to {@code 200} which is the maximal boost).
+	 * @param userId ID of the user to adjust the volume for
+	 * @param volume New volume adjustment in percent, an integer from 0 to 200
+	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
+	 * @see #getLocalVolume(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord-voice#setlocalvolume">
+	 *     https://discord.com/developers/docs/game-sdk/discord-voice#setlocalvolume</a>
+	 */
+	public void setLocalVolume(long userId, @Range(from = 0, to = 100) int volume)
+	{
+		Result result = setLocalVolume(pointer, userId, (byte)volume);
 		if(result != Result.OK)
 		{
 			throw new GameSDKException(result);

@@ -135,3 +135,83 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_VoiceManager_setSelfDeaf
 
 	return result_object;
 }
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_VoiceManager_isLocalMute
+  (JNIEnv *env, jobject object, jlong pointer, jlong userId)
+{
+	struct IDiscordVoiceManager *voice_manager = (struct IDiscordVoiceManager*) pointer;
+
+	bool mute;
+	enum EDiscordResult result = voice_manager->is_local_mute(voice_manager, userId, &mute);
+
+	if(result == DiscordResult_Ok) // if everything went well, return the boolean
+	{
+		jclass Boolean_class = (*env)->FindClass(env, "java/lang/Boolean");
+		jmethodID valueOf_method = (*env)->GetStaticMethodID(env, Boolean_class, "valueOf", "(Z)Ljava/lang/Boolean;");
+		jobject return_object = (*env)->CallStaticObjectMethod(env, Boolean_class, valueOf_method, mute);
+		return return_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_VoiceManager_setLocalMute
+  (JNIEnv *env, jobject object, jlong pointer, jlong userId, jboolean mute)
+{
+	struct IDiscordVoiceManager *voice_manager = (struct IDiscordVoiceManager*) pointer;
+	enum EDiscordResult result = voice_manager->set_local_mute(voice_manager, userId, mute);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_VoiceManager_getLocalVolume
+  (JNIEnv *env, jobject object, jlong pointer, jlong userId)
+{
+	struct IDiscordVoiceManager *voice_manager = (struct IDiscordVoiceManager*) pointer;
+
+	uint8_t volume;
+	enum EDiscordResult result = voice_manager->get_local_volume(voice_manager, userId, &volume);
+
+	if(result == DiscordResult_Ok) // if everything went well, return the volume as an Integer
+	{
+		jclass Integer_class = (*env)->FindClass(env, "java/lang/Integer");
+		jmethodID valueOf_method = (*env)->GetStaticMethodID(env, Integer_class, "valueOf", "(I)Ljava/lang/Integer;");
+		jobject return_object = (*env)->CallStaticObjectMethod(env, Integer_class, valueOf_method, (int)volume);
+		return return_object;
+	}
+	else // otherwise return the result
+	{
+		jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+		jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+		jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+		jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+		return result_object;
+	}
+}
+
+JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_VoiceManager_setLocalVolume
+  (JNIEnv *env, jobject object, jlong pointer, jlong userId, jbyte volume)
+{
+	struct IDiscordVoiceManager *voice_manager = (struct IDiscordVoiceManager*) pointer;
+	enum EDiscordResult result = voice_manager->set_local_volume(voice_manager, userId, (uint8_t)volume);
+
+	jclass result_clazz = (*env)->FindClass(env, "de/jcm/discordgamesdk/Result");
+	jmethodID values_method = (*env)->GetStaticMethodID(env, result_clazz, "values", "()[Lde/jcm/discordgamesdk/Result;");
+	jobjectArray values = (jobjectArray) (*env)->CallStaticObjectMethod(env, result_clazz, values_method);
+	jobject result_object = (*env)->GetObjectArrayElement(env, values, result);
+
+	return result_object;
+}

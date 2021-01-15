@@ -656,6 +656,16 @@ public class DiscordTest
 				boolean selfMute2 = core.voiceManager().isSelfMute();
 				Assertions.assertNotEquals(selfMute, selfMute2, "self mute did not change");
 
+				long testUid = 0;
+
+				Assertions.assertFalse(core.voiceManager().isLocalMute(testUid));
+				core.voiceManager().setLocalMute(testUid, true);
+				Assertions.assertTrue(core.voiceManager().isLocalMute(testUid));
+
+				Assertions.assertEquals(100, core.voiceManager().getLocalVolume(testUid));
+				core.voiceManager().setLocalVolume(testUid, 200);
+				Assertions.assertEquals(200, core.voiceManager().getLocalVolume(testUid));
+
 				for(int i = 0; i < 1000; i++)
 				{
 					core.runCallbacks();
