@@ -22,9 +22,11 @@ add_library(discord_game_sdk_jni
 			de_jcm_discordgamesdk_lobby_LobbyMemberTransaction.c
 			de_jcm_discordgamesdk_lobby_LobbySearchQuery.c
 			de_jcm_discordgamesdk_LobbyManager.c
+			de_jcm_discordgamesdk_NetworkManager.c
 			de_jcm_discordgamesdk_OverlayManager.c
 			de_jcm_discordgamesdk_RelationshipManager.c
 			de_jcm_discordgamesdk_UserManager.c
+			de_jcm_discordgamesdk_VoiceManager.c
 
 			Callback.c
 			EventHandler.c)

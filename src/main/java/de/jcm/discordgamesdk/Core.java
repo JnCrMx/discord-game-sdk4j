@@ -87,6 +87,8 @@ public class Core implements AutoCloseable
 	private final RelationshipManager relationshipManager;
 	private final ImageManager imageManager;
 	private final LobbyManager lobbyManager;
+	private final NetworkManager networkManager;
+	private final VoiceManager voiceManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
@@ -128,6 +130,8 @@ public class Core implements AutoCloseable
 		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
 		this.imageManager = new ImageManager(getImageManager(pointer));
 		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
+		this.networkManager = new NetworkManager(getNetworkManager(pointer));
+		this.voiceManager = new VoiceManager(getVoiceManager(pointer));
 	}
 
 	private native Object create(long paramPointer);
@@ -139,6 +143,8 @@ public class Core implements AutoCloseable
 	private native long getRelationshipManager(long pointer);
 	private native long getImageManager(long pointer);
 	private native long getLobbyManager(long pointer);
+	private native long getNetworkManager(long pointer);
+	private native long getVoiceManager(long pointer);
 
 	private native void runCallbacks(long pointer);
 
@@ -216,6 +222,36 @@ public class Core implements AutoCloseable
 	public LobbyManager lobbyManager()
 	{
 		return lobbyManager;
+	}
+
+	/**
+	 * Returns the {@link NetworkManager} associated with this core.
+	 * <p>
+	 * A NetworkManager can be used to open network channels over
+	 * Discord on which you can send arbitrary messages.
+	 * @return A {@link NetworkManager}
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager">
+	 *     https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager</a>
+	 */
+	public NetworkManager networkManager()
+	{
+		return networkManager;
+	}
+
+	/**
+	 * Returns the {@link VoiceManager} associated with this core.
+	 * <p>
+	 * A VoiceManager is used to control Discord Lobby voice channels.
+	 * It can be used to configure input modes, to mute and deaf the current user,
+	 * to locally mute other users and to locally adjust their volume.
+	 * @return A {@link VoiceManager}
+	 * @see LobbyManager#connectVoice(long)
+	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getvoicemanager">
+	 *     https://discord.com/developers/docs/game-sdk/discord#getvoicemanager</a>
+	 */
+	public VoiceManager voiceManager()
+	{
+		return voiceManager;
 	}
 
 	/**

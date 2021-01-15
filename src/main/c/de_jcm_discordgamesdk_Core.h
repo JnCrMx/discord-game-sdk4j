@@ -81,6 +81,22 @@ JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getLobbyManager
 
 /*
  * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getNetworkManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getNetworkManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
+ * Method:    getVoiceManager
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_de_jcm_discordgamesdk_Core_getVoiceManager
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     de_jcm_discordgamesdk_Core
  * Method:    runCallbacks
  * Signature: (J)V
  */
