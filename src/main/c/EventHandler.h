@@ -22,14 +22,14 @@ void on_relationship_refresh(void* event_data);
 void on_relationship_update(void* event_data, struct DiscordRelationship* relationship);
 
 // lobby_events
-void on_lobby_update(void* event_data, long lobby_id);
-void on_lobby_delete(void* event_data, long lobby_id, uint32_t reason);
-void on_member_connect(void* event_data, long lobby_id, long user_id);
-void on_member_update(void* event_data, long lobby_id, long user_id);
-void on_member_disconnect(void* event_data, long lobby_id, long user_id);
-void on_lobby_message(void* event_data, long lobby_id, long user_id, uint8_t* data, uint32_t data_length);
-void on_speaking(void* event_data, long lobby_id, long user_id, bool speaking);
-void on_network_message(void* event_data, long lobby_id, long user_id, uint8_t channel_id, uint8_t* data, uint32_t data_length);
+void on_lobby_update(void* event_data, int64_t lobby_id);
+void on_lobby_delete(void* event_data, int64_t lobby_id, uint32_t reason);
+void on_member_connect(void* event_data, int64_t lobby_id, int64_t user_id);
+void on_member_update(void* event_data, int64_t lobby_id, int64_t user_id);
+void on_member_disconnect(void* event_data, int64_t lobby_id, int64_t user_id);
+void on_lobby_message(void* event_data, int64_t lobby_id, int64_t user_id, uint8_t* data, uint32_t data_length);
+void on_speaking(void* event_data, int64_t lobby_id, int64_t user_id, bool speaking);
+void on_network_message(void* event_data, int64_t lobby_id, int64_t user_id, uint8_t channel_id, uint8_t* data, uint32_t data_length);
 
 // network_events
 void on_message(void* event_data, DiscordNetworkPeerId peer_id, DiscordNetworkChannelId channel_id, uint8_t* data, uint32_t data_length);
