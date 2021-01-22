@@ -1,8 +1,8 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.voice.VoiceInputMode;
-import org.jetbrains.annotations.Range;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -61,7 +61,7 @@ public class VoiceManager
 	 */
 	public void setInputMode(VoiceInputMode inputMode, Consumer<Result> callback)
 	{
-		setInputMode(pointer, inputMode, callback);
+		setInputMode(pointer, inputMode, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -238,8 +238,11 @@ public class VoiceManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord-voice#setlocalvolume">
 	 *     https://discord.com/developers/docs/game-sdk/discord-voice#setlocalvolume</a>
 	 */
-	public void setLocalVolume(long userId, @Range(from = 0, to = 100) int volume)
+	public void setLocalVolume(long userId, int volume)
 	{
+		if(volume < 0 || volume > 200)
+			throw new IllegalArgumentException("volume out of range: "+volume);
+
 		Result result = setLocalVolume(pointer, userId, (byte)volume);
 		if(result != Result.OK)
 		{

@@ -3,8 +3,8 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityJoinRequestReply;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -30,7 +30,7 @@ public class ActivityManager
 	 */
 	public Result registerCommand(String command)
 	{
-		return registerCommand(pointer, command);
+		return registerCommand(pointer, Objects.requireNonNull(command));
 	}
 
 	/**
@@ -66,9 +66,9 @@ public class ActivityManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#updateactivity">
 	 *     https://discordapp.com/developers/docs/game-sdk/activities#updateactivity</a>
 	 */
-	public void updateActivity(Activity activity, @NotNull Consumer<Result> callback)
+	public void updateActivity(Activity activity, Consumer<Result> callback)
 	{
-		updateActivity(pointer, activity.getPointer(), callback);
+		updateActivity(pointer, activity.getPointer(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -89,9 +89,9 @@ public class ActivityManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#clearactivity">
 	 *     https://discordapp.com/developers/docs/game-sdk/activities#clearactivity</a>
 	 */
-	public void clearActivity(@NotNull Consumer<Result> callback)
+	public void clearActivity(Consumer<Result> callback)
 	{
-		clearActivity(pointer, callback);
+		clearActivity(pointer, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class ActivityManager
 	 */
 	public void sendRequestReply(long userId, ActivityJoinRequestReply reply, Consumer<Result> callback)
 	{
-		sendRequestReply(pointer, userId, reply.ordinal(), callback);
+		sendRequestReply(pointer, userId, reply.ordinal(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class ActivityManager
 	 */
 	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
 	{
-		sendInvite(pointer, userId, type.ordinal(), content, callback);
+		sendInvite(pointer, userId, type.ordinal(), Objects.requireNonNull(content), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class ActivityManager
 	 */
 	public void acceptRequest(long userId, Consumer<Result> callback)
 	{
-		acceptRequest(pointer, userId, callback);
+		acceptRequest(pointer, userId, Objects.requireNonNull(callback));
 	}
 
 	private native Result registerCommand(long pointer, String command);

@@ -1,7 +1,8 @@
 package de.jcm.discordgamesdk.image;
 
 import de.jcm.discordgamesdk.ImageManager;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * <p>Handle identifying a Discord image.</p>
@@ -22,9 +23,9 @@ public class ImageHandle
 	 * @param size Desired resolution of the image, a power of 2 between 16 and 256
 	 * @throws IllegalArgumentException if the desired size is not allowed (s. a.)
 	 */
-	public ImageHandle(@NotNull ImageType type, long id, int size)
+	public ImageHandle(ImageType type, long id, int size)
 	{
-		this.type = type;
+		this.type = Objects.requireNonNull(type);
 		this.id = id;
 		if(size < 16)
 			throw new IllegalArgumentException("size is smaller than 16: "+size);
@@ -59,7 +60,7 @@ public class ImageHandle
 	 */
 	public void setType(ImageType type)
 	{
-		this.type = type;
+		this.type = Objects.requireNonNull(type);
 	}
 
 	/**
@@ -95,6 +96,8 @@ public class ImageHandle
 	 */
 	public void setSize(int size)
 	{
+		if((size & (size - 1)) != 0)
+			throw new IllegalArgumentException("size is not a power of 2: "+size);
 		this.size = size;
 	}
 

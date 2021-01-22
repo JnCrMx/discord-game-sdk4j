@@ -7,6 +7,7 @@ import de.jcm.discordgamesdk.user.RelationshipType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -79,7 +80,7 @@ public class RelationshipManager
 	 */
 	public void filter(Predicate<Relationship> filter)
 	{
-		filter(pointer, filter);
+		filter(pointer, Objects.requireNonNull(filter));
 	}
 
 	/**

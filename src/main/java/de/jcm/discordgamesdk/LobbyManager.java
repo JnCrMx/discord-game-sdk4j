@@ -3,12 +3,8 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.ActivitySecrets;
 import de.jcm.discordgamesdk.lobby.*;
 import de.jcm.discordgamesdk.user.DiscordUser;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -159,9 +155,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#createlobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#createlobby</a>
 	 */
-	public void createLobby(LobbyTransaction transaction, @NotNull BiConsumer<Result, Lobby> callback)
+	public void createLobby(LobbyTransaction transaction, BiConsumer<Result, Lobby> callback)
 	{
-		createLobby(pointer, transaction.getPointer(), callback);
+		createLobby(pointer, transaction.getPointer(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -181,7 +177,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#createlobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#createlobby</a>
 	 */
-	public void createLobby(LobbyTransaction transaction, @NotNull Consumer<Lobby> callback)
+	public void createLobby(LobbyTransaction transaction, Consumer<Lobby> callback)
 	{
 		createLobby(transaction, (result, lobby) ->
 		{
@@ -207,9 +203,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
 	 */
-	public void updateLobby(long lobbyId, LobbyTransaction transaction, @NotNull Consumer<Result> callback)
+	public void updateLobby(long lobbyId, LobbyTransaction transaction, Consumer<Result> callback)
 	{
-		updateLobby(pointer, lobbyId, transaction.getPointer(), callback);
+		updateLobby(pointer, lobbyId, transaction.getPointer(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -254,7 +250,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#updatelobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#updatelobby</a>
 	 */
-	public void updateLobby(Lobby lobby, LobbyTransaction transaction, @NotNull Consumer<Result> callback)
+	public void updateLobby(Lobby lobby, LobbyTransaction transaction, Consumer<Result> callback)
 	{
 		updateLobby(lobby.getId(), transaction, callback);
 	}
@@ -294,9 +290,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
 	 */
-	public void deleteLobby(long lobbyId, @NotNull Consumer<Result> callback)
+	public void deleteLobby(long lobbyId, Consumer<Result> callback)
 	{
-		deleteLobby(pointer, lobbyId, callback);
+		deleteLobby(pointer, lobbyId, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -312,7 +308,7 @@ public class LobbyManager
 	 */
 	public void deleteLobby(long lobbyId)
 	{
-		deleteLobby(pointer, lobbyId, Core.DEFAULT_CALLBACK);
+		deleteLobby(lobbyId, Core.DEFAULT_CALLBACK);
 	}
 
 	/**
@@ -327,7 +323,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#deletelobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#deletelobby</a>
 	 */
-	public void deleteLobby(Lobby lobby, @NotNull Consumer<Result> callback)
+	public void deleteLobby(Lobby lobby, Consumer<Result> callback)
 	{
 		deleteLobby(lobby.getId(), callback);
 	}
@@ -371,11 +367,11 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
 	 */
-	public void connectLobby(long lobbyId, String secret, @NotNull BiConsumer<Result, Lobby> callback)
+	public void connectLobby(long lobbyId, String secret, BiConsumer<Result, Lobby> callback)
 	{
 		if(secret.getBytes().length >= 128)
 			throw new IllegalArgumentException("max secret length is 127");
-		connectLobby(pointer, lobbyId, secret, callback);
+		connectLobby(pointer, lobbyId, secret, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -403,7 +399,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
 	 */
-	public void connectLobby(long lobbyId, String secret, @NotNull Consumer<Lobby> callback)
+	public void connectLobby(long lobbyId, String secret, Consumer<Lobby> callback)
 	{
 		connectLobby(lobbyId, secret, (result, lobby) ->
 		{
@@ -433,7 +429,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobby">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobby</a>
 	 */
-	public void connectLobby(Lobby lobby, @NotNull BiConsumer<Result, Lobby> callback)
+	public void connectLobby(Lobby lobby, BiConsumer<Result, Lobby> callback)
 	{
 		connectLobby(lobby.getId(), lobby.getSecret(), callback);
 	}
@@ -462,11 +458,11 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret</a>
 	 */
-	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull BiConsumer<Result, Lobby> callback)
+	public void connectLobbyWithActivitySecret(String activitySecret, BiConsumer<Result, Lobby> callback)
 	{
 		if(activitySecret.getBytes().length >= 128)
 			throw new IllegalArgumentException("max activity secret length is 127");
-		connectLobbyWithActivitySecret(pointer, activitySecret, callback);
+		connectLobbyWithActivitySecret(pointer, activitySecret, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -497,9 +493,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectlobbywithactivitysecret</a>
 	 */
-	public void connectLobbyWithActivitySecret(String activitySecret, @NotNull Consumer<Lobby> callback)
+	public void connectLobbyWithActivitySecret(String activitySecret, Consumer<Lobby> callback)
 	{
-		connectLobbyWithActivitySecret(pointer, activitySecret, (result, lobby) ->
+		connectLobbyWithActivitySecret(activitySecret, (result, lobby) ->
 		{
 			Core.DEFAULT_CALLBACK.accept(result);
 			callback.accept(lobby);
@@ -516,7 +512,7 @@ public class LobbyManager
 	 */
 	public void disconnectLobby(long lobbyId, Consumer<Result> callback)
 	{
-		disconnectLobby(pointer, lobbyId, callback);
+		disconnectLobby(pointer, lobbyId, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1353,7 +1349,7 @@ public class LobbyManager
 	 */
 	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
 	{
-		updateMember(pointer, lobbyId, userId, transaction.getPointer(), callback);
+		updateMember(pointer, lobbyId, userId, transaction.getPointer(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1439,7 +1435,7 @@ public class LobbyManager
 	 */
 	public void sendLobbyMessage(long lobbyId, byte[] data, Consumer<Result> callback)
 	{
-		sendLobbyMessage(pointer, lobbyId, data, 0, data.length, callback);
+		sendLobbyMessage(pointer, lobbyId, data, 0, data.length, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1571,7 +1567,7 @@ public class LobbyManager
 	 */
 	public void search(LobbySearchQuery query, Consumer<Result> callback)
 	{
-		search(pointer, query.getPointer(), callback);
+		search(pointer, query.getPointer(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1714,9 +1710,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
 	 */
-	public void connectVoice(long lobbyId, @NotNull Consumer<Result> callback)
+	public void connectVoice(long lobbyId, Consumer<Result> callback)
 	{
-		connectVoice(pointer, lobbyId, callback);
+		connectVoice(pointer, lobbyId, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1736,7 +1732,7 @@ public class LobbyManager
 	 */
 	public void connectVoice(long lobbyId)
 	{
-		connectVoice(pointer, lobbyId, Core.DEFAULT_CALLBACK);
+		connectVoice(lobbyId, Core.DEFAULT_CALLBACK);
 	}
 
 	/**
@@ -1755,7 +1751,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#connectvoice">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#connectvoice</a>
 	 */
-	public void connectVoice(Lobby lobby, @NotNull Consumer<Result> callback)
+	public void connectVoice(Lobby lobby, Consumer<Result> callback)
 	{
 		connectVoice(lobby.getId(), callback);
 	}
@@ -1791,9 +1787,9 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
 	 */
-	public void disconnectVoice(long lobbyId, @NotNull Consumer<Result> callback)
+	public void disconnectVoice(long lobbyId, Consumer<Result> callback)
 	{
-		disconnectVoice(pointer, lobbyId, callback);
+		disconnectVoice(pointer, lobbyId, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -1808,7 +1804,7 @@ public class LobbyManager
 	 */
 	public void disconnectVoice(long lobbyId)
 	{
-		disconnectVoice(pointer, lobbyId, Core.DEFAULT_CALLBACK);
+		disconnectVoice(lobbyId, Core.DEFAULT_CALLBACK);
 	}
 
 	/**
@@ -1822,7 +1818,7 @@ public class LobbyManager
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#disconnectvoice</a>
 	 */
-	public void disconnectVoice(Lobby lobby, @NotNull Consumer<Result> callback)
+	public void disconnectVoice(Lobby lobby, Consumer<Result> callback)
 	{
 		disconnectVoice(lobby.getId(), callback);
 	}

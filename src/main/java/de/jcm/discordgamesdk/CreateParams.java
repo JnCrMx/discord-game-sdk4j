@@ -1,6 +1,6 @@
 package de.jcm.discordgamesdk;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 /**
  * Initial parameters to create a {@link Core} from.
@@ -63,9 +63,9 @@ public class CreateParams implements AutoCloseable
 	 * Registers an event handler to later receive events from the created Core.
 	 * @param eventHandler An EventHandler
 	 */
-	public void registerEventHandler(@NotNull DiscordEventAdapter eventHandler)
+	public void registerEventHandler(DiscordEventAdapter eventHandler)
 	{
-		registerEventHandler(pointer, eventHandler);
+		registerEventHandler(pointer, Objects.requireNonNull(eventHandler));
 	}
 
 	private native long allocate();

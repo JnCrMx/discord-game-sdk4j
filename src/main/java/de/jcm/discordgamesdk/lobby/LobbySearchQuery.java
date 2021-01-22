@@ -205,6 +205,9 @@ public class LobbySearchQuery
 	 */
 	public LobbySearchQuery sort(String key, Cast cast, String baseValue)
 	{
+		if(key.getBytes().length >= 256)
+			throw new IllegalArgumentException("max key length is 255");
+
 		Result result = sort(pointer, key, cast.nativeValue(), baseValue);
 		if(result != Result.OK)
 		{

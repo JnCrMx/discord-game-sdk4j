@@ -3,8 +3,6 @@ package de.jcm.discordgamesdk.lobby;
 import de.jcm.discordgamesdk.GameSDKException;
 import de.jcm.discordgamesdk.LobbyManager;
 import de.jcm.discordgamesdk.Result;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.function.BiConsumer;
 
@@ -58,7 +56,7 @@ public class LobbyTransaction
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsettype">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsettype</a>
 	 */
-	public void setType(@NotNull LobbyType type)
+	public void setType(LobbyType type)
 	{
 		Result result = setType(pointer, type.ordinal()+1);
 		if(result != Result.OK)
@@ -97,7 +95,7 @@ public class LobbyTransaction
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetcapacity">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetcapacity</a>
 	 */
-	public void setCapacity(@Range(from = 1, to = 1024) int capacity)
+	public void setCapacity(int capacity)
 	{
 		Result result = setCapacity(pointer, capacity);
 		if(result != Result.OK)
@@ -123,7 +121,7 @@ public class LobbyTransaction
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetmetadata">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactionsetmetadata</a>
 	 */
-	public void setMetadata(@NotNull String key, @NotNull String value)
+	public void setMetadata(String key, String value)
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
@@ -146,7 +144,7 @@ public class LobbyTransaction
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactiondeletemetadata">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbytransactiondeletemetadata</a>
 	 */
-	public void deleteMetadata(@NotNull String key)
+	public void deleteMetadata(String key)
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");

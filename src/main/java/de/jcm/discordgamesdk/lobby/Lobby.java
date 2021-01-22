@@ -3,8 +3,6 @@ package de.jcm.discordgamesdk.lobby;
 import de.jcm.discordgamesdk.LobbyManager;
 import de.jcm.discordgamesdk.Result;
 import de.jcm.discordgamesdk.user.DiscordUser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.function.BiConsumer;
 
@@ -16,10 +14,10 @@ import java.util.function.BiConsumer;
 public class Lobby
 {
 	private final long id;
-	private final @NotNull LobbyType type;
+	private final LobbyType type;
 	private final long ownerId;
-	private final @NotNull String secret;
-	private final @Range(from = 1, to = 1024) int capacity;
+	private final String secret;
+	private final int capacity;
 	private final boolean locked;
 
 	/**
@@ -36,7 +34,7 @@ public class Lobby
 	 * @param locked Whether this Lobby is locked, so no new players can join.
 	 * @throws IllegalArgumentException if the secret is too long
 	 */
-	public Lobby(long id, int type, long ownerId, @NotNull String secret, @Range(from = 1, to = 1024) int capacity, boolean locked)
+	public Lobby(long id, int type, long ownerId, String secret, int capacity, boolean locked)
 	{
 		this.id = id;
 		this.type = LobbyType.values()[type-1];
@@ -69,7 +67,6 @@ public class Lobby
 	 * @return The type of this Lobby.
 	 * @see LobbyTransaction#setType(LobbyType)
 	 */
-	@NotNull
 	public LobbyType getType()
 	{
 		return type;
@@ -100,7 +97,6 @@ public class Lobby
 	 * @return The secret of this Lobby, max. 127 bytes in length
 	 * @see LobbyManager#getLobbyActivitySecret(Lobby)
 	 */
-	@NotNull
 	public String getSecret()
 	{
 		return secret;
@@ -117,7 +113,6 @@ public class Lobby
 	 * @return The capacity of this Lobby.
 	 * @see LobbyTransaction#setCapacity(int) 
 	 */
-	@Range(from = 0, to = 1024)
 	public int getCapacity()
 	{
 		return capacity;

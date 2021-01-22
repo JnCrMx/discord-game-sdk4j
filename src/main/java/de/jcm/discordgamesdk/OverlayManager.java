@@ -1,8 +1,8 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.ActivityActionType;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -50,7 +50,7 @@ public class OverlayManager
 	 */
 	public void setLocked(boolean locked)
 	{
-		setLocked(pointer, locked, Core.DEFAULT_CALLBACK);
+		setLocked(locked, Core.DEFAULT_CALLBACK);
 	}
 
 	/**
@@ -61,9 +61,9 @@ public class OverlayManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#setlocked">
 	 *     https://discordapp.com/developers/docs/game-sdk/overlay#setlocked</a>
 	 */
-	public void setLocked(boolean locked, @NotNull Consumer<Result> callback)
+	public void setLocked(boolean locked, Consumer<Result> callback)
 	{
-		setLocked(pointer, locked, callback);
+		setLocked(pointer, locked, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -86,9 +86,9 @@ public class OverlayManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#openactivityinvite">
 	 *     https://discordapp.com/developers/docs/game-sdk/overlay#openactivityinvite</a>
 	 */
-	public void openActivityInvite(ActivityActionType type, @NotNull Consumer<Result> callback)
+	public void openActivityInvite(ActivityActionType type, Consumer<Result> callback)
 	{
-		openActivityInvite(pointer, type.ordinal(), callback);
+		openActivityInvite(pointer, type.ordinal(), Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -111,9 +111,9 @@ public class OverlayManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#openguildinvite">
 	 *     https://discordapp.com/developers/docs/game-sdk/overlay#openguildinvite</a>
 	 */
-	public void openGuildInvite(String code, @NotNull Consumer<Result> callback)
+	public void openGuildInvite(String code, Consumer<Result> callback)
 	{
-		openGuildInvite(pointer, code, callback);
+		openGuildInvite(pointer, code, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -134,9 +134,9 @@ public class OverlayManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/overlay#openvoicesettings">
 	 *     https://discordapp.com/developers/docs/game-sdk/overlay#openvoicesettings</a>
 	 */
-	public void openVoiceSettings(@NotNull Consumer<Result> callback)
+	public void openVoiceSettings(Consumer<Result> callback)
 	{
-		openVoiceSettings(pointer, callback);
+		openVoiceSettings(pointer, Objects.requireNonNull(callback));
 	}
 
 	private native boolean isEnabled(long pointer);

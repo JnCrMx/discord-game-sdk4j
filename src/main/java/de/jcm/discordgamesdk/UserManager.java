@@ -2,9 +2,8 @@ package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.PremiumType;
-import org.intellij.lang.annotations.MagicConstant;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -87,9 +86,9 @@ public class UserManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/users#getuser">
 	 *     https://discordapp.com/developers/docs/game-sdk/users#getuser</a>
 	 */
-	public void getUser(long userId, @NotNull BiConsumer<Result, DiscordUser> callback)
+	public void getUser(long userId, BiConsumer<Result, DiscordUser> callback)
 	{
-		getUser(pointer, userId, callback);
+		getUser(pointer, userId, Objects.requireNonNull(callback));
 	}
 
 	/**
@@ -125,11 +124,7 @@ public class UserManager
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/users#currentuserhasflag">
 	 *     https://discordapp.com/developers/docs/game-sdk/users#currentuserhasflag</a>
 	 */
-	public boolean currentUserHasFlag(@MagicConstant(flags = {USER_FLAG_PARTNER,
-	                                                          USER_FLAG_HYPE_SQUAD_EVENTS,
-	                                                          USER_FLAG_HYPE_SQUAD_HOUSE1,
-	                                                          USER_FLAG_HYPE_SQUAD_HOUSE2,
-	                                                          USER_FLAG_HYPE_SQUAD_HOUSE3}) int flag)
+	public boolean currentUserHasFlag(int flag)
 	{
 		Object ret = currentUserHasFlag(pointer, flag);
 		if(ret instanceof Result)

@@ -4,6 +4,7 @@ import de.jcm.discordgamesdk.image.ImageDimensions;
 import de.jcm.discordgamesdk.image.ImageHandle;
 
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -35,7 +36,7 @@ public class ImageManager
 		      handle.getId(),
 		      handle.getSize(),
 		      refresh,
-		      callback);
+		      Objects.requireNonNull(callback));
 	}
 
 	/**

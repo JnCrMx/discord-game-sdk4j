@@ -1,10 +1,10 @@
 package de.jcm.discordgamesdk;
 
 import cz.adamh.utils.NativeUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -273,9 +273,9 @@ public class Core implements AutoCloseable
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#setloghook">
 	 *     https://discordapp.com/developers/docs/game-sdk/discord#setloghook</a>
 	 */
-	public void setLogHook(LogLevel minLevel, @NotNull BiConsumer<LogLevel, String> logHook)
+	public void setLogHook(LogLevel minLevel, BiConsumer<LogLevel, String> logHook)
 	{
-		setLogHook(pointer, minLevel.ordinal(), logHook);
+		setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook));
 	}
 
 	/**

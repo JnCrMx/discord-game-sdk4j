@@ -169,12 +169,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>19.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.adamheinrich</groupId>
             <artifactId>native-utils</artifactId>
             <version>e6a394896</version>
