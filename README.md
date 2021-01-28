@@ -9,6 +9,11 @@ To be honest I'm not sure if people even need this, because Discord apparently d
 
 But maybe the activity, overlay, user, and relationship features could be useful to some people.
 
+## Rich Presence
+
+If you are just looking for an alternative to the deprecated [Discord Rich Presence SDK](https://discord.com/developers/docs/rich-presence/how-to),
+head over to the [ActivityExample.java](examples/ActivityExample.java)!
+
 ## Features of the SDK
 
 | Feature | State | Example |
