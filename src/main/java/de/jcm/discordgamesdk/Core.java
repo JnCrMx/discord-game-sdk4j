@@ -31,9 +31,10 @@ public class Core implements AutoCloseable
 	 */
 	public static void init(File discordLibrary)
 	{
+		String jniLibraryName = getJniLibraryName();
 		try
 		{
-			System.loadLibrary("discord_game_sdk_jni");
+			System.loadLibrary(jniLibraryName);
 		}
 		catch(UnsatisfiedLinkError e)
 		{
@@ -42,11 +43,11 @@ public class Core implements AutoCloseable
 				if(System.getProperty("os.name").toLowerCase().contains("windows"))
 				{
 					System.load(discordLibrary.getAbsolutePath());
-					NativeUtils.loadLibraryFromJar("/"+"discord_game_sdk_jni"+".dll");
+					NativeUtils.loadLibraryFromJar("/"+jniLibraryName+".dll");
 				}
 				else
 				{
-					NativeUtils.loadLibraryFromJar("/"+"lib"+"discord_game_sdk_jni"+".so");
+					NativeUtils.loadLibraryFromJar("/lib"+jniLibraryName+".so");
 				}
 			}
 			catch(IOException ex)
@@ -54,7 +55,35 @@ public class Core implements AutoCloseable
 				ex.printStackTrace();
 			}
 		}
-		initDiscordNative(discordLibrary.getAbsolutePath());
+		initManual(discordLibrary.getAbsolutePath());
+	}
+
+	/**
+	 * <p> Initialize the native library.
+	 * You need manually load Discord's native libraries before calling this method. </p>
+	 *
+	 * <p>You may call this method more than once which unloads the old shared object and loads the new one.</p>
+	 *
+	 * @param discordLibrary Location of Discord's native library.
+	 *                       <p>On Windows the filename (last component of the path) must be
+	 *                       "discord_game_sdk.dll" or an {@link UnsatisfiedLinkError} will occur.</p>
+	 *                       <p>On Linux the filename does not matter.</p>
+	 *
+	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
+	 */
+	public static void initManual(String discordLibrary) {
+		initDiscordNative(discordLibrary);
+	}
+
+	private static String getJniLibraryName() {
+		String bits = System.getProperty("sun.arch.data.model");
+		String jniLibraryName;
+		if("32".equals(bits)) {
+			jniLibraryName = "discord_game_sdk_jni_32";
+		} else {
+			jniLibraryName = "discord_game_sdk_jni";
+		}
+		return jniLibraryName;
 	}
 
 	private static native void initDiscordNative(String discordPath);
