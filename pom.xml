@@ -97,7 +97,7 @@
                                     <arg line="--build . --config Release"/>
                                 </exec>
                             </target>
-							<target>
+                            <target>
                                 <mkdir dir="${project.build.directory}/native32"/>
                                 <exec executable="cmake" dir="${project.build.directory}/native32" failonerror="false">
                                     <arg line="-DCMAKE_BUILD_TYPE=Release -A Win32 -DBUILDARCH=x86 ${basedir}/src/main/c"/>
@@ -137,7 +137,7 @@
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
-								<resource>
+                                <resource>
                                     <directory>${project.build.directory}/native32</directory>
                                     <includes>
                                         <include>libdiscord_game_sdk_jni.so</include>
