@@ -91,9 +91,18 @@
                             <target>
                                 <mkdir dir="${project.build.directory}/native"/>
                                 <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
-                                    <arg line="-DCMAKE_BUILD_TYPE=Release ${basedir}/src/main/c"/>
+                                    <arg line="-DCMAKE_BUILD_TYPE=Release -DBUILDARCH=x86_64 ${basedir}/src/main/c"/>
                                 </exec>
                                 <exec executable="cmake" dir="${project.build.directory}/native" failonerror="true">
+                                    <arg line="--build . --config Release"/>
+                                </exec>
+                            </target>
+							<target>
+                                <mkdir dir="${project.build.directory}/native32"/>
+                                <exec executable="cmake" dir="${project.build.directory}/native32" failonerror="false">
+                                    <arg line="-DCMAKE_BUILD_TYPE=Release -A Win32 -DBUILDARCH=x86 ${basedir}/src/main/c"/>
+                                </exec>
+                                <exec executable="cmake" dir="${project.build.directory}/native32" failonerror="false">
                                     <arg line="--build . --config Release"/>
                                 </exec>
                             </target>
@@ -123,6 +132,20 @@
                                 </resource>
                                 <resource>
                                     <directory>${project.build.directory}/native/Release</directory>
+                                    <includes>
+                                        <include>discord_game_sdk_jni.dll</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+								<resource>
+                                    <directory>${project.build.directory}/native32</directory>
+                                    <includes>
+                                        <include>libdiscord_game_sdk_jni.so</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/native32/Release</directory>
                                     <includes>
                                         <include>discord_game_sdk_jni.dll</include>
                                     </includes>
