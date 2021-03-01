@@ -1,9 +1,11 @@
 package de.jcm.discordgamesdk;
 
-import cz.adamh.utils.NativeUtils;
-
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -17,10 +19,17 @@ import java.util.function.Consumer;
 public class Core implements AutoCloseable
 {
 	/**
-	 * <p> Loads and initializes the native library.
-	 * This method also loads Discord's native library. </p>
-	 *
-	 * <p>You may call this method more than once which unloads the old shared object and loads the new one.</p>
+	 * Extracts and initializes the native library.
+	 * This method also loads Discord's native library.
+	 * <p>
+	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
+	 * using {@link Class#getResourceAsStream(String)}.
+	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
+	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
+	 * the system property {@code os.arch} and {@code object name} is the name of the native object
+	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
+	 * <p>
+	 * You may call this method more than once which unloads the old shared object and loads the new one.
 	 *
 	 * @param discordLibrary Location of Discord's native library.
 	 *                       <p>On Windows the filename (last component of the path) must be
@@ -31,33 +40,68 @@ public class Core implements AutoCloseable
 	 */
 	public static void init(File discordLibrary)
 	{
+		String name = "discord_game_sdk_jni";
+		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+
+		String objectName;
+
+		if(osName.contains("windows"))
+		{
+			osName = "windows";
+			objectName = name + ".dll";
+
+			// the Discord native library needs to be loaded before our JNI library on Windows
+			System.load(discordLibrary.getAbsolutePath());
+		}
+		else if(osName.contains("linux"))
+		{
+			osName = "linux";
+			objectName = "lib" + name + ".so";
+		}
+		else
+		{
+			throw new RuntimeException("cannot determine OS type");
+		}
+
+		String path = "/native/"+osName+"/"+arch+"/"+objectName;
+		InputStream in = Core.class.getResourceAsStream(path);
+		if(in == null)
+			throw new RuntimeException(new FileNotFoundException("cannot find native library at "+path));
+
+		File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-"+name+System.nanoTime());
+		if(!tempDir.mkdir())
+			throw new RuntimeException(new IOException("Cannot create temporary directory"));
+		tempDir.deleteOnExit();
+
+		File temp = new File(tempDir, objectName);
+		temp.deleteOnExit();
+
 		try
 		{
-			System.loadLibrary("discord_game_sdk_jni");
+			Files.copy(in, temp.toPath());
 		}
-		catch(UnsatisfiedLinkError e)
+		catch(IOException e)
 		{
-			try
-			{
-				if(System.getProperty("os.name").toLowerCase().contains("windows"))
-				{
-					System.load(discordLibrary.getAbsolutePath());
-					NativeUtils.loadLibraryFromJar("/"+"discord_game_sdk_jni"+".dll");
-				}
-				else
-				{
-					NativeUtils.loadLibraryFromJar("/"+"lib"+"discord_game_sdk_jni"+".so");
-				}
-			}
-			catch(IOException ex)
-			{
-				ex.printStackTrace();
-			}
+			throw new RuntimeException(e);
 		}
+
+		System.load(temp.getAbsolutePath());
 		initDiscordNative(discordLibrary.getAbsolutePath());
 	}
 
-	private static native void initDiscordNative(String discordPath);
+	/**
+	 * Loads Discord's SDK library.
+	 * <p>
+	 * This does not extract nor load the JNI native library.
+	 * If you want to do that, please use {@link Core#init(File)}
+	 * which extracts and loads the JNI native and then calls this method.
+	 * @param discordPath Location of Discord's native library.
+	 *                    <p>On Windows the filename (last component of the path) must be
+	 *                    "discord_game_sdk.dll" or an {@link UnsatisfiedLinkError} will occur.</p>
+	 *                    <p>On Linux the filename does not matter.</p>
+	 */
+	public static native void initDiscordNative(String discordPath);
 
 	/**
 	 * <p>Default callback to use for operation returning a {@link Result}.</p>
