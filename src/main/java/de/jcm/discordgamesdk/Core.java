@@ -59,6 +59,11 @@ public class Core implements AutoCloseable
 			osName = "linux";
 			objectName = "lib" + name + ".so";
 		}
+		else if(osName.contains("macos"))
+		{
+			osName = "macos";
+			objectName = "lib" + name + ".dylib";
+		}
 		else
 		{
 			throw new RuntimeException("cannot determine OS type");
