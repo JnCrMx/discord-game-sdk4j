@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -125,6 +126,9 @@ public class Core implements AutoCloseable
 
 	private final long pointer;
 
+	private final CreateParams createParams;
+	private final AtomicBoolean open = new AtomicBoolean(true);
+
 	private final ActivityManager activityManager;
 	private final UserManager userManager;
 	private final OverlayManager overlayManager;
@@ -156,6 +160,7 @@ public class Core implements AutoCloseable
 	 */
 	public Core(CreateParams params)
 	{
+		this.createParams = params;
 		Object ret = create(params.getPointer());
 		if(ret instanceof Result)
 		{
@@ -306,7 +311,7 @@ public class Core implements AutoCloseable
 	 */
 	public void runCallbacks()
 	{
-		runCallbacks(pointer);
+		execute(()->runCallbacks(pointer));
 	}
 
 	/**
@@ -332,7 +337,9 @@ public class Core implements AutoCloseable
 	@Override
 	public void close()
 	{
-		destroy(pointer);
+		if(open.compareAndSet(true, false))
+			destroy(pointer);
+		createParams.close();
 	}
 
 	/**

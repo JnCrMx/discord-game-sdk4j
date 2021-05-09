@@ -1,6 +1,7 @@
 package de.jcm.discordgamesdk;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Initial parameters to create a {@link Core} from.
@@ -10,6 +11,7 @@ import java.util.Objects;
 public class CreateParams implements AutoCloseable
 {
 	private final long pointer;
+	private final AtomicBoolean open = new AtomicBoolean(true);
 
 	/**
 	 * Allocates a new structure and initializes it with default parameters.
@@ -97,7 +99,10 @@ public class CreateParams implements AutoCloseable
 	@Override
 	public void close()
 	{
-		free(pointer);
+		if(open.compareAndSet(true, false))
+		{
+			free(pointer);
+		}
 	}
 
 	/**
