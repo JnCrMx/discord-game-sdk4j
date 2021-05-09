@@ -8,8 +8,10 @@ import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The main component for accessing Discord's game SDK.
@@ -128,6 +130,7 @@ public class Core implements AutoCloseable
 
 	private final CreateParams createParams;
 	private final AtomicBoolean open = new AtomicBoolean(true);
+	private final ReentrantLock lock = new ReentrantLock();
 
 	private final ActivityManager activityManager;
 	private final UserManager userManager;
@@ -350,5 +353,30 @@ public class Core implements AutoCloseable
 	public long getPointer()
 	{
 		return pointer;
+	}
+
+	void execute(Runnable runnable)
+	{
+		execute((Supplier<Void>) () ->
+		{
+			runnable.run();
+			return null;
+		});
+	}
+
+	<T> T execute(Supplier<T> provider)
+	{
+		if(!open.get())
+			throw new IllegalStateException("Core is closed");
+
+		lock.lock();
+		try
+		{
+			return provider.get();
+		}
+		finally
+		{
+			lock.unlock();
+		}
 	}
 }
