@@ -13,10 +13,12 @@ import java.util.function.Consumer;
 public class OverlayManager
 {
 	private final long pointer;
+	private final Core core;
 
-	OverlayManager(long pointer)
+	OverlayManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -27,7 +29,7 @@ public class OverlayManager
 	 */
 	public boolean isEnabled()
 	{
-		return isEnabled(pointer);
+		return core.execute(()->isEnabled(pointer));
 	}
 
 	/**
@@ -38,7 +40,7 @@ public class OverlayManager
 	 */
 	public boolean isLocked()
 	{
-		return isLocked(pointer);
+		return core.execute(()->isLocked(pointer));
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class OverlayManager
 	 */
 	public void setLocked(boolean locked, Consumer<Result> callback)
 	{
-		setLocked(pointer, locked, Objects.requireNonNull(callback));
+		core.execute(()->setLocked(pointer, locked, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -88,7 +90,7 @@ public class OverlayManager
 	 */
 	public void openActivityInvite(ActivityActionType type, Consumer<Result> callback)
 	{
-		openActivityInvite(pointer, type.ordinal(), Objects.requireNonNull(callback));
+		core.execute(()->openActivityInvite(pointer, type.ordinal(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -113,7 +115,7 @@ public class OverlayManager
 	 */
 	public void openGuildInvite(String code, Consumer<Result> callback)
 	{
-		openGuildInvite(pointer, code, Objects.requireNonNull(callback));
+		core.execute(()->openGuildInvite(pointer, code, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -136,7 +138,7 @@ public class OverlayManager
 	 */
 	public void openVoiceSettings(Consumer<Result> callback)
 	{
-		openVoiceSettings(pointer, Objects.requireNonNull(callback));
+		core.execute(()->openVoiceSettings(pointer, Objects.requireNonNull(callback)));
 	}
 
 	private native boolean isEnabled(long pointer);

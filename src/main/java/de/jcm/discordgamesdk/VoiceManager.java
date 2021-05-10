@@ -13,10 +13,12 @@ import java.util.function.Consumer;
 public class VoiceManager
 {
 	private final long pointer;
+	private final Core core;
 
-	VoiceManager(long pointer)
+	VoiceManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class VoiceManager
 	 */
 	public VoiceInputMode getInputMode()
 	{
-		Object ret = getInputMode(pointer);
+		Object ret = core.execute(()->getInputMode(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -61,7 +63,7 @@ public class VoiceManager
 	 */
 	public void setInputMode(VoiceInputMode inputMode, Consumer<Result> callback)
 	{
-		setInputMode(pointer, inputMode, Objects.requireNonNull(callback));
+		core.execute(()->setInputMode(pointer, inputMode, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class VoiceManager
 	 */
 	public boolean isSelfMute()
 	{
-		Object ret = isSelfMute(pointer);
+		Object ret = core.execute(()->isSelfMute(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -110,7 +112,7 @@ public class VoiceManager
 	 */
 	public void setSelfMute(boolean selfMute)
 	{
-		Result result = setSelfMute(pointer, selfMute);
+		Result result = core.execute(()->setSelfMute(pointer, selfMute));
 		if(result != Result.OK)
 		{
 			throw new GameSDKException(result);
@@ -127,7 +129,7 @@ public class VoiceManager
 	 */
 	public boolean isSelfDeaf()
 	{
-		Object ret = isSelfDeaf(pointer);
+		Object ret = core.execute(()->isSelfDeaf(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -148,7 +150,7 @@ public class VoiceManager
 	 */
 	public void setSelfDeaf(boolean selfDeaf)
 	{
-		Result result = setSelfDeaf(pointer, selfDeaf);
+		Result result = core.execute(()->setSelfDeaf(pointer, selfDeaf));
 		if(result != Result.OK)
 		{
 			throw new GameSDKException(result);
@@ -166,7 +168,7 @@ public class VoiceManager
 	 */
 	public boolean isLocalMute(long userId)
 	{
-		Object ret = isLocalMute(pointer, userId);
+		Object ret = core.execute(()->isLocalMute(pointer, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -188,7 +190,7 @@ public class VoiceManager
 	 */
 	public void setLocalMute(long userId, boolean mute)
 	{
-		Result result = setLocalMute(pointer, userId, mute);
+		Result result = core.execute(()->setLocalMute(pointer, userId, mute));
 		if(result != Result.OK)
 		{
 			throw new GameSDKException(result);
@@ -212,7 +214,7 @@ public class VoiceManager
 	 */
 	public int getLocalVolume(long userId)
 	{
-		Object ret = getLocalVolume(pointer, userId);
+		Object ret = core.execute(()->getLocalVolume(pointer, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -243,7 +245,7 @@ public class VoiceManager
 		if(volume < 0 || volume > 200)
 			throw new IllegalArgumentException("volume out of range: "+volume);
 
-		Result result = setLocalVolume(pointer, userId, (byte)volume);
+		Result result = core.execute(()->setLocalVolume(pointer, userId, (byte)volume));
 		if(result != Result.OK)
 		{
 			throw new GameSDKException(result);

@@ -47,10 +47,12 @@ import java.util.function.BiConsumer;
 public class NetworkManager
 {
 	private final long pointer;
+	private final Core core;
 
-	NetworkManager(long pointer)
+	NetworkManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -70,7 +72,7 @@ public class NetworkManager
 	 */
 	public long getPeerId()
 	{
-		return getPeerId(pointer);
+		return core.execute(()->getPeerId(pointer));
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class NetworkManager
 	 */
 	public void flush()
 	{
-		Result result = flush(pointer);
+		Result result = core.execute(()->flush(pointer));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -105,7 +107,7 @@ public class NetworkManager
 	 */
 	public void openPeer(long peerId, String routeData)
 	{
-		Result result = openPeer(pointer, peerId, routeData);
+		Result result = core.execute(()->openPeer(pointer, peerId, routeData));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -126,7 +128,7 @@ public class NetworkManager
 	 */
 	public void updatePeer(long peerId, String routeData)
 	{
-		Result result = updatePeer(pointer, peerId, routeData);
+		Result result = core.execute(()->updatePeer(pointer, peerId, routeData));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -141,7 +143,7 @@ public class NetworkManager
 	 */
 	public void closePeer(long peerId)
 	{
-		Result result = closePeer(pointer, peerId);
+		Result result = core.execute(()->closePeer(pointer, peerId));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -174,7 +176,7 @@ public class NetworkManager
 	 */
 	public void openChannel(long peerId, byte channelId, boolean reliable)
 	{
-		Result result = openChannel(pointer, peerId, channelId, reliable);
+		Result result = core.execute(()->openChannel(pointer, peerId, channelId, reliable));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -190,7 +192,7 @@ public class NetworkManager
 	 */
 	public void closeChannel(long peerId, byte channelId)
 	{
-		Result result = closeChannel(pointer, peerId, channelId);
+		Result result = core.execute(()->closeChannel(pointer, peerId, channelId));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -209,7 +211,7 @@ public class NetworkManager
 	 */
 	public void sendMessage(long peerId, byte channelId, byte[] data)
 	{
-		Result result = sendMessage(pointer, peerId, channelId, data, 0, data.length);
+		Result result = core.execute(()->sendMessage(pointer, peerId, channelId, data, 0, data.length));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}

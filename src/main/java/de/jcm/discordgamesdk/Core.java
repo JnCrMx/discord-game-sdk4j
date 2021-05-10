@@ -176,14 +176,14 @@ public class Core implements AutoCloseable
 
 		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
 
-		this.activityManager = new ActivityManager(getActivityManager(pointer));
-		this.userManager = new UserManager(getUserManager(pointer));
-		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
-		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
-		this.imageManager = new ImageManager(getImageManager(pointer));
-		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
-		this.networkManager = new NetworkManager(getNetworkManager(pointer));
-		this.voiceManager = new VoiceManager(getVoiceManager(pointer));
+		this.activityManager = new ActivityManager(getActivityManager(pointer), this);
+		this.userManager = new UserManager(getUserManager(pointer), this);
+		this.overlayManager = new OverlayManager(getOverlayManager(pointer), this);
+		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer), this);
+		this.imageManager = new ImageManager(getImageManager(pointer), this);
+		this.lobbyManager = new LobbyManager(getLobbyManager(pointer), this);
+		this.networkManager = new NetworkManager(getNetworkManager(pointer), this);
+		this.voiceManager = new VoiceManager(getVoiceManager(pointer), this);
 	}
 
 	private native Object create(long paramPointer);
@@ -327,7 +327,7 @@ public class Core implements AutoCloseable
 	 */
 	public void setLogHook(LogLevel minLevel, BiConsumer<LogLevel, String> logHook)
 	{
-		setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook));
+		execute(()->setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook)));
 	}
 
 	/**
@@ -341,8 +341,18 @@ public class Core implements AutoCloseable
 	public void close()
 	{
 		if(open.compareAndSet(true, false))
-			destroy(pointer);
-		createParams.close();
+		{
+			lock.lock();
+			try
+			{
+				destroy(pointer);
+			}
+			finally
+			{
+				lock.unlock();
+			}
+			createParams.close();
+		}
 	}
 
 	/**

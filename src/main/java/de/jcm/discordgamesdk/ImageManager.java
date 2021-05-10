@@ -15,10 +15,12 @@ import java.util.function.BiConsumer;
 public class ImageManager
 {
 	private final long pointer;
+	private final Core core;
 
-	ImageManager(long pointer)
+	ImageManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -31,12 +33,12 @@ public class ImageManager
 	 */
 	public void fetch(ImageHandle handle, boolean refresh, BiConsumer<Result, ImageHandle> callback)
 	{
-		fetch(pointer,
+		core.execute(()->fetch(pointer,
 		      handle.getType().ordinal(),
 		      handle.getId(),
 		      handle.getSize(),
 		      refresh,
-		      Objects.requireNonNull(callback));
+		      Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -49,8 +51,8 @@ public class ImageManager
 	 */
 	public ImageDimensions getDimensions(ImageHandle handle)
 	{
-		Object ret = getDimensions(pointer, handle.getType().ordinal(),
-		                           handle.getId(), handle.getSize());
+		Object ret = core.execute(()->getDimensions(pointer, handle.getType().ordinal(),
+		                           handle.getId(), handle.getSize()));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -92,8 +94,8 @@ public class ImageManager
 	 */
 	public byte[] getData(ImageHandle handle, int length)
 	{
-		Object ret = getData(pointer, handle.getType().ordinal(),
-		                           handle.getId(), handle.getSize(), length);
+		Object ret = core.execute(()->getData(pointer, handle.getType().ordinal(),
+		                           handle.getId(), handle.getSize(), length));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);

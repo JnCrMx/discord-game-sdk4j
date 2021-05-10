@@ -18,10 +18,12 @@ import java.util.stream.IntStream;
 public class LobbyManager
 {
 	private final long pointer;
+	private final Core core;
 
-	LobbyManager(long pointer)
+	LobbyManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -38,7 +40,7 @@ public class LobbyManager
 	 */
 	public LobbyTransaction getLobbyCreateTransaction()
 	{
-		Object ret = getLobbyCreateTransaction(pointer);
+		Object ret = core.execute(()->getLobbyCreateTransaction(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -65,7 +67,7 @@ public class LobbyManager
 	 */
 	public LobbyTransaction getLobbyUpdateTransaction(long lobbyId)
 	{
-		Object ret = getLobbyUpdateTransaction(pointer, lobbyId);
+		Object ret = core.execute(()->getLobbyUpdateTransaction(pointer, lobbyId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -111,7 +113,7 @@ public class LobbyManager
 	 */
 	public LobbyMemberTransaction getMemberUpdateTransaction(long lobbyId, long userId)
 	{
-		Object ret = getMemberUpdateTransaction(pointer, lobbyId, userId);
+		Object ret = core.execute(()->getMemberUpdateTransaction(pointer, lobbyId, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -157,7 +159,7 @@ public class LobbyManager
 	 */
 	public void createLobby(LobbyTransaction transaction, BiConsumer<Result, Lobby> callback)
 	{
-		createLobby(pointer, transaction.getPointer(), Objects.requireNonNull(callback));
+		core.execute(()->createLobby(pointer, transaction.getPointer(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -205,7 +207,7 @@ public class LobbyManager
 	 */
 	public void updateLobby(long lobbyId, LobbyTransaction transaction, Consumer<Result> callback)
 	{
-		updateLobby(pointer, lobbyId, transaction.getPointer(), Objects.requireNonNull(callback));
+		core.execute(()->updateLobby(pointer, lobbyId, transaction.getPointer(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -292,7 +294,7 @@ public class LobbyManager
 	 */
 	public void deleteLobby(long lobbyId, Consumer<Result> callback)
 	{
-		deleteLobby(pointer, lobbyId, Objects.requireNonNull(callback));
+		core.execute(()->deleteLobby(pointer, lobbyId, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -371,7 +373,7 @@ public class LobbyManager
 	{
 		if(secret.getBytes().length >= 128)
 			throw new IllegalArgumentException("max secret length is 127");
-		connectLobby(pointer, lobbyId, secret, Objects.requireNonNull(callback));
+		core.execute(()->connectLobby(pointer, lobbyId, secret, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -462,7 +464,7 @@ public class LobbyManager
 	{
 		if(activitySecret.getBytes().length >= 128)
 			throw new IllegalArgumentException("max activity secret length is 127");
-		connectLobbyWithActivitySecret(pointer, activitySecret, Objects.requireNonNull(callback));
+		core.execute(()->connectLobbyWithActivitySecret(pointer, activitySecret, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -512,7 +514,7 @@ public class LobbyManager
 	 */
 	public void disconnectLobby(long lobbyId, Consumer<Result> callback)
 	{
-		disconnectLobby(pointer, lobbyId, Objects.requireNonNull(callback));
+		core.execute(()->disconnectLobby(pointer, lobbyId, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -573,7 +575,7 @@ public class LobbyManager
 	 */
 	public Lobby getLobby(long lobbyId)
 	{
-		Object ret = getLobby(pointer, lobbyId);
+		Object ret = core.execute(()->getLobby(pointer, lobbyId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -611,7 +613,7 @@ public class LobbyManager
 	 */
 	public String getLobbyActivitySecret(long lobbyId)
 	{
-		Object ret = getLobbyActivitySecret(pointer, lobbyId);
+		Object ret = core.execute(()->getLobbyActivitySecret(pointer, lobbyId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -670,7 +672,7 @@ public class LobbyManager
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
-		Object ret = getLobbyMetadataValue(pointer, lobbyId, key);
+		Object ret = core.execute(()->getLobbyMetadataValue(pointer, lobbyId, key));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -718,7 +720,7 @@ public class LobbyManager
 	 */
 	public String getLobbyMetadataKey(long lobbyId, int index)
 	{
-		Object ret = getLobbyMetadataKey(pointer, lobbyId, index);
+		Object ret = core.execute(()->getLobbyMetadataKey(pointer, lobbyId, index));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -769,7 +771,7 @@ public class LobbyManager
 	 */
 	public int lobbyMetadataCount(long lobbyId)
 	{
-		Object ret = lobbyMetadataCount(pointer, lobbyId);
+		Object ret = core.execute(()->lobbyMetadataCount(pointer, lobbyId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -891,7 +893,7 @@ public class LobbyManager
 	 */
 	public int memberCount(long lobbyId)
 	{
-		Object ret = memberCount(pointer, lobbyId);
+		Object ret = core.execute(()->memberCount(pointer, lobbyId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -939,7 +941,7 @@ public class LobbyManager
 	 */
 	public long getMemberUserId(long lobbyId, int index)
 	{
-		Object ret = getMemberUserId(pointer, lobbyId, index);
+		Object ret = core.execute(()->getMemberUserId(pointer, lobbyId, index));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1041,7 +1043,7 @@ public class LobbyManager
 	 */
 	public DiscordUser getMemberUser(long lobbyId, long userId)
 	{
-		Object ret = getMemberUser(pointer, lobbyId, userId);
+		Object ret = core.execute(()->getMemberUser(pointer, lobbyId, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1141,7 +1143,7 @@ public class LobbyManager
 	{
 		if(key.getBytes().length >= 256)
 			throw new IllegalArgumentException("max key length is 255");
-		Object ret = getMemberMetadataValue(pointer, lobbyId, userId, key);
+		Object ret = core.execute(()->getMemberMetadataValue(pointer, lobbyId, userId, key));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1192,7 +1194,7 @@ public class LobbyManager
 	 */
 	public String getMemberMetadataKey(long lobbyId, long userId, int index)
 	{
-		Object ret = getMemberMetadataKey(pointer, lobbyId, userId, index);
+		Object ret = core.execute(()->getMemberMetadataKey(pointer, lobbyId, userId, index));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1245,7 +1247,7 @@ public class LobbyManager
 	 */
 	public int memberMetadataCount(long lobbyId, long userId)
 	{
-		Object ret = memberMetadataCount(pointer, lobbyId, userId);
+		Object ret = core.execute(()->memberMetadataCount(pointer, lobbyId, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1349,7 +1351,7 @@ public class LobbyManager
 	 */
 	public void updateMember(long lobbyId, long userId, LobbyMemberTransaction transaction, Consumer<Result> callback)
 	{
-		updateMember(pointer, lobbyId, userId, transaction.getPointer(), Objects.requireNonNull(callback));
+		core.execute(()->updateMember(pointer, lobbyId, userId, transaction.getPointer(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -1435,7 +1437,7 @@ public class LobbyManager
 	 */
 	public void sendLobbyMessage(long lobbyId, byte[] data, Consumer<Result> callback)
 	{
-		sendLobbyMessage(pointer, lobbyId, data, 0, data.length, Objects.requireNonNull(callback));
+		core.execute(()->sendLobbyMessage(pointer, lobbyId, data, 0, data.length, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -1530,7 +1532,7 @@ public class LobbyManager
 	 */
 	public LobbySearchQuery getSearchQuery()
 	{
-		Object ret = getSearchQuery(pointer);
+		Object ret = core.execute(()->getSearchQuery(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1567,7 +1569,7 @@ public class LobbyManager
 	 */
 	public void search(LobbySearchQuery query, Consumer<Result> callback)
 	{
-		search(pointer, query.getPointer(), Objects.requireNonNull(callback));
+		core.execute(()->search(pointer, query.getPointer(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -1592,7 +1594,7 @@ public class LobbyManager
 	 * Be careful about timing,
 	 * so you don't try to access the search result, before it is ready.
 	 * @param query A {@link LobbySearchQuery} specifying additional criteria and sorting
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer) 
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#search">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#search</a>
 	 */
@@ -1614,7 +1616,7 @@ public class LobbyManager
 	 */
 	public int lobbyCount()
 	{
-		return lobbyCount(pointer);
+		return core.execute(()->lobbyCount(pointer));
 	}
 
 	/**
@@ -1634,7 +1636,7 @@ public class LobbyManager
 	 */
 	public long getLobbyId(int index)
 	{
-		Object ret = getLobbyId(pointer, index);
+		Object ret = core.execute(()->getLobbyId(pointer, index));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -1712,7 +1714,7 @@ public class LobbyManager
 	 */
 	public void connectVoice(long lobbyId, Consumer<Result> callback)
 	{
-		connectVoice(pointer, lobbyId, Objects.requireNonNull(callback));
+		core.execute(()->connectVoice(pointer, lobbyId, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -1789,7 +1791,7 @@ public class LobbyManager
 	 */
 	public void disconnectVoice(long lobbyId, Consumer<Result> callback)
 	{
-		disconnectVoice(pointer, lobbyId, Objects.requireNonNull(callback));
+		core.execute(()->disconnectVoice(pointer, lobbyId, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -1871,7 +1873,7 @@ public class LobbyManager
 	 */
 	public void connectNetwork(long lobbyId)
 	{
-		Result result = connectNetwork(pointer, lobbyId);
+		Result result = core.execute(()->connectNetwork(pointer, lobbyId));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -1940,7 +1942,7 @@ public class LobbyManager
 	 */
 	public void disconnectNetwork(long lobbyId)
 	{
-		Result result = disconnectNetwork(pointer, lobbyId);
+		Result result = core.execute(()->disconnectNetwork(pointer, lobbyId));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -2005,7 +2007,7 @@ public class LobbyManager
 	 */
 	public void flushNetwork()
 	{
-		Result result = flushNetwork(pointer);
+		Result result = core.execute(()->flushNetwork(pointer));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -2043,7 +2045,7 @@ public class LobbyManager
 	 */
 	public void openNetworkChannel(long lobbyId, byte channelId, boolean reliable)
 	{
-		Result result = openNetworkChannel(pointer, lobbyId, channelId, reliable);
+		Result result = core.execute(()->openNetworkChannel(pointer, lobbyId, channelId, reliable));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
@@ -2123,7 +2125,7 @@ public class LobbyManager
 	 */
 	public void sendNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
 	{
-		Result result = sendNetworkMessage(pointer, lobbyId, userId, channelId, data, 0, data.length);
+		Result result = core.execute(()->sendNetworkMessage(pointer, lobbyId, userId, channelId, data, 0, data.length));
 		if(result != Result.OK)
 			throw new GameSDKException(result);
 	}
