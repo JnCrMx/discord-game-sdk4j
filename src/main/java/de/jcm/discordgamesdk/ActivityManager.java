@@ -15,10 +15,12 @@ import java.util.function.Consumer;
 public class ActivityManager
 {
 	private final long pointer;
+	private final Core core;
 
-	ActivityManager(long pointer)
+	ActivityManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -30,7 +32,7 @@ public class ActivityManager
 	 */
 	public Result registerCommand(String command)
 	{
-		return registerCommand(pointer, Objects.requireNonNull(command));
+		return core.execute(()->registerCommand(pointer, Objects.requireNonNull(command)));
 	}
 
 	/**
@@ -43,7 +45,7 @@ public class ActivityManager
 	 */
 	public Result registerSteam(int steamId)
 	{
-		return registerSteam(pointer, steamId);
+		return core.execute(()->registerSteam(pointer, steamId));
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class ActivityManager
 	 */
 	public void updateActivity(Activity activity, Consumer<Result> callback)
 	{
-		updateActivity(pointer, activity.getPointer(), Objects.requireNonNull(callback));
+		core.execute(()->updateActivity(pointer, activity.getPointer(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -91,7 +93,7 @@ public class ActivityManager
 	 */
 	public void clearActivity(Consumer<Result> callback)
 	{
-		clearActivity(pointer, Objects.requireNonNull(callback));
+		core.execute(()->clearActivity(pointer, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -118,7 +120,7 @@ public class ActivityManager
 	 */
 	public void sendRequestReply(long userId, ActivityJoinRequestReply reply, Consumer<Result> callback)
 	{
-		sendRequestReply(pointer, userId, reply.ordinal(), Objects.requireNonNull(callback));
+		core.execute(()->sendRequestReply(pointer, userId, reply.ordinal(), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -147,7 +149,7 @@ public class ActivityManager
 	 */
 	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
 	{
-		sendInvite(pointer, userId, type.ordinal(), Objects.requireNonNull(content), Objects.requireNonNull(callback));
+		core.execute(()->sendInvite(pointer, userId, type.ordinal(), Objects.requireNonNull(content), Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -172,7 +174,7 @@ public class ActivityManager
 	 */
 	public void acceptRequest(long userId, Consumer<Result> callback)
 	{
-		acceptRequest(pointer, userId, Objects.requireNonNull(callback));
+		core.execute(()->acceptRequest(pointer, userId, Objects.requireNonNull(callback)));
 	}
 
 	private native Result registerCommand(long pointer, String command);

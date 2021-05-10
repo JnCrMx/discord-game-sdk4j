@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 public class UserManager
 {
 	private final long pointer;
+	private final Core core;
 
 	/**
 	 * Discord Partner
@@ -51,9 +52,10 @@ public class UserManager
 	 */
 	public static final int USER_FLAG_HYPE_SQUAD_HOUSE3 = 256;
 
-	UserManager(long pointer)
+	UserManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -67,7 +69,7 @@ public class UserManager
 	 */
 	public DiscordUser getCurrentUser()
 	{
-		Object ret = getCurrentUser(pointer);
+		Object ret = core.execute(()->getCurrentUser(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -88,7 +90,7 @@ public class UserManager
 	 */
 	public void getUser(long userId, BiConsumer<Result, DiscordUser> callback)
 	{
-		getUser(pointer, userId, Objects.requireNonNull(callback));
+		core.execute(()->getUser(pointer, userId, Objects.requireNonNull(callback)));
 	}
 
 	/**
@@ -100,7 +102,7 @@ public class UserManager
 	 */
 	public PremiumType getCurrentUserPremiumType()
 	{
-		Object ret = getCurrentUserPremiumType(pointer);
+		Object ret = core.execute(()->getCurrentUserPremiumType(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -126,7 +128,7 @@ public class UserManager
 	 */
 	public boolean currentUserHasFlag(int flag)
 	{
-		Object ret = currentUserHasFlag(pointer, flag);
+		Object ret = core.execute(()->currentUserHasFlag(pointer, flag));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);

@@ -7,8 +7,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The main component for accessing Discord's game SDK.
@@ -125,6 +128,10 @@ public class Core implements AutoCloseable
 
 	private final long pointer;
 
+	private final CreateParams createParams;
+	private final AtomicBoolean open = new AtomicBoolean(true);
+	private final ReentrantLock lock = new ReentrantLock();
+
 	private final ActivityManager activityManager;
 	private final UserManager userManager;
 	private final OverlayManager overlayManager;
@@ -156,6 +163,7 @@ public class Core implements AutoCloseable
 	 */
 	public Core(CreateParams params)
 	{
+		this.createParams = params;
 		Object ret = create(params.getPointer());
 		if(ret instanceof Result)
 		{
@@ -168,14 +176,14 @@ public class Core implements AutoCloseable
 
 		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
 
-		this.activityManager = new ActivityManager(getActivityManager(pointer));
-		this.userManager = new UserManager(getUserManager(pointer));
-		this.overlayManager = new OverlayManager(getOverlayManager(pointer));
-		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer));
-		this.imageManager = new ImageManager(getImageManager(pointer));
-		this.lobbyManager = new LobbyManager(getLobbyManager(pointer));
-		this.networkManager = new NetworkManager(getNetworkManager(pointer));
-		this.voiceManager = new VoiceManager(getVoiceManager(pointer));
+		this.activityManager = new ActivityManager(getActivityManager(pointer), this);
+		this.userManager = new UserManager(getUserManager(pointer), this);
+		this.overlayManager = new OverlayManager(getOverlayManager(pointer), this);
+		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer), this);
+		this.imageManager = new ImageManager(getImageManager(pointer), this);
+		this.lobbyManager = new LobbyManager(getLobbyManager(pointer), this);
+		this.networkManager = new NetworkManager(getNetworkManager(pointer), this);
+		this.voiceManager = new VoiceManager(getVoiceManager(pointer), this);
 	}
 
 	private native Object create(long paramPointer);
@@ -306,7 +314,7 @@ public class Core implements AutoCloseable
 	 */
 	public void runCallbacks()
 	{
-		runCallbacks(pointer);
+		execute(()->runCallbacks(pointer));
 	}
 
 	/**
@@ -319,7 +327,7 @@ public class Core implements AutoCloseable
 	 */
 	public void setLogHook(LogLevel minLevel, BiConsumer<LogLevel, String> logHook)
 	{
-		setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook));
+		execute(()->setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook)));
 	}
 
 	/**
@@ -332,7 +340,19 @@ public class Core implements AutoCloseable
 	@Override
 	public void close()
 	{
-		destroy(pointer);
+		if(open.compareAndSet(true, false))
+		{
+			lock.lock();
+			try
+			{
+				destroy(pointer);
+			}
+			finally
+			{
+				lock.unlock();
+			}
+			createParams.close();
+		}
 	}
 
 	/**
@@ -343,5 +363,30 @@ public class Core implements AutoCloseable
 	public long getPointer()
 	{
 		return pointer;
+	}
+
+	void execute(Runnable runnable)
+	{
+		execute((Supplier<Void>) () ->
+		{
+			runnable.run();
+			return null;
+		});
+	}
+
+	<T> T execute(Supplier<T> provider)
+	{
+		if(!open.get())
+			throw new IllegalStateException("Core is closed");
+
+		lock.lock();
+		try
+		{
+			return provider.get();
+		}
+		finally
+		{
+			lock.unlock();
+		}
 	}
 }

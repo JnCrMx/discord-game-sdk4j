@@ -45,10 +45,12 @@ public class RelationshipManager
 					r.getPresence().getActivity().getType() != ActivityType.PLAYING;
 
 	private final long pointer;
+	private final Core core;
 
-	RelationshipManager(long pointer)
+	RelationshipManager(long pointer, Core core)
 	{
 		this.pointer = pointer;
+		this.core = core;
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class RelationshipManager
 	 */
 	public Relationship getWith(long userId)
 	{
-		Object ret = get(pointer, userId);
+		Object ret = core.execute(()->get(pointer, userId));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -80,7 +82,7 @@ public class RelationshipManager
 	 */
 	public void filter(Predicate<Relationship> filter)
 	{
-		filter(pointer, Objects.requireNonNull(filter));
+		core.execute(()->filter(pointer, Objects.requireNonNull(filter)));
 	}
 
 	/**
@@ -95,7 +97,7 @@ public class RelationshipManager
 	 */
 	public int count()
 	{
-		Object ret = count(pointer);
+		Object ret = core.execute(()->count(pointer));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -119,7 +121,7 @@ public class RelationshipManager
 	 */
 	public Relationship getAt(int index)
 	{
-		Object ret = getAt(pointer, index);
+		Object ret = core.execute(()->getAt(pointer, index));
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);

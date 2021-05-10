@@ -2,6 +2,7 @@ package de.jcm.discordgamesdk;
 
 import java.util.Objects;
 import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Initial parameters to create a {@link Core} from.
@@ -72,6 +73,7 @@ public class CreateParams implements AutoCloseable
 	}
 
 	private final long pointer;
+	private final AtomicBoolean open = new AtomicBoolean(true);
 
 	/**
 	 * Allocates a new structure and initializes it with default parameters.
@@ -115,7 +117,7 @@ public class CreateParams implements AutoCloseable
 	/**
 	 * Sets flags for the Core.
 	 * @param flags Flags to initialize the Core with.
-	 * @see #setFlags(Flags...)    
+	 * @see #setFlags(Flags...)
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum">
 	 *     https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum</a>
 	 */
@@ -130,7 +132,7 @@ public class CreateParams implements AutoCloseable
 	 * Use {@link Flags#fromLong(long)} to convert this to an array of flags.
 	 * @return Flags that have been set.
 	 * @see #setFlags(long)
-	 * @see #setFlags(Flags...) 
+	 * @see #setFlags(Flags...)
 	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum">
 	 *     https://discordapp.com/developers/docs/game-sdk/discord#data-models-createflags-enum</a>
 	 */
@@ -177,7 +179,10 @@ public class CreateParams implements AutoCloseable
 	@Override
 	public void close()
 	{
-		free(pointer);
+		if(open.compareAndSet(true, false))
+		{
+			free(pointer);
+		}
 	}
 
 	/**
