@@ -356,7 +356,8 @@ public class LobbyManager
 	 * A Lobby cannot be connected to (= joined) if it is full,
 	 * locked or the user is already connected to 5 Lobbies.
 	 * <p>
-	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery, Consumer)}
+	 * for {@link LobbyType#PUBLIC} Lobbies.
 	 * For {@link LobbyType#PRIVATE} Lobbies you need to obtain them on an different way (e.g. user input).
 	 * <p>
 	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
@@ -384,7 +385,8 @@ public class LobbyManager
 	 * A Lobby cannot be connected to (= joined) if it is full,
 	 * locked or the user is already connected to 5 Lobbies.
 	 * <p>
-	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery, Consumer)}
+	 * for {@link LobbyType#PUBLIC} Lobbies.
 	 * For {@link LobbyType#PRIVATE} Lobbies you need to obtain them on an different way (e.g. user input).
 	 * <p>
 	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
@@ -418,7 +420,8 @@ public class LobbyManager
 	 * A Lobby cannot be connected to (= joined) if it is full,
 	 * locked or the user is already connected to 5 Lobbies.
 	 * <p>
-	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery)} for {@link LobbyType#PUBLIC} Lobbies.
+	 * Both can be obtained with {@link LobbyManager#search(LobbySearchQuery, Consumer)}
+	 * for {@link LobbyType#PUBLIC} Lobbies.
 	 * <p>
 	 * For connecting with an Activity secret (as obtained by {@link #getLobbyActivitySecret(Lobby)})
 	 * consider using {@link #connectLobbyWithActivitySecret(String, BiConsumer)} instead of parsing it manually.
@@ -565,7 +568,7 @@ public class LobbyManager
 	/**
 	 * Gets the Lobby object for a Lobby with the specified ID.
 	 * <p>
-	 * The Lobby must be "fetched" before; either as part of a {@link #search(LobbySearchQuery)} or
+	 * The Lobby must be "fetched" before; either as part of a {@link #search(LobbySearchQuery, Consumer)} or
 	 * because the current user is connected to it.
 	 * @param lobbyId ID of the requested Lobby
 	 * @return A Lobby object for the given ID
@@ -1518,14 +1521,14 @@ public class LobbyManager
 
 	/**
 	 * Returns a new {@link LobbySearchQuery}.
-	 * A search query is used with {@link #search(LobbySearchQuery)} to search for
+	 * A search query is used with {@link #search(LobbySearchQuery, Consumer)} to search for
 	 * other available and Discord lobbies.
 	 * <p>
 	 * This method is the only way of obtaining an instance of {@link LobbySearchQuery}.
 	 * Do <b>not</b> attempt to create an instance in any other way.
 	 * @return A {@link LobbySearchQuery}
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer)
 	 * @see #getSearchQuery()
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getsearchquery">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#getsearchquery</a>
@@ -1604,12 +1607,12 @@ public class LobbyManager
 	}
 
 	/**
-	 * Gets the number of Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * Gets the number of Lobbies found in the last {@link #search(LobbySearchQuery, Consumer)}.
 	 * <p>
 	 * If you want a list of found Lobbies use either
 	 * {@link #getLobbyIds()} or {@link #getLobbies()}.
 	 * @return A positive integer or {@code 0} if no Lobbies were found
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer)
 	 * @see #getLobbyId(int)
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#lobbycount">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#lobbycount</a>
@@ -1620,7 +1623,7 @@ public class LobbyManager
 	}
 
 	/**
-	 * Gets the ID of the Lobby at the given index in the {@link #search(LobbySearchQuery)} result.
+	 * Gets the ID of the Lobby at the given index in the {@link #search(LobbySearchQuery, Consumer)} result.
 	 * Use {@link #lobbyCount()} the get the number of Lobbies in the result.
 	 * <p>
 	 * If you want a list of found Lobbies use either
@@ -1629,7 +1632,7 @@ public class LobbyManager
 	 *              and {@literal <} {@link #lobbyCount()}
 	 * @return A Discord Lobby ID
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer)
 	 * @see #lobbyCount()
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#getlobbyid">
 	 *     https://discord.com/developers/docs/game-sdk/lobbies#getlobbyid</a>
@@ -1648,7 +1651,7 @@ public class LobbyManager
 	}
 
 	/**
-	 * Gets a list of the IDs of all Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * Gets a list of the IDs of all Lobbies found in the last {@link #search(LobbySearchQuery, Consumer)}.
 	 * <p>
 	 * This is done in the following way:
 	 * <ol>
@@ -1663,7 +1666,7 @@ public class LobbyManager
 	 * or the search result, which is stored by Discord.
 	 * @return An <i>unmodifiable</i> list containing Discord Lobby IDs
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer)
 	 */
 	public List<Long> getLobbyIds()
 	{
@@ -1675,7 +1678,7 @@ public class LobbyManager
 	}
 
 	/**
-	 * Gets a list of all Lobbies found in the last {@link #search(LobbySearchQuery)}.
+	 * Gets a list of all Lobbies found in the last {@link #search(LobbySearchQuery, Consumer)}.
 	 * <p>
 	 * This is done in the following way:
 	 * <ol>
@@ -1688,7 +1691,7 @@ public class LobbyManager
 	 * or the search result, which is stored by Discord.
 	 * @return An <i>unmodifiable</i> list containing {@link Lobby} objects
 	 * @throws GameSDKException for a {@link Result} that is not {@link Result#OK}
-	 * @see #search(LobbySearchQuery)
+	 * @see #search(LobbySearchQuery, Consumer)
 	 */
 	public List<Lobby> getLobbies()
 	{

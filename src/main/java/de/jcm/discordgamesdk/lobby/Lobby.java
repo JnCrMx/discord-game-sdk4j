@@ -5,6 +5,7 @@ import de.jcm.discordgamesdk.Result;
 import de.jcm.discordgamesdk.user.DiscordUser;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Data holding structure representing a Discord Lobby created via the {@link LobbyManager}.
@@ -60,7 +61,7 @@ public class Lobby
 	/**
 	 * Returns the {@link LobbyType} of this Lobby (e.g. public, private).
 	 * <p>
-	 * Public Lobbies can be found via {@link LobbyManager#search(LobbySearchQuery)}
+	 * Public Lobbies can be found via {@link LobbyManager#search(LobbySearchQuery, Consumer)}
 	 * while private Lobbies cannot. You can only join them via their ID and secret
 	 * or their activity secret (a concatenation of ID and secret) which can be obtained
 	 * with {@link LobbyManager#getLobbyActivitySecret(Lobby)}.
@@ -93,7 +94,7 @@ public class Lobby
 	 * <p>
 	 * It is unclear in which context this is really a "secret" as it can be obtained via
 	 * {@link LobbyManager#getLobby(long)} for public Lobbies after searching for them with
-	 * {@link LobbyManager#search(LobbySearchQuery)}.
+	 * {@link LobbyManager#search(LobbySearchQuery, Consumer)}.
 	 * @return The secret of this Lobby, max. 127 bytes in length
 	 * @see LobbyManager#getLobbyActivitySecret(Lobby)
 	 */
@@ -123,7 +124,7 @@ public class Lobby
 	 * <p>
 	 * Attempting to join a locked Lobby will result in a {@link Result#LOBBY_FULL}.
 	 * <p>
-	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery)}.
+	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery, Consumer)}.
 	 * Therefore it acts like a "stronger" version of {@link LobbyType#PRIVATE}
 	 * as it cannot be connected to using ID and secret.
 	 * @return {@code true} if this Lobby is locked.

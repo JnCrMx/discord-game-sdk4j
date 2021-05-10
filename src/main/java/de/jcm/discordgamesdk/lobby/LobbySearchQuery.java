@@ -4,8 +4,10 @@ import de.jcm.discordgamesdk.GameSDKException;
 import de.jcm.discordgamesdk.LobbyManager;
 import de.jcm.discordgamesdk.Result;
 
+import java.util.function.Consumer;
+
 /**
- * A search query used to filter, sort and limit Lobbies in a {@link LobbyManager#search(LobbySearchQuery)}.
+ * A search query used to filter, sort and limit Lobbies in a {@link LobbyManager#search(LobbySearchQuery, Consumer)}.
  * <p>
  * An instance of this can only be obtained by {@link LobbyManager#getSearchQuery()}.
  * <p>
@@ -13,7 +15,7 @@ import de.jcm.discordgamesdk.Result;
  * <p>
  * Closing or freeing the instance does not seem to be required or even possible.
  * @see LobbyManager#getSearchQuery()
- * @see LobbyManager#search(LobbySearchQuery)
+ * @see LobbyManager#search(LobbySearchQuery, Consumer) 
  * @see <a href="https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchquery-struct">
  *     https://discord.com/developers/docs/game-sdk/lobbies#data-models-lobbysearchquery-struct</a>
  */

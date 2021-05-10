@@ -5,6 +5,7 @@ import de.jcm.discordgamesdk.LobbyManager;
 import de.jcm.discordgamesdk.Result;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A transaction used to create or update a Lobby.
@@ -46,7 +47,7 @@ public class LobbyTransaction
 	/**
 	 * Sets the type (public, private) of the Lobby created/updated by this transaction.
 	 * <p>
-	 * Public Lobbies can be found via {@link LobbyManager#search(LobbySearchQuery)}
+	 * Public Lobbies can be found via {@link LobbyManager#search(LobbySearchQuery, Consumer)}
 	 * while private Lobbies cannot. You can only join them via their ID and secret
 	 * or their activity secret (a concatenation of ID and secret) which can be obtained
 	 * with {@link LobbyManager#getLobbyActivitySecret(Lobby)}
@@ -162,7 +163,7 @@ public class LobbyTransaction
 	 * <p>
 	 * Attempting to join a locked Lobby will result in a {@link Result#LOBBY_FULL}.
 	 * <p>
-	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery)}.
+	 * For some reason a locked Lobby cannot be found with {@link LobbyManager#search(LobbySearchQuery, Consumer)}.
 	 * Therefore it acts like a "stronger" version of {@link LobbyType#PRIVATE}
 	 * as it cannot be connected to using ID and secret.
 	 * @param locked {@code true} if the Lobby is locked
