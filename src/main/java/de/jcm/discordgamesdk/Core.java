@@ -47,6 +47,19 @@ public class Core implements AutoCloseable
 		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
 		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
 
+		String sep;
+
+		if(osName.contains("windows"))
+		{
+			sep = "\\";;
+		}
+		else
+		{
+			sep = "/";
+		}
+
+		String pathOfApp = System.getProperty("user.dir") + sep; // Kiritron: Returns path where app is running(with separator)
+
 		String objectName;
 
 		if(osName.contains("windows"))
@@ -67,10 +80,16 @@ public class Core implements AutoCloseable
 			throw new RuntimeException("cannot determine OS type");
 		}
 
-		String path = "/native/"+osName+"/"+arch+"/"+objectName;
-		InputStream in = Core.class.getResourceAsStream(path);
-		if(in == null)
+		String path = pathOfApp + "native" + sep + osName + sep + arch + sep + objectName;
+		InputStream in = null;
+		try
+		{
+			in = new FileInputStream(new File(path));
+		}
+		catch (FileNotFoundException e)
+		{
 			throw new RuntimeException(new FileNotFoundException("cannot find native library at "+path));
+		}
 
 		File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-"+name+System.nanoTime());
 		if(!tempDir.mkdir())
