@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#ifdef linux
+#if defined(linux) || defined(__APPLE__)
 #include <dlfcn.h>
 #endif
 
@@ -12,7 +12,7 @@ void* handle = NULL;
 
 JNIEXPORT void JNICALL Java_de_jcm_discordgamesdk_Core_initDiscordNative(JNIEnv *env, jclass clazz, jstring path)
 {
-#ifdef linux
+#if defined(linux) || defined(__APPLE__)
 	if(handle)
 	{
 		if(dlclose(handle) != 0) // close the handle if it already exists
@@ -43,7 +43,7 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create(JNIEnv *env, jo
 	
 	struct IDiscordCore* core;
 	enum EDiscordResult result;
-#ifdef linux
+#if defined(linux) || defined(__APPLE__)
 	dlerror(); // clear old error
 	enum EDiscordResult (*create)(int, struct DiscordCreateParams*, struct IDiscordCore**) = dlsym(handle, "DiscordCreate");
 	char* error = dlerror(); // get new error
@@ -59,6 +59,8 @@ JNIEXPORT jobject JNICALL Java_de_jcm_discordgamesdk_Core_create(JNIEnv *env, jo
 	result = create(DISCORD_VERSION, params, &core);
 #elif defined _WIN32
 	result = DiscordCreate(DISCORD_VERSION, params, &core);
+#else
+	#error Unsupported platform. Neither "linux", nor "__APPLE__", nor "_WIN32" defined.
 #endif
 
 	if(result == DiscordResult_Ok) // if everything went well, return the pointer

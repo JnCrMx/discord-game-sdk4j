@@ -62,10 +62,23 @@ public class Core implements AutoCloseable
 			osName = "linux";
 			objectName = "lib" + name + ".so";
 		}
+		else if(osName.contains("mac os"))
+		{
+			osName = "macos";
+			objectName = "lib" + name + ".dylib";
+		}
 		else
 		{
-			throw new RuntimeException("cannot determine OS type");
+			throw new RuntimeException("cannot determine OS type: "+osName);
 		}
+
+		/*
+		Some systems (e.g. Mac OS X) might report the architecture as "x86_64" instead of "amd64".
+		While it would be possible to store the MacOS dylib as "x86_x64" instead of "amd64",
+		I personally prefer to keep the system architecture consistent.
+		 */
+		if(arch.equals("x86_64"))
+			arch = "amd64";
 
 		String path = "/native/"+osName+"/"+arch+"/"+objectName;
 		InputStream in = Core.class.getResourceAsStream(path);
