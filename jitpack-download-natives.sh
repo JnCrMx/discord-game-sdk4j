@@ -15,7 +15,7 @@ mkdir -p src/main/resources/native/linux/amd64
 curl -L -o src/main/resources/native/linux/amd64/libdiscord_game_sdk_jni.so \
 	https://github.com/JnCrMx/discord-game-sdk4j/releases/download/$version/linux-amd64-libdiscord_game_sdk_jni.so
 
-# Mac OS
+# macOS
 mkdir -p src/main/resources/native/macos/amd64
 curl -L -o src/main/resources/native/macos/amd64/libdiscord_game_sdk_jni.dylib \
-	https://github.com/JnCrMx/discord-game-sdk4j/releases/download/$version/macos-amd64-libdiscord_game_sdk_jni.so
+	https://github.com/JnCrMx/discord-game-sdk4j/releases/download/$version/macos-amd64-libdiscord_game_sdk_jni.dylib
