@@ -39,9 +39,9 @@ release=target/release
 mkdir -p $release
 
 # JARs
-check_and_copy target/discord-game-sdk4j-0.5.3.jar $release/discord-game-sdk4j-0.5.3.jar
-check_and_copy target/discord-game-sdk4j-0.5.3-javadoc.jar $release/discord-game-sdk4j-0.5.3-javadoc.jar
-check_and_copy target/discord-game-sdk4j-0.5.3-sources.jar $release/discord-game-sdk4j-0.5.3-sources.jar
+check_and_copy target/discord-game-sdk4j-$mvnversion.jar $release/discord-game-sdk4j-$mvnversion.jar
+check_and_copy target/discord-game-sdk4j-$mvnversion-javadoc.jar $release/discord-game-sdk4j-$mvnversion-javadoc.jar
+check_and_copy target/discord-game-sdk4j-$mvnversion-sources.jar $release/discord-game-sdk4j-$mvnversion-sources.jar
 
 # Windows
 check_and_copy target/classes/native/windows/amd64/discord_game_sdk_jni.dll $release/windows-amd64-discord_game_sdk_jni.dll
