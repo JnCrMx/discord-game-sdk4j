@@ -36,6 +36,7 @@ public class Activity implements AutoCloseable
 	}, "Activity-Cleaner");
 	static
 	{
+		QUEUE_THREAD.setDaemon(true);
 		QUEUE_THREAD.start();
 	}
 
