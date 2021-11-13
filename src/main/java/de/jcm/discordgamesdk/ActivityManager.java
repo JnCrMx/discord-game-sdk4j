@@ -149,7 +149,7 @@ public class ActivityManager
 	 */
 	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
 	{
-		core.execute(()->sendInvite(pointer, userId, type.ordinal(), Objects.requireNonNull(content), Objects.requireNonNull(callback)));
+		core.execute(()->sendInvite(pointer, userId, type.nativeValue(), Objects.requireNonNull(content), Objects.requireNonNull(callback)));
 	}
 
 	/**

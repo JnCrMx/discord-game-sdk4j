@@ -21,4 +21,12 @@ public enum ActivityActionType
 	 * Send/open a spectate invitation.
 	 */
 	SPECTATE
+	;
+
+	private static final int OFFSET = 1;
+
+	public int nativeValue()
+	{
+		return ordinal() + OFFSET;
+	}
 }
