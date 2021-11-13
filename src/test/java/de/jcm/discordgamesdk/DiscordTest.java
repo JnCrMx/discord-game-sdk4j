@@ -121,7 +121,7 @@ public class DiscordTest
 						                        "update_activity failed.");
 
 						core.activityManager().sendInvite(691614879399936078L,
-						                                  ActivityActionType.SPECTATE,
+						                                  ActivityActionType.JOIN,
 						                                  "Join me baka!");
 					});
 				}
@@ -466,8 +466,8 @@ public class DiscordTest
 				@Override
 				public void onLobbyUpdate(long lobbyId)
 				{
-					System.out.println("Lobby "+lobbyId+" updated");
-					System.out.println(coreRef.get().lobbyManager().getLobbyMetadata(lobbyId));
+					System.out.println("Lobby "+lobbyId+" updated: " +
+							                   coreRef.get().lobbyManager().getLobbyMetadata(lobbyId));
 				}
 
 				@Override
@@ -485,8 +485,8 @@ public class DiscordTest
 				@Override
 				public void onMemberUpdate(long lobbyId, long userId)
 				{
-					System.out.println("User "+userId+" in lobby "+lobbyId+" updated");
-					System.out.println(coreRef.get().lobbyManager().getMemberMetadata(lobbyId, userId));
+					System.out.println("User "+userId+" in lobby "+lobbyId+" updated: "+
+							                   coreRef.get().lobbyManager().getMemberMetadata(lobbyId, userId));
 				}
 
 				@Override
@@ -633,7 +633,7 @@ public class DiscordTest
 			params.setClientID(698611073133051974L);
 			try(Core core = new Core(params))
 			{
-				VoiceInputMode inputMode = new VoiceInputMode(
+				/*VoiceInputMode inputMode = new VoiceInputMode(
 						VoiceInputMode.InputModeType.PUSH_TO_TALK,
 						Integer.toString((int) (System.currentTimeMillis()%10))); // use pseudo-random shortcut
 
@@ -645,11 +645,11 @@ public class DiscordTest
 				});
 
 				core.overlayManager().openVoiceSettings(r->{
-					Assumptions.assumeTrue(r==Result.OK, "open_voice_settings failed");
+					Assumptions.assumeTrue(r==Result.OK, "open_voice_settings failed: "+r);
 
 					VoiceInputMode mode = core.voiceManager().getInputMode();
 					System.out.println(mode);
-				});
+				});*/
 
 				boolean selfMute = core.voiceManager().isSelfMute();
 				core.voiceManager().setSelfMute(!selfMute);
