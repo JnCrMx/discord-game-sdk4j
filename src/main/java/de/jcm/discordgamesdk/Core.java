@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Objects;
@@ -42,6 +45,15 @@ public class Core implements AutoCloseable
 	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
 	 */
 	public static void init(File discordLibrary)
+	{
+		File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-discord-game-sdk-"+System.nanoTime());
+		if(!(tempDir.exists() && tempDir.isDirectory()) && !tempDir.mkdir())
+			throw new RuntimeException(new IOException("Cannot create temporary directory"));
+		tempDir.deleteOnExit();
+		init(discordLibrary, tempDir);
+	}
+
+	public static void init(File discordLibrary, File tempDir)
 	{
 		String name = "discord_game_sdk_jni";
 		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
@@ -85,11 +97,6 @@ public class Core implements AutoCloseable
 		if(in == null)
 			throw new RuntimeException(new FileNotFoundException("cannot find native library at "+path));
 
-		File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-"+name+System.nanoTime());
-		if(!tempDir.mkdir())
-			throw new RuntimeException(new IOException("Cannot create temporary directory"));
-		tempDir.deleteOnExit();
-
 		File temp = new File(tempDir, objectName);
 		temp.deleteOnExit();
 
@@ -104,6 +111,58 @@ public class Core implements AutoCloseable
 
 		System.load(temp.getAbsolutePath());
 		initDiscordNative(discordLibrary.getAbsolutePath());
+	}
+
+	public static void init(URL url)
+	{
+		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+		String protocol = url.getProtocol();
+		if(protocol.equalsIgnoreCase("file") &&
+				(!osName.contains("windows") || url.getFile().endsWith("discord_game_sdk.dll")))
+		{
+			try
+			{
+				File file = new File(url.toURI());
+				init(file);
+			}
+			catch(URISyntaxException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		else
+		{
+			try
+			{
+				InputStream in = url.openStream();
+
+				String objectName;
+				if(osName.contains("windows"))
+					objectName = "discord_game_sdk.dll";
+				else if(osName.contains("mac os"))
+					objectName = "discord_game_sdk.dylib";
+				else if(osName.contains("linux"))
+					objectName = "discord_game_sdk.so";
+				else
+					throw new RuntimeException("cannot determine OS type: "+osName);
+
+				File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-discord-game-sdk-"+System.nanoTime());
+				if(!(tempDir.exists() && tempDir.isDirectory()) && !tempDir.mkdir())
+					throw new RuntimeException(new IOException("Cannot create temporary directory"));
+				File temp = new File(tempDir, objectName);
+				temp.deleteOnExit();
+
+				Files.copy(in, temp.toPath());
+
+				in.close();
+
+				init(temp, tempDir);
+			}
+			catch(IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	/**
