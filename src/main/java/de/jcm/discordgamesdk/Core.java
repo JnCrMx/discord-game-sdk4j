@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -449,7 +448,7 @@ public class Core implements AutoCloseable
 	<T> T execute(Supplier<T> provider)
 	{
 		if(!open.get())
-			throw new IllegalStateException("Core is closed");
+			throw new CoreClosedException();
 
 		lock.lock();
 		try
