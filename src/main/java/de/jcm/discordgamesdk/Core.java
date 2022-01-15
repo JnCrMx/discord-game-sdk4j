@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -403,6 +402,17 @@ public class Core implements AutoCloseable
 	}
 
 	/**
+	 * Returns true if this {@link Core} instance is open, i.e. {@link #close()} has not
+	 * been called yet. Calling certain SDK methods will throw {@link CoreClosedException}
+	 * if the {@link Core} is not open.
+	 * @return True if this {@link Core} is still open, false otherwise
+	 */
+	public boolean isOpen()
+	{
+		return open.get();
+	}
+
+	/**
 	 * <p>Closes and destroys the instance.</p>
 	 * <p>This should be called at the end of the program.</p>
 	 *
@@ -448,8 +458,8 @@ public class Core implements AutoCloseable
 
 	<T> T execute(Supplier<T> provider)
 	{
-		if(!open.get())
-			throw new IllegalStateException("Core is closed");
+		if(!isOpen())
+			throw new CoreClosedException();
 
 		lock.lock();
 		try
