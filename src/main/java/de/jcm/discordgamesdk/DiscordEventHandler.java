@@ -137,13 +137,13 @@ public class DiscordEventHandler extends DiscordEventAdapter
 	@Override
 	public void onSpeaking(long lobbyId, long userId, boolean speaking)
 	{
-		listeners.forEach(l->onSpeaking(lobbyId, userId, speaking));
+		listeners.forEach(l->l.onSpeaking(lobbyId, userId, speaking));
 	}
 
 	@Override
 	public void onNetworkMessage(long lobbyId, long userId, byte channelId, byte[] data)
 	{
-		listeners.forEach(l->onNetworkMessage(lobbyId, userId, channelId, data));
+		listeners.forEach(l->l.onNetworkMessage(lobbyId, userId, channelId, data));
 	}
 
 	@Override
