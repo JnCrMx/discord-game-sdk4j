@@ -16,20 +16,20 @@ head over to the [ActivityExample.java](examples/ActivityExample.java)!
 
 ## Features of the SDK
 
-| Feature | State | Example |
-| ------- | ----- | ------- |
-| [Achievements](https://discord.com/developers/docs/game-sdk/achievements) | :x: not implemented | |
-| [Activities](https://discord.com/developers/docs/game-sdk/activities) | :heavy_check_mark: implemented | [ActivityExample.java](examples/ActivityExample.java) |
-| [Applications](https://discord.com/developers/docs/game-sdk/applications) | :x: not implemented | |
-| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice) | :heavy_check_mark: implemented | [VoiceExample.java](examples/VoiceExample.java) |
-| [Images](https://discord.com/developers/docs/game-sdk/images) | :heavy_check_mark: implemented | none yet :cry: (see [``imageTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L417) for now) |
-| [Lobbies](https://discord.com/developers/docs/game-sdk/lobbies) | :heavy_check_mark: implemented | [LobbyExample.java](examples/LobbyExample.java) |
-| [Networking](https://discord.com/developers/docs/game-sdk/networking) | :heavy_check_mark: implemented | [NetworkExample.java](examples/NetworkExample.java) |
-| [Overlay](https://discord.com/developers/docs/game-sdk/overlay) | :heavy_check_mark: implemented |  none yet :cry: (see [``overlayTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L289) for now) |
+| Feature                                                                     | State                          | Example                                                                                                                                  |
+|-----------------------------------------------------------------------------|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [Achievements](https://discord.com/developers/docs/game-sdk/achievements)   | :x: not implemented            |                                                                                                                                          |
+| [Activities](https://discord.com/developers/docs/game-sdk/activities)       | :heavy_check_mark: implemented | [ActivityExample.java](examples/ActivityExample.java)                                                                                    |
+| [Applications](https://discord.com/developers/docs/game-sdk/applications)   | :x: not implemented            |                                                                                                                                          |
+| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice)         | :heavy_check_mark: implemented | [VoiceExample.java](examples/VoiceExample.java)                                                                                          |
+| [Images](https://discord.com/developers/docs/game-sdk/images)               | :heavy_check_mark: implemented | none yet :cry: (see [``imageTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L417) for now)                                |
+| [Lobbies](https://discord.com/developers/docs/game-sdk/lobbies)             | :heavy_check_mark: implemented | [LobbyExample.java](examples/LobbyExample.java)                                                                                          |
+| [Networking](https://discord.com/developers/docs/game-sdk/networking)       | :heavy_check_mark: implemented | [NetworkExample.java](examples/NetworkExample.java)                                                                                      |
+| [Overlay](https://discord.com/developers/docs/game-sdk/overlay)             | :heavy_check_mark: implemented | none yet :cry: (see [``overlayTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L289) for now)                              |
 | [Relationships](https://discord.com/developers/docs/game-sdk/relationships) | :heavy_check_mark: implemented | [RelationshipExample.java](examples/RelationshipExample.java), [FriendNotificationExample.java](examples/FriendNotificationExample.java) |
-| [Storage](https://discord.com/developers/docs/game-sdk/storage) | :x: not implemented | |
-| [Store](https://discord.com/developers/docs/game-sdk/store) | :x: not implemented | |
-| [Users](https://discord.com/developers/docs/game-sdk/users) | :heavy_check_mark: implemented | none yet :cry: (see [``userTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L216) for now) |
+| [Storage](https://discord.com/developers/docs/game-sdk/storage)             | :x: not implemented            |                                                                                                                                          |
+| [Store](https://discord.com/developers/docs/game-sdk/store)                 | :x: not implemented            |                                                                                                                                          |
+| [Users](https://discord.com/developers/docs/game-sdk/users)                 | :heavy_check_mark: implemented | none yet :cry: (see [``userTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L216) for now)                                 |
 
 I will try to work on features that are not implemented yet soon,
 but the remaining ones are quite difficult to test,

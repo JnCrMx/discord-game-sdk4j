@@ -14,6 +14,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * The main component for accessing Discord's game SDK.
@@ -37,9 +39,6 @@ public class Core implements AutoCloseable
 	 * You may call this method more than once which unloads the old shared object and loads the new one.
 	 *
 	 * @param discordLibrary Location of Discord's native library.
-	 *                       <p>On Windows the filename (last component of the path) must be
-	 *                       "discord_game_sdk.dll" or an {@link UnsatisfiedLinkError} will occur.</p>
-	 *                       <p>On Linux the filename does not matter.</p>
 	 *
 	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
 	 */
@@ -52,6 +51,25 @@ public class Core implements AutoCloseable
 		init(discordLibrary, tempDir);
 	}
 
+	/**
+	 * Extracts and initializes the native library.
+	 * This method also loads Discord's native library.
+	 * <p>
+	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
+	 * using {@link Class#getResourceAsStream(String)}.
+	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
+	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
+	 * the system property {@code os.arch} and {@code object name} is the name of the native object
+	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
+	 * <p>
+	 * You may call this method more than once which unloads the old shared object and loads the new one.
+	 *
+	 * @param discordLibrary Location of Discord's native library.
+	 * @param tempDir Temporary directory, to which the discordLibrary will be copied to avoid problems
+	 *                on Windows.
+	 *
+	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
+	 */
 	public static void init(File discordLibrary, File tempDir)
 	{
 		String name = "discord_game_sdk_jni";
@@ -112,6 +130,25 @@ public class Core implements AutoCloseable
 		initDiscordNative(discordLibrary.getAbsolutePath());
 	}
 
+	/**
+	 * Extracts and initializes the native library.
+	 * This method also loads Discord's native library from any given URL.
+	 * <p>
+	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
+	 * using {@link Class#getResourceAsStream(String)}.
+	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
+	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
+	 * the system property {@code os.arch} and {@code object name} is the name of the native object
+	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
+	 * <p>
+	 * You may call this method more than once which unloads the old shared object and loads the new one.
+	 * <p>
+	 * The URL will be read and copied into a temporary file.
+	 *
+	 * @param url URL from which to load Discord's native library.
+	 *
+	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
+	 */
 	public static void init(URL url)
 	{
 		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
@@ -162,6 +199,167 @@ public class Core implements AutoCloseable
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	/**
+	 * Extracts and initializes the native library.
+	 * This method also loads Discord's native library from the classpath, which <b>must</b> be located
+	 * at {@code /lib/{arch}/{name}} where {@code arch} is the system architecture from {@code os.arch},
+	 * where {@code amd64} is replaced with {@code x86_64} for unification, and {@code name} is either
+	 * {@code discord_game_sdk.dll} for Windows, {@code discord_game_sdk.so} for Linux or {@code discord_game_sdk.dylib}
+	 * for macOS.
+	 * <p>
+	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
+	 * using {@link Class#getResourceAsStream(String)}.
+	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
+	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
+	 * the system property {@code os.arch} and {@code object name} is the name of the native object
+	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
+	 * <p>
+	 * You may call this method more than once which unloads the old shared object and loads the new one.
+	 * <p>
+	 * The resource will be read and copied into a temporary file.
+	 *
+	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
+	 */
+	public static void initFromClasspath()
+	{
+		// Find out which name Discord's library has (.dll for Windows, .so for Linux)
+		String name = "discord_game_sdk";
+		String suffix;
+
+		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+
+		if(osName.contains("windows"))
+		{
+			suffix = ".dll";
+		}
+		else if(osName.contains("linux"))
+		{
+			suffix = ".so";
+		}
+		else if(osName.contains("mac os"))
+		{
+			suffix = ".dylib";
+		}
+		else
+		{
+			throw new RuntimeException("cannot determine OS type: "+osName);
+		}
+
+		/*
+		Some systems report "amd64" (e.g. Windows and Linux), some "x86_64" (e.g. Mac OS).
+		At this point we need the "x86_64" version, as this one is used in the ZIP.
+		 */
+		if(arch.equals("amd64"))
+			arch = "x86_64";
+
+		// Path of Discord's library inside the ZIP
+		String res = "/lib/"+arch+"/"+name+suffix;
+
+		Core.init(Objects.requireNonNull(Core.class.getResource(res)));
+	}
+
+	private static File downloadDiscordLibrary() throws IOException
+	{
+		// Find out which name Discord's library has (.dll for Windows, .so for Linux)
+		String name = "discord_game_sdk";
+		String suffix;
+
+		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+
+		if(osName.contains("windows"))
+		{
+			suffix = ".dll";
+		}
+		else if(osName.contains("linux"))
+		{
+			suffix = ".so";
+		}
+		else if(osName.contains("mac os"))
+		{
+			suffix = ".dylib";
+		}
+		else
+		{
+			throw new RuntimeException("cannot determine OS type: "+osName);
+		}
+
+		/*
+		Some systems report "amd64" (e.g. Windows and Linux), some "x86_64" (e.g. Mac OS).
+		At this point we need the "x86_64" version, as this one is used in the ZIP.
+		 */
+		if(arch.equals("amd64"))
+			arch = "x86_64";
+
+		// Path of Discord's library inside the ZIP
+		String zipPath = "lib/"+arch+"/"+name+suffix;
+
+		// Open the URL as a ZipInputStream
+		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
+		ZipInputStream zin = new ZipInputStream(downloadUrl.openStream());
+
+		// Search for the right file inside the ZIP
+		ZipEntry entry;
+		while((entry = zin.getNextEntry())!=null)
+		{
+			if(entry.getName().equals(zipPath))
+			{
+				// Create a new temporary directory
+				// We need to do this, because we may not change the filename on Windows
+				File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-"+name+System.nanoTime());
+				if(!tempDir.mkdir())
+					throw new IOException("Cannot create temporary directory");
+				tempDir.deleteOnExit();
+
+				// Create a temporary file inside our directory (with a "normal" name)
+				File temp = new File(tempDir, name+suffix);
+				temp.deleteOnExit();
+
+				// Copy the file in the ZIP to our temporary file
+				Files.copy(zin, temp.toPath());
+
+				// We are done, so close the input stream
+				zin.close();
+
+				// Return our temporary file
+				return temp;
+			}
+			// next entry
+			zin.closeEntry();
+		}
+		zin.close();
+		// We couldn't find the library inside the ZIP
+		return null;
+	}
+
+	/**
+	 * Extracts and initializes the native library.
+	 * This method also downloads, extracts and loads Discord's native library from
+	 * <a href="https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip">
+	 *     https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip</a>.
+	 * <p>
+	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
+	 * using {@link Class#getResourceAsStream(String)}.
+	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
+	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
+	 * the system property {@code os.arch} and {@code object name} is the name of the native object
+	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
+	 * <p>
+	 * You may call this method more than once which unloads the old shared object and loads the new one.
+	 * <p>
+	 * The resource will be read and copied into a temporary file.
+	 *
+	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
+	 */
+	public static void initDownload() throws IOException
+	{
+		File f = downloadDiscordLibrary();
+		if(f == null)
+			throw new FileNotFoundException("cannot find native library in downloaded zip file");
+		init(f);
 	}
 
 	/**
