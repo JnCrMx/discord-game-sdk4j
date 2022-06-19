@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -299,7 +300,9 @@ public class Core implements AutoCloseable
 
 		// Open the URL as a ZipInputStream
 		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
-		ZipInputStream zin = new ZipInputStream(downloadUrl.openStream());
+		HttpURLConnection connection = (HttpURLConnection) downloadUrl.openConnection();
+		connection.setRequestProperty("User-Agent", "discord-game-sdk4j (https://github.com/JnCrMx/discord-game-sdk4j)");
+		ZipInputStream zin = new ZipInputStream(connection.getInputStream());
 
 		// Search for the right file inside the ZIP
 		ZipEntry entry;
