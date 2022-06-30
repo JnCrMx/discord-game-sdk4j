@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.net.HttpURLConnection;
 
 /**
  * An examples showing how to automatically download, extract and load
@@ -53,7 +54,9 @@ public class DownloadNativeLibrary
 
 		// Open the URL as a ZipInputStream
 		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
-		ZipInputStream zin = new ZipInputStream(downloadUrl.openStream());
+		HttpURLConnection connection = (HttpURLConnection) downloadUrl.openConnection();
+		connection.setRequestProperty("User-Agent", "discord-game-sdk4j (https://github.com/JnCrMx/discord-game-sdk4j)");
+		ZipInputStream zin = new ZipInputStream(connection.getInputStream());
 
 		// Search for the right file inside the ZIP
 		ZipEntry entry;
