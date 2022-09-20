@@ -1,7 +1,5 @@
 package de.jcm.discordgamesdk;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 /**
@@ -72,17 +70,15 @@ public class CreateParams implements AutoCloseable
 		}
 	}
 
-	private final long pointer;
-	private final AtomicBoolean open = new AtomicBoolean(true);
-
+	long flags;
+	long clientID;
 	DiscordEventAdapter eventAdapter;
 
 	/**
-	 * Allocates a new structure and initializes it with default parameters.
+	 * Create the CreateParams.
 	 */
 	public CreateParams()
 	{
-		this.pointer = allocate();
 	}
 
 	/**
@@ -91,7 +87,7 @@ public class CreateParams implements AutoCloseable
 	 */
 	public void setClientID(long id)
 	{
-		setClientID(pointer, id);
+		this.clientID = id;
 	}
 
 	/**
@@ -100,7 +96,7 @@ public class CreateParams implements AutoCloseable
 	 */
 	public long getClientID()
 	{
-		return getClientID(pointer);
+		return clientID;
 	}
 
 	/**
@@ -113,7 +109,7 @@ public class CreateParams implements AutoCloseable
 	 */
 	public void setFlags(Flags... flags)
 	{
-		setFlags(pointer, Flags.toLong(flags));
+		setFlags(Flags.toLong(flags));
 	}
 
 	/**
@@ -125,7 +121,7 @@ public class CreateParams implements AutoCloseable
 	 */
 	public void setFlags(long flags)
 	{
-		setFlags(pointer, flags);
+		this.flags = flags;
 	}
 
 	/**
@@ -140,7 +136,7 @@ public class CreateParams implements AutoCloseable
 	 */
 	public long getFlags()
 	{
-		return getFlags(pointer);
+		return flags;
 	}
 
 	/**
@@ -149,52 +145,23 @@ public class CreateParams implements AutoCloseable
 	 */
 	public void registerEventHandler(DiscordEventAdapter eventHandler)
 	{
-		registerEventHandler(pointer, Objects.requireNonNull(eventHandler));
 		eventAdapter = eventHandler;
 	}
-
-	private native long allocate();
-	private native void free(long pointer);
-
-	private native void setClientID(long pointer, long id);
-	private native long getClientID(long pointer);
-
-	private native void setFlags(long pointer, long flags);
-	private native long getFlags(long pointer);
-
-	private native void registerEventHandler(long pointer, DiscordEventAdapter handler);
-
 	/**
 	 * Gets the default flags for new Cores.
 	 * @return The default flags.
 	 */
-	public static native long getDefaultFlags();
-
-	/**
-	 * <p>Frees the allocated native structure.</p>
-	 * <p>You should call this when you do not need the structure anymore.
-	 * Do <b>not</b> call this if you still want to use a {@link Core} created from the params.
-	 * It will cause the JVM to crash with an access violation exception.</p>
-	 * <p>If you a using a <i>try-with-resources</i> block make sure that you only use the created
-	 * {@link Core} - especially {@link Core#runCallbacks()} - <b>inside</b> the block, because
-	 * the CreateParams will be closed by the end of the block.</p>
-	 */
-	@Override
-	public void close()
+	public static long getDefaultFlags()
 	{
-		if(open.compareAndSet(true, false))
-		{
-			free(pointer);
-		}
+		return Flags.DEFAULT.value;
 	}
 
 	/**
-	 * <p>Return the pointer to the native structure.</p>
-	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
-	 * @return A native pointer.
+	 * No operation, only kept for backwards compatibility
 	 */
-	public long getPointer()
+	@Override
+	@Deprecated
+	public void close()
 	{
-		return pointer;
 	}
 }
