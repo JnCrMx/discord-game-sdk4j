@@ -1,13 +1,14 @@
 package de.jcm.discordgamesdk;
 
 import com.google.gson.Gson;
+import de.jcm.discordgamesdk.activity.Activity;
+import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.impl.ConnectionState;
 import de.jcm.discordgamesdk.impl.HandshakeMessage;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
@@ -87,17 +88,6 @@ public class SocketTest
 	@Test
 	void testNewCore()
 	{
-		String discordLibraryPath;
-		if(System.getProperty("os.name").toLowerCase().contains("windows"))
-		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.dll";
-		}
-		else
-		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
-		}
-		Core.init(new File(discordLibraryPath));
-
 		CreateParams params = new CreateParams();
 		DiscordEventHandler handler = new DiscordEventHandler();
 		params.registerEventHandler(handler);
@@ -112,8 +102,22 @@ public class SocketTest
 				System.out.println(core.userManager().getCurrentUser());
 			}
 		});
-		core.userManager().getUser(269831647468191754L, (r,u)->{
+		core.userManager().getUser(691614879399936078L, (r,u)->{
 			System.out.println(r+" "+u);
+		});
+
+		Activity activity = new Activity();
+		activity.setState("test");
+		activity.party().setID("1234");
+		activity.party().size().setCurrentSize(10);
+		activity.party().size().setMaxSize(100);
+
+		activity.secrets().setMatchSecret("match");
+		activity.secrets().setJoinSecret("join1");
+		activity.secrets().setSpectateSecret("spectate");
+		core.activityManager().updateActivity(activity, r->{
+			System.out.println(r);
+			core.activityManager().sendInvite(691614879399936078L, ActivityActionType.JOIN, "Join me baka!");
 		});
 
 		for(int i=0; i<1000; i++)

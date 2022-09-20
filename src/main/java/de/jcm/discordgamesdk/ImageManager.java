@@ -2,8 +2,15 @@ package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.image.ImageDimensions;
 import de.jcm.discordgamesdk.image.ImageHandle;
+import de.jcm.discordgamesdk.impl.Command;
+import de.jcm.discordgamesdk.impl.commands.GetImage;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -14,12 +21,11 @@ import java.util.function.BiConsumer;
  */
 public class ImageManager
 {
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
+	private final Map<ImageHandle, BufferedImage> imageCache = new HashMap<>();
 
-	ImageManager(long pointer, Core core)
+	ImageManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
 	}
 
@@ -33,12 +39,34 @@ public class ImageManager
 	 */
 	public void fetch(ImageHandle handle, boolean refresh, BiConsumer<Result, ImageHandle> callback)
 	{
-		core.execute(()->fetch(pointer,
-		      handle.getType().ordinal(),
-		      handle.getId(),
-		      handle.getSize(),
-		      refresh,
-		      Objects.requireNonNull(callback)));
+		if(!refresh && imageCache.containsKey(handle))
+		{
+			callback.accept(Result.OK, handle);
+		}
+		else
+		{
+			core.sendCommand(Command.Type.GET_IMAGE, new GetImage.Args(handle), c->{
+				Result r = core.checkError(c);
+				if(r != Result.OK)
+				{
+					callback.accept(r, null);
+					return;
+				}
+				try
+				{
+					GetImage.Response response = core.getGson().fromJson(c.getData(), GetImage.Response.class);
+					byte[] data = response.getData();
+					BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
+					imageCache.put(handle, img);
+					callback.accept(r, handle);
+				}
+				catch(IOException e)
+				{
+					core.log(LogLevel.ERROR, e.toString());
+					callback.accept(Result.INTERNAL_ERROR, handle);
+				}
+			});
+		}
 	}
 
 	/**
@@ -51,16 +79,10 @@ public class ImageManager
 	 */
 	public ImageDimensions getDimensions(ImageHandle handle)
 	{
-		Object ret = core.execute(()->getDimensions(pointer, handle.getType().ordinal(),
-		                           handle.getId(), handle.getSize()));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (ImageDimensions) ret;
-		}
+		if(!imageCache.containsKey(handle))
+			throw new GameSDKException(Result.NOT_FETCHED);
+		BufferedImage img = imageCache.get(handle);
+		return new ImageDimensions(img.getWidth(), img.getHeight());
 	}
 
 	/**
@@ -94,16 +116,11 @@ public class ImageManager
 	 */
 	public byte[] getData(ImageHandle handle, int length)
 	{
-		Object ret = core.execute(()->getData(pointer, handle.getType().ordinal(),
-		                           handle.getId(), handle.getSize(), length));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (byte[]) ret;
-		}
+		if(!imageCache.containsKey(handle))
+			throw new GameSDKException(Result.NOT_FETCHED);
+		BufferedImage img = imageCache.get(handle);
+		byte[] data = new byte[length];
+		return (byte[]) img.getRaster().getDataElements(0, 0, data);
 	}
 
 	/**
@@ -114,18 +131,10 @@ public class ImageManager
 	 * @return A BufferedImage containing the image data
 	 * @throws GameSDKException if something went wrong fetching the image data
 	 */
+	@Deprecated
 	public BufferedImage getAsBufferedImage(ImageHandle handle, ImageDimensions dimensions)
 	{
-		byte[] data = getData(handle, dimensions);
-
-		BufferedImage image = new BufferedImage(dimensions.getWidth(),
-		                                         dimensions.getHeight(),
-		                                         BufferedImage.TYPE_4BYTE_ABGR);
-		image.getRaster().setDataElements(0, 0,
-		                                   dimensions.getWidth(), dimensions.getHeight(),
-		                                   data);
-
-		return image;
+		return getAsBufferedImage(handle);
 	}
 
 	/**
@@ -137,12 +146,8 @@ public class ImageManager
 	 */
 	public BufferedImage getAsBufferedImage(ImageHandle handle)
 	{
-		ImageDimensions dimensions = getDimensions(handle);
-		return getAsBufferedImage(handle, dimensions);
+		if(!imageCache.containsKey(handle))
+			throw new GameSDKException(Result.NOT_FETCHED);
+		return imageCache.get(handle);
 	}
-
-	private native void fetch(long pointer, int type, long id, int size,
-	                          boolean refresh, BiConsumer<Result, ImageHandle> callback);
-	private native Object getDimensions(long pointer, int type, long id, int size);
-	private native Object getData(long pointer, int type, long id, int size, int length);
 }

@@ -58,7 +58,7 @@ public class Core implements AutoCloseable
 	private final Events events;
 	private final DiscordEventAdapter eventAdapter;
 	private BiConsumer<LogLevel, String> logHook = DEFAULT_LOG_HOOK;
-	private LogLevel minLogLevel = LogLevel.DEBUG;
+	private LogLevel minLogLevel = LogLevel.VERBOSE;
 	private final CorePrivate corePrivate;
 
 	private final CreateParams createParams;
@@ -77,7 +77,7 @@ public class Core implements AutoCloseable
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
 	 * sets the log hook to {@link Core#DEFAULT_LOG_HOOK}.
-	 *
+	 * <p>
 	 * Example:
 	 * <pre>{@code
 	 *  try(CreateParams params = new CreateParams())
@@ -106,8 +106,6 @@ public class Core implements AutoCloseable
 		this.events = new Events(corePrivate);
 		this.eventAdapter = createParams.eventAdapter;
 
-		pointer = 0;
-
 		try
 		{
 			this.channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
@@ -120,22 +118,25 @@ public class Core implements AutoCloseable
 			throw new RuntimeException(e);
 		}
 
-		activityManager = null;
+		this.activityManager = new ActivityManager(corePrivate);
 		this.userManager = new UserManager(corePrivate);
-		overlayManager = null;
+		this.overlayManager = new OverlayManager(corePrivate);
 		this.relationshipManager = new RelationshipManager(corePrivate);
-		imageManager = null;
+		this.imageManager = new ImageManager(corePrivate);
 		lobbyManager = null;
 		networkManager = null;
-		voiceManager = null;
+		this.voiceManager = new VoiceManager(corePrivate);
 	}
 
 	public class CorePrivate
 	{
 		private CorePrivate() {}
 
+		public int pid = 0;
 		public DiscordUser currentUser;
 		public Map<Long, Relationship> relationships = new HashMap<>();
+		public OverlayUpdateEvent.Data overlayData = new OverlayUpdateEvent.Data();
+		public VoiceSettingsUpdate2Event.Data voiceData = new VoiceSettingsUpdate2Event.Data();
 
 		public DiscordEventAdapter getEventAdapter()
 		{
@@ -173,6 +174,18 @@ public class Core implements AutoCloseable
 			{
 				logHook.accept(level, message);
 			}
+		}
+
+		public Result checkError(Command c)
+		{
+			if(c.getEvent() == Command.Event.ERROR)
+			{
+				Error error = gson.fromJson(c.getData(), Error.class);
+				log(LogLevel.ERROR, error.getMessage());
+
+				return Result.fromCode(error.getCode());
+			}
+			return Result.OK;
 		}
 	}
 

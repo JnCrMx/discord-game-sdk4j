@@ -39,11 +39,8 @@ public class RelationshipManager
 	 * (playing, watching, listening, having a custom status, etc.).
 	 */
 	public static final Predicate<Relationship> SPECIAL_FILTER = r->
-			(
-					r.getPresence().getActivity().getType() == ActivityType.PLAYING &&
-							r.getPresence().getActivity().getApplicationId() != 0
-			) ||
-					r.getPresence().getActivity().getType() != ActivityType.PLAYING;
+			r.getPresence().getActivity().getType() != ActivityType.PLAYING || r.getPresence().getActivity()
+			                                                                    .getApplicationId() != 0;
 
 	private final Core.CorePrivate core;
 	private List<Relationship> relationships;
@@ -70,7 +67,9 @@ public class RelationshipManager
 	 */
 	public Relationship getWith(long userId)
 	{
-		throw new RuntimeException("not implemented");
+		if(!core.relationships.containsKey(userId))
+			throw new GameSDKException(Result.NOT_FOUND);
+		return core.relationships.get(userId);
 	}
 
 	/**

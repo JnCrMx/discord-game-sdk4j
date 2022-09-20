@@ -2,7 +2,6 @@ package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.voice.VoiceInputMode;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -12,12 +11,10 @@ import java.util.function.Consumer;
  */
 public class VoiceManager
 {
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
 
-	VoiceManager(long pointer, Core core)
+	VoiceManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
 	}
 
@@ -35,15 +32,7 @@ public class VoiceManager
 	 */
 	public VoiceInputMode getInputMode()
 	{
-		Object ret = core.execute(()->getInputMode(pointer));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (VoiceInputMode) ret;
-		}
+		return core.voiceData.getInputMode();
 	}
 
 	/**
@@ -63,7 +52,7 @@ public class VoiceManager
 	 */
 	public void setInputMode(VoiceInputMode inputMode, Consumer<Result> callback)
 	{
-		core.execute(()->setInputMode(pointer, inputMode, Objects.requireNonNull(callback)));
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -91,15 +80,7 @@ public class VoiceManager
 	 */
 	public boolean isSelfMute()
 	{
-		Object ret = core.execute(()->isSelfMute(pointer));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Boolean) ret;
-		}
+		return core.voiceData.isSelfMute();
 	}
 
 	/**
@@ -112,11 +93,7 @@ public class VoiceManager
 	 */
 	public void setSelfMute(boolean selfMute)
 	{
-		Result result = core.execute(()->setSelfMute(pointer, selfMute));
-		if(result != Result.OK)
-		{
-			throw new GameSDKException(result);
-		}
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -129,15 +106,7 @@ public class VoiceManager
 	 */
 	public boolean isSelfDeaf()
 	{
-		Object ret = core.execute(()->isSelfDeaf(pointer));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Boolean) ret;
-		}
+		return core.voiceData.isSelfDeaf();
 	}
 
 	/**
@@ -150,11 +119,7 @@ public class VoiceManager
 	 */
 	public void setSelfDeaf(boolean selfDeaf)
 	{
-		Result result = core.execute(()->setSelfDeaf(pointer, selfDeaf));
-		if(result != Result.OK)
-		{
-			throw new GameSDKException(result);
-		}
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -168,15 +133,7 @@ public class VoiceManager
 	 */
 	public boolean isLocalMute(long userId)
 	{
-		Object ret = core.execute(()->isLocalMute(pointer, userId));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Boolean) ret;
-		}
+		return core.voiceData.getLocalMutes().contains(Long.toString(userId));
 	}
 
 	/**
@@ -190,11 +147,7 @@ public class VoiceManager
 	 */
 	public void setLocalMute(long userId, boolean mute)
 	{
-		Result result = core.execute(()->setLocalMute(pointer, userId, mute));
-		if(result != Result.OK)
-		{
-			throw new GameSDKException(result);
-		}
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -214,15 +167,7 @@ public class VoiceManager
 	 */
 	public int getLocalVolume(long userId)
 	{
-		Object ret = core.execute(()->getLocalVolume(pointer, userId));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Integer) ret;
-		}
+		return core.voiceData.getLocalVolumes().get(Long.toString(userId));
 	}
 
 	/**
@@ -245,23 +190,6 @@ public class VoiceManager
 		if(volume < 0 || volume > 200)
 			throw new IllegalArgumentException("volume out of range: "+volume);
 
-		Result result = core.execute(()->setLocalVolume(pointer, userId, (byte)volume));
-		if(result != Result.OK)
-		{
-			throw new GameSDKException(result);
-		}
+		throw new RuntimeException("not implemented");
 	}
-
-	private native Object getInputMode(long pointer);
-	private native void setInputMode(long pointer, VoiceInputMode inputMode, Consumer<Result> callback);
-
-	private native Object isSelfMute(long pointer);
-	private native Result setSelfMute(long pointer, boolean mute);
-	private native Object isSelfDeaf(long pointer);
-	private native Result setSelfDeaf(long pointer, boolean deaf);
-
-	private native Object isLocalMute(long pointer, long userId);
-	private native Result setLocalMute(long pointer, long userId, boolean mute);
-	private native Object getLocalVolume(long pointer, long userId);
-	private native Result setLocalVolume(long pointer, long userId, byte volume);
 }

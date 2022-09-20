@@ -25,7 +25,7 @@ public class DataProxies
 		public Activity toActivity()
 		{
 			Activity activity = new Activity();
-			if(state != null) activity.setState(state.substring(0, Math.min(state.length(), 126)));
+			activity.setState(state);
 			activity.setType(ActivityType.values()[type]);
 			return activity;
 		}

@@ -87,9 +87,9 @@ public class UserManager
 	 */
 	public void getUser(long userId, BiConsumer<Result, DiscordUser> callback)
 	{
-		core.sendCommand(Command.Type.GET_USER, new DiscordUser(userId), o->{
-			DiscordUser user = core.getGson().fromJson(o.getData(), DiscordUser.class);
-			callback.accept(Result.OK, user);
+		core.sendCommand(Command.Type.GET_USER, new DiscordUser(userId), c->{
+			DiscordUser user = core.getGson().fromJson(c.getData(), DiscordUser.class);
+			callback.accept(core.checkError(c), user);
 		});
 	}
 
@@ -102,7 +102,7 @@ public class UserManager
 	 */
 	public PremiumType getCurrentUserPremiumType()
 	{
-		return PremiumType.NONE;
+		throw new RuntimeException("not implemented");
 	}
 
 	/**

@@ -6,6 +6,8 @@ import java.util.List;
 
 public class GetRelationships
 {
+	private GetRelationships() {}
+
 	public class Response
 	{
 		private List<DataProxies.RelationshipImpl> relationships;
