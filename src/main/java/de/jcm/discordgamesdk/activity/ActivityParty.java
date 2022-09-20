@@ -1,5 +1,7 @@
 package de.jcm.discordgamesdk.activity;
 
+import java.util.Arrays;
+
 /**
  * A structure used show information about the player's party.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activityparty-struct">
@@ -7,27 +9,21 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivityParty
 {
-	private final long pointer;
+	private String id;
+	private int[] size;
 
-	private final ActivityPartySize size;
-
-	ActivityParty(long pointer)
+	ActivityParty()
 	{
-		this.pointer = pointer;
-
-		this.size = new ActivityPartySize(getSize(pointer));
+		this.size = null;
 	}
 
 	/**
 	 * Sets an unique identifier for the party.
-	 * @param id a unique identifier, max 127 characters
-	 * @throws IllegalArgumentException if {@code id} is too long
+	 * @param id a unique identifier
 	 */
 	public void setID(String id)
 	{
-		if(id.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 127");
-		setID(pointer, id);
+		this.id = id;
 	}
 
 	/**
@@ -36,7 +32,7 @@ public class ActivityParty
 	 */
 	public String getID()
 	{
-		return getID(pointer);
+		return id;
 	}
 
 	/**
@@ -45,11 +41,19 @@ public class ActivityParty
 	 */
 	public ActivityPartySize size()
 	{
-		return size;
+		if(size == null)
+		{
+			this.size = new int[2];
+		}
+		return new ActivityPartySize(size);
 	}
 
-	private native void setID(long pointer, String id);
-	private native String getID(long pointer);
-
-	private native long getSize(long pointer);
+	@Override
+	public String toString()
+	{
+		return "ActivityParty{" +
+				"id='" + id + '\'' +
+				", size=" + size() +
+				'}';
+	}
 }

@@ -50,7 +50,6 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
-	private final long pointer;
 	private final SocketChannel channel;
 	private ConnectionState state;
 	private final Gson gson;

@@ -9,25 +9,20 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivityAssets
 {
-	private final long pointer;
-
-	ActivityAssets(long pointer)
-	{
-		this.pointer = pointer;
-	}
+	private String large_image;
+	private String large_text;
+	private String small_image;
+	private String small_text;
 
 	/**
 	 * <p>Sets the asset to be displayed as the large image.</p>
 	 * <p>Upload assets at the Art Assets configuration page of your Discord application:<br>
 	 *     https://discordapp.com/developers/applications/&lt;your application id&gt;/rich-presence/assets</p>
-	 * @param assetKey An asset key, max 127 characters
-	 * @throws IllegalArgumentException if {@code assetKey} is too long
+	 * @param assetKey An asset key
 	 */
 	public void setLargeImage(String assetKey)
 	{
-		if(assetKey.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 127");
-		setLargeImage(pointer, assetKey);
+		this.large_image = assetKey;
 	}
 
 	/**
@@ -36,19 +31,16 @@ public class ActivityAssets
 	 */
 	public String getLargeImage()
 	{
-		return getLargeImage(pointer);
+		return large_image;
 	}
 
 	/**
 	 * <p>Sets the tooltip text (displayed on hover) for the large image.</p>
-	 * @param text A text, max 127 characters
-	 * @throws IllegalArgumentException if {@code text} is too long
+	 * @param text A text
 	 */
 	public void setLargeText(String text)
 	{
-		if(text.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 127");
-		setLargeText(pointer, text);
+		this.large_text = text;
 	}
 
 	/**
@@ -57,21 +49,18 @@ public class ActivityAssets
 	 */
 	public String getLargeText()
 	{
-		return getLargeText(pointer);
+		return large_text;
 	}
 
 	/**
 	 * <p>Sets the asset to be displayed as the small image.</p>
 	 * <p>Upload assets at the Art Assets configuration page of your Discord application:<br>
 	 *     https://discordapp.com/developers/applications/&lt;your application id&gt;/rich-presence/assets</p>
-	 * @param assetKey An asset key, max 127 characters
-	 * @throws IllegalArgumentException if {@code assetKey} is too long
+	 * @param assetKey An asset key
 	 */
 	public void setSmallImage(String assetKey)
 	{
-		if(assetKey.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 127");
-		setSmallImage(pointer, assetKey);
+		this.small_image = assetKey;
 	}
 
 	/**
@@ -80,19 +69,16 @@ public class ActivityAssets
 	 */
 	public String getSmallImage()
 	{
-		return getSmallImage(pointer);
+		return small_image;
 	}
 
 	/**
 	 * <p>Sets the tooltip text (displayed on hover) for the small image.</p>
-	 * @param text A text, max 127 characters
-	 * @throws IllegalArgumentException if {@code text} is too long
+	 * @param text A text
 	 */
 	public void setSmallText(String text)
 	{
-		if(text.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 127");
-		setSmallText(pointer, text);
+		this.small_text = text;
 	}
 
 	/**
@@ -101,19 +87,17 @@ public class ActivityAssets
 	 */
 	public String getSmallText()
 	{
-		return getSmallText(pointer);
+		return small_text;
 	}
 
-	private native void setLargeImage(long pointer, String assetKey);
-	private native String getLargeImage(long pointer);
-
-	private native void setLargeText(long pointer, String text);
-	private native String getLargeText(long pointer);
-
-
-	private native void setSmallImage(long pointer, String assetKey);
-	private native String getSmallImage(long pointer);
-
-	private native void setSmallText(long pointer, String text);
-	private native String getSmallText(long pointer);
+	@Override
+	public String toString()
+	{
+		return "ActivityAssets{" +
+				"large_image='" + large_image + '\'' +
+				", large_text='" + large_text + '\'' +
+				", small_image='" + small_image + '\'' +
+				", small_text='" + small_text + '\'' +
+				'}';
+	}
 }

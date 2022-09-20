@@ -7,23 +7,18 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivitySecrets
 {
-	private final long pointer;
+	private String match;
+	private String join;
+	private String spectate;
 
-	ActivitySecrets(long pointer)
-	{
-		this.pointer = pointer;
-	}
 
 	/**
 	 * Sets the unique secret for the match context (whatever that is).
-	 * @param secret A unique secret, max 127 characters
-	 * @throws IllegalArgumentException if {@code secret} is too long
+	 * @param secret A unique secret,
 	 */
 	public void setMatchSecret(String secret)
 	{
-		if(secret.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 128");
-		setMatchSecret(pointer, secret);
+		this.match = secret;
 	}
 	/**
 	 * Gets the unique secret for the match context (whatever that is).
@@ -31,19 +26,16 @@ public class ActivitySecrets
 	 */
 	public String getMatchSecret()
 	{
-		return getMatchSecret(pointer);
+		return match;
 	}
 
 	/**
 	 * Sets a unique secret for join request and invites.
-	 * @param secret A unique secret, max 127 characters
-	 * @throws IllegalArgumentException if {@code secret} is too long
+	 * @param secret A unique secret
 	 */
 	public void setJoinSecret(String secret)
 	{
-		if(secret.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 128");
-		setJoinSecret(pointer, secret);
+		this.join = secret;
 	}
 
 	/**
@@ -52,19 +44,16 @@ public class ActivitySecrets
 	 */
 	public String getJoinSecret()
 	{
-		return getJoinSecret(pointer);
+		return join;
 	}
 
 	/**
 	 * Sets a unique secret for spectate option and invites.
-	 * @param secret A unique secret, max 127 characters
-	 * @throws IllegalArgumentException if {@code secret} is too long
+	 * @param secret A unique secret
 	 */
 	public void setSpectateSecret(String secret)
 	{
-		if(secret.getBytes().length>=128)
-			throw new IllegalArgumentException("max length is 128");
-		setSpectateSecret(pointer, secret);
+		this.spectate = secret;
 	}
 	/**
 	 * Gets the unique spectate secret.
@@ -72,15 +61,6 @@ public class ActivitySecrets
 	 */
 	public String getSpectateSecret()
 	{
-		return getSpectateSecret(pointer);
+		return spectate;
 	}
-
-	private native void setMatchSecret(long pointer, String secret);
-	private native String getMatchSecret(long pointer);
-
-	private native void setJoinSecret(long pointer, String secret);
-	private native String getJoinSecret(long pointer);
-
-	private native void setSpectateSecret(long pointer, String secret);
-	private native String getSpectateSecret(long pointer);
 }

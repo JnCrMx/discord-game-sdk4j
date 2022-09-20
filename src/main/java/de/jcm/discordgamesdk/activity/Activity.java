@@ -13,50 +13,13 @@ import java.util.ArrayList;
  */
 public class Activity implements AutoCloseable
 {
-	/*
-	This seems to work for freeing allocated native space of Activity,
-	but I'm somehow sure this is REALLY wrong.
-	 */
-	private static final ReferenceQueue<Activity> QUEUE = new ReferenceQueue<>();
-	private static final ArrayList<ActivityReference> REFERENCES = new ArrayList<>();
-	private static final Thread QUEUE_THREAD = new Thread(()->{
-		while(true)
-		{
-			try
-			{
-				ActivityReference reference = (ActivityReference) QUEUE.remove();
-				free(reference.pointer);
-				REFERENCES.remove(reference);
-			}
-			catch(InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}, "Activity-Cleaner");
-	static
-	{
-		QUEUE_THREAD.setDaemon(true);
-		QUEUE_THREAD.start();
-	}
+	private Long applicationId;
+	private String name;
+	private ActivityType type;
 
-	private static class ActivityReference extends PhantomReference<Activity>
-	{
-		private final long pointer;
-
-		public ActivityReference(Activity referent, ReferenceQueue<? super Activity> q)
-		{
-			super(referent, q);
-			this.pointer = referent.pointer;
-		}
-
-		public long getPointer()
-		{
-			return pointer;
-		}
-	}
-
-	private final long pointer;
+	private String state;
+	private String details;
+	private boolean instance;
 
 	private final ActivityTimestamps timestamps;
 	private final ActivityAssets assets;
@@ -68,40 +31,10 @@ public class Activity implements AutoCloseable
 	 */
 	public Activity()
 	{
-		this.pointer = allocate();
-
-		this.timestamps = new ActivityTimestamps(getTimestamps(pointer));
-		this.assets = new ActivityAssets(getAssets(pointer));
-		this.party = new ActivityParty(getParty(pointer));
-		this.secrets = new ActivitySecrets(getSecrets(pointer));
-
-		/*
-		 * This constructor is only invoked from people using this library, not from the library itself.
-		 * So, I don't think it's our job to clean up their closeables.
-		 */
-	}
-
-	/**
-	 * Parses the given pointer as an Activity.
-	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
-	 * @param pointer A native pointer
-	 */
-	public Activity(long pointer)
-	{
-		this.pointer = pointer;
-
-		this.timestamps = new ActivityTimestamps(getTimestamps(pointer));
-		this.assets = new ActivityAssets(getAssets(pointer));
-		this.party = new ActivityParty(getParty(pointer));
-		this.secrets = new ActivitySecrets(getSecrets(pointer));
-
-		/*
-		 * This constructor is ideally never invoked by users.
-		 * Only the library uses it to wrap existing activity objects.
-		 * So, it's our job to clean the allocated space.
-		 */
-		ActivityReference reference = new ActivityReference(this, QUEUE);
-		REFERENCES.add(reference);
+		this.timestamps = new ActivityTimestamps();
+		this.assets = new ActivityAssets();
+		this.party = new ActivityParty();
+		this.secrets = new ActivitySecrets();
 	}
 
 	/**
@@ -112,7 +45,7 @@ public class Activity implements AutoCloseable
 	 */
 	public long getApplicationId()
 	{
-		return getApplicationId(pointer);
+		return applicationId;
 	}
 
 	/**
@@ -123,19 +56,16 @@ public class Activity implements AutoCloseable
 	 */
 	public String getName()
 	{
-		return getName(pointer);
+		return name;
 	}
 
 	/**
 	 * Sets the player's current party status.
-	 * @param state Current party status, max 127 characters
-	 * @throws IllegalArgumentException if {@code state} is too long
+	 * @param state Current party status
 	 */
 	public void setState(String state)
 	{
-		if(state.getBytes().length >= 128)
-			throw new IllegalArgumentException("max length is 127");
-		setState(pointer, state);
+		this.state = state;
 	}
 
 	/**
@@ -144,19 +74,16 @@ public class Activity implements AutoCloseable
 	 */
 	public String getState()
 	{
-		return getState(pointer);
+		return state;
 	}
 
 	/**
 	 * Sets what the player is currently doing.
-	 * @param details What the player is currently doing, max 127 characters
-	 * @throws IllegalArgumentException if {@code details} is too long
+	 * @param details What the player is currently doing
 	 */
 	public void setDetails(String details)
 	{
-		if(details.getBytes().length >= 128)
-			throw new IllegalArgumentException("max length is 127");
-		setDetails(pointer, details);
+		this.details = details;
 	}
 
 	/**
@@ -165,7 +92,7 @@ public class Activity implements AutoCloseable
 	 */
 	public String getDetails()
 	{
-		return getDetails(pointer);
+		return details;
 	}
 
 	/**
@@ -179,7 +106,7 @@ public class Activity implements AutoCloseable
 	 */
 	public void setType(ActivityType type)
 	{
-		setType(pointer, type.ordinal());
+		this.type = type;
 	}
 	/**
 	 * <p>Gets the type of the Activity.</p>
@@ -192,7 +119,7 @@ public class Activity implements AutoCloseable
 	 */
 	public ActivityType getType()
 	{
-		return ActivityType.values()[getType(pointer)];
+		return type;
 	}
 
 	/**
@@ -241,7 +168,7 @@ public class Activity implements AutoCloseable
 	 */
 	public void setInstance(boolean instance)
 	{
-		setInstance(pointer, instance);
+		this.instance = instance;
 	}
 	/**
 	 * Gets whether the player is in an instance
@@ -249,31 +176,8 @@ public class Activity implements AutoCloseable
 	 */
 	public boolean getInstance()
 	{
-		return getInstance(pointer);
+		return instance;
 	}
-
-	private native long allocate();
-	private static native void free(long pointer);
-
-	private native long getApplicationId(long pointer);
-	private native String getName(long pointer);
-
-	private native void setState(long pointer, String state);
-	private native String getState(long pointer);
-
-	private native void setDetails(long pointer, String details);
-	private native String getDetails(long pointer);
-
-	private native void setType(long pointer, int type);
-	private native int getType(long pointer);
-
-	private native long getTimestamps(long pointer);
-	private native long getAssets(long pointer);
-	private native long getParty(long pointer);
-	private native long getSecrets(long pointer);
-
-	private native void setInstance(long pointer, boolean instance);
-	private native boolean getInstance(long pointer);
 
 	/**
 	 * <p>Frees the allocated native structure and therefore also all embedded native structures.</p>
@@ -282,32 +186,22 @@ public class Activity implements AutoCloseable
 	@Override
 	public void close()
 	{
-		free(pointer);
-	}
-
-	/**
-	 * <p>Return the pointer to the native structure.</p>
-	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
-	 * @return A native pointer
-	 */
-	public long getPointer()
-	{
-		return pointer;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "Activity@"+pointer+"{" +
-				"applicationId=" + getApplicationId() +
-				", name = " + getName() +
-				", state = " + getState() +
-				", details = " + getDetails() +
-				", type = " + getType() +
-				", timestamps=" + timestamps() +
-				", assets=" + assets() +
-				", party=" + party() +
-				", secrets=" + secrets() +
+		return "Activity{" +
+				"applicationId=" + applicationId +
+				", name='" + name + '\'' +
+				", type=" + type +
+				", state='" + state + '\'' +
+				", details='" + details + '\'' +
+				", instance=" + instance +
+				", timestamps=" + timestamps +
+				", assets=" + assets +
+				", party=" + party +
+				", secrets=" + secrets +
 				'}';
 	}
 }
