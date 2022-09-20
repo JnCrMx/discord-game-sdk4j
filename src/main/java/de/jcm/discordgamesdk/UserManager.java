@@ -1,9 +1,9 @@
 package de.jcm.discordgamesdk;
 
+import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.PremiumType;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -13,8 +13,7 @@ import java.util.function.BiConsumer;
  */
 public class UserManager
 {
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
 
 	/**
 	 * Discord Partner
@@ -52,9 +51,8 @@ public class UserManager
 	 */
 	public static final int USER_FLAG_HYPE_SQUAD_HOUSE3 = 256;
 
-	UserManager(long pointer, Core core)
+	UserManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
 	}
 
@@ -69,14 +67,13 @@ public class UserManager
 	 */
 	public DiscordUser getCurrentUser()
 	{
-		Object ret = core.execute(()->getCurrentUser(pointer));
-		if(ret instanceof Result)
+		if(core.currentUser == null)
 		{
-			throw new GameSDKException((Result) ret);
+			throw new GameSDKException(Result.NOT_FOUND);
 		}
 		else
 		{
-			return (DiscordUser) ret;
+			return core.currentUser;
 		}
 	}
 
@@ -90,7 +87,10 @@ public class UserManager
 	 */
 	public void getUser(long userId, BiConsumer<Result, DiscordUser> callback)
 	{
-		core.execute(()->getUser(pointer, userId, Objects.requireNonNull(callback)));
+		core.sendCommand(Command.Type.GET_USER, new DiscordUser(userId), o->{
+			DiscordUser user = core.getGson().fromJson(o.getData(), DiscordUser.class);
+			callback.accept(Result.OK, user);
+		});
 	}
 
 	/**
@@ -102,15 +102,7 @@ public class UserManager
 	 */
 	public PremiumType getCurrentUserPremiumType()
 	{
-		Object ret = core.execute(()->getCurrentUserPremiumType(pointer));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return PremiumType.values()[(Integer) ret];
-		}
+		return PremiumType.NONE;
 	}
 
 	/**
@@ -128,19 +120,6 @@ public class UserManager
 	 */
 	public boolean currentUserHasFlag(int flag)
 	{
-		Object ret = core.execute(()->currentUserHasFlag(pointer, flag));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Boolean) ret;
-		}
+		return (core.currentUser.getFlags() & flag) != 0;
 	}
-
-	private native Object getCurrentUser(long pointer);
-	private native void getUser(long pointer, long userId, BiConsumer<Result, DiscordUser> callback);
-	private native Object getCurrentUserPremiumType(long pointer);
-	private native Object currentUserHasFlag(long pointer, int flag);
 }

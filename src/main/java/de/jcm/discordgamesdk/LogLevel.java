@@ -28,5 +28,9 @@ public enum LogLevel
 	/**
 	 * Log everything!
 	 */
-	DEBUG
+	DEBUG,
+	/**
+	 * Log even messages!
+	 */
+	VERBOSE
 }

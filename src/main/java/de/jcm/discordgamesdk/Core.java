@@ -1,14 +1,23 @@
 package de.jcm.discordgamesdk;
 
+import com.google.gson.Gson;
+import de.jcm.discordgamesdk.impl.*;
+import de.jcm.discordgamesdk.impl.commands.Subscribe;
+import de.jcm.discordgamesdk.user.DiscordUser;
+import de.jcm.discordgamesdk.user.Relationship;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnixDomainSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
@@ -396,6 +405,16 @@ public class Core implements AutoCloseable
 	};
 
 	private final long pointer;
+	private final SocketChannel channel;
+	private ConnectionState state;
+	private final Gson gson;
+	private long nonce;
+	private final Map<String, Consumer<Command>> handlers;
+	private final Events events;
+	private final DiscordEventAdapter eventAdapter;
+	private BiConsumer<LogLevel, String> logHook = DEFAULT_LOG_HOOK;
+	private LogLevel minLogLevel = LogLevel.DEBUG;
+	private final CorePrivate corePrivate;
 
 	private final CreateParams createParams;
 	private final AtomicBoolean open = new AtomicBoolean(true);
@@ -433,7 +452,7 @@ public class Core implements AutoCloseable
 	public Core(CreateParams params)
 	{
 		this.createParams = params;
-		Object ret = create(params.getPointer());
+		/*Object ret = create(params.getPointer());
 		if(ret instanceof Result)
 		{
 			throw new GameSDKException((Result) ret);
@@ -452,7 +471,197 @@ public class Core implements AutoCloseable
 		this.imageManager = new ImageManager(getImageManager(pointer), this);
 		this.lobbyManager = new LobbyManager(getLobbyManager(pointer), this);
 		this.networkManager = new NetworkManager(getNetworkManager(pointer), this);
-		this.voiceManager = new VoiceManager(getVoiceManager(pointer), this);
+		this.voiceManager = new VoiceManager(getVoiceManager(pointer), this);*/
+
+		this.state = ConnectionState.HANDSHAKE;
+		this.gson = new Gson();
+		this.nonce = 0;
+		this.handlers = new HashMap<>();
+		this.corePrivate = new CorePrivate();
+		this.events = new Events(corePrivate);
+		this.eventAdapter = createParams.eventAdapter;
+
+		pointer = 0;
+
+		try
+		{
+			this.channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
+			this.sendHandshake();
+			runCallbacks();
+			channel.configureBlocking(false);
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+
+		activityManager = null;
+		this.userManager = new UserManager(corePrivate);
+		overlayManager = null;
+		this.relationshipManager = new RelationshipManager(corePrivate);
+		imageManager = null;
+		lobbyManager = null;
+		networkManager = null;
+		voiceManager = null;
+	}
+
+	public class CorePrivate
+	{
+		private CorePrivate() {}
+
+		public DiscordUser currentUser;
+		public Map<Long, Relationship> relationships = new HashMap<>();
+
+		public DiscordEventAdapter getEventAdapter()
+		{
+			return eventAdapter;
+		}
+
+		public void ready()
+		{
+			state = ConnectionState.CONNECTED;
+			registerEvents();
+		}
+
+		public Core getCore()
+		{
+			return Core.this;
+		}
+
+		public void sendCommand(Command.Type type, Object args, Consumer<Command> responseHandler)
+		{
+			Command command = new Command();
+			command.setCmd(type);
+			command.setArgs(gson.toJsonTree(args).getAsJsonObject());
+			command.setNonce(Long.toString(++nonce));
+			Core.this.sendCommand(command, responseHandler);
+		}
+
+		public Gson getGson()
+		{
+			return gson;
+		}
+
+		public void log(LogLevel level, String message)
+		{
+			if(level.compareTo(minLogLevel) <= 0)
+			{
+				logHook.accept(level, message);
+			}
+		}
+	}
+
+	private void sendString(String message) throws IOException
+	{
+		byte[] bytes = message.getBytes();
+		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		buf.putInt(state.ordinal());
+		buf.putInt(bytes.length);
+		buf.put(bytes);
+
+		channel.write(buf.flip());
+		corePrivate.log(LogLevel.VERBOSE, "Sent string \""+message+"\" at state "+state);
+	}
+
+	private static class Res
+	{
+		public ConnectionState result;
+		public String data;
+
+		public Res(ConnectionState result, String data)
+		{
+			this.result = result;
+			this.data = data;
+		}
+	}
+
+	private Res receiveString() throws IOException
+	{
+		ByteBuffer header = ByteBuffer.allocate(8);
+		channel.read(header);
+		header.flip();
+		header.order(ByteOrder.LITTLE_ENDIAN);
+		if(header.remaining() == 0)
+		{
+			return null;
+		}
+
+		int status = header.getInt(); // ignored for now?
+		int length = header.getInt();
+
+		ByteBuffer data = ByteBuffer.allocate(length);
+		int read = 0;
+		do
+		{
+			read += (int) channel.read(new ByteBuffer[]{data}, 0, 1);
+		}
+		while(read < length);
+		String s = new String(data.flip().array());
+		ConnectionState state1 = ConnectionState.values()[status];
+
+		corePrivate.log(LogLevel.VERBOSE, "Received string \""+s+"\" at state "+state1);
+
+		return new Res(state1, s);
+	}
+
+	private void sendCommand(Command command, Consumer<Command> responseHandler)
+	{
+		handlers.put(command.getNonce(), responseHandler);
+		try
+		{
+			sendString(gson.toJson(command));
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void sendHandshake() throws IOException
+	{
+		HandshakeMessage handshakeMessage = new HandshakeMessage(Long.toString(createParams.getClientID()));
+		sendString(gson.toJson(handshakeMessage));
+	}
+
+	private void registerEvents()
+	{
+		for(Map.Entry<Command.Event, EventHandler<?>> e : events.getEventTypes())
+		{
+			Command.Event event = e.getKey();
+			EventHandler<?> handler = e.getValue();
+			if(!handler.shouldRegister()) continue;
+
+			Command command = new Command();
+			command.setCmd(Command.Type.SUBSCRIBE);
+			command.setEvt(event);
+			command.setArgs(gson.toJsonTree(handler.getRegisterArgs()));
+			command.setNonce(Long.toString(++nonce));
+			sendCommand(command, o->
+					corePrivate.log(LogLevel.DEBUG, "Registered event "+gson.fromJson(o.getData(), Subscribe.Response.class).getEvent()));
+		}
+	}
+
+	private Command receiveCommand() throws IOException
+	{
+		Res r = receiveString();
+		if(r == null)
+			return null;
+		return gson.fromJson(r.data, Command.class);
+	}
+
+	private void handleCommand(Command command)
+	{
+		if(command.getNonce() != null)
+		{
+			handlers.remove(command.getNonce()).accept(command);
+		}
+		else if(command.getEvent() != null)
+		{
+			EventHandler<?> handler = events.forEvent(command.getEvent());
+			Object data = gson.fromJson(command.getData(), handler.getDataClass());
+			handler.handleObject(command, data);
+		}
 	}
 
 	private native Object create(long paramPointer);
@@ -583,7 +792,20 @@ public class Core implements AutoCloseable
 	 */
 	public void runCallbacks()
 	{
-		execute(()->runCallbacks(pointer));
+		try
+		{
+			Command c = receiveCommand();
+			if(c != null)
+			{
+				handleCommand(c);
+			}
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+
+		//execute(()->runCallbacks(pointer));
 	}
 
 	/**
@@ -596,7 +818,8 @@ public class Core implements AutoCloseable
 	 */
 	public void setLogHook(LogLevel minLevel, BiConsumer<LogLevel, String> logHook)
 	{
-		execute(()->setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook)));
+		this.logHook = logHook;
+		this.minLogLevel = minLevel;
 	}
 
 	/**
@@ -620,18 +843,13 @@ public class Core implements AutoCloseable
 	@Override
 	public void close()
 	{
-		if(open.compareAndSet(true, false))
+		try
 		{
-			lock.lock();
-			try
-			{
-				destroy(pointer);
-			}
-			finally
-			{
-				lock.unlock();
-			}
-			createParams.close();
+			channel.close();
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
 		}
 	}
 

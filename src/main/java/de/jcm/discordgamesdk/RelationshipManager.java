@@ -1,13 +1,14 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.ActivityType;
+import de.jcm.discordgamesdk.impl.Command;
+import de.jcm.discordgamesdk.impl.DataProxies;
+import de.jcm.discordgamesdk.impl.commands.GetRelationships;
 import de.jcm.discordgamesdk.user.OnlineStatus;
 import de.jcm.discordgamesdk.user.Relationship;
 import de.jcm.discordgamesdk.user.RelationshipType;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -44,13 +45,19 @@ public class RelationshipManager
 			) ||
 					r.getPresence().getActivity().getType() != ActivityType.PLAYING;
 
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
+	private List<Relationship> relationships;
 
-	RelationshipManager(long pointer, Core core)
+	RelationshipManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
+		this.core.sendCommand(Command.Type.GET_RELATIONSHIPS, new Object(), o->{
+			GetRelationships.Response r = core.getGson().fromJson(o.getData(), GetRelationships.Response.class);
+			for(DataProxies.RelationshipImpl rel : r.getRelationships())
+			{
+				core.relationships.put(rel.user.getUserId(), rel.toRelationship());
+			}
+		});
 	}
 
 	/**
@@ -63,15 +70,7 @@ public class RelationshipManager
 	 */
 	public Relationship getWith(long userId)
 	{
-		Object ret = core.execute(()->get(pointer, userId));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Relationship) ret;
-		}
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -82,7 +81,7 @@ public class RelationshipManager
 	 */
 	public void filter(Predicate<Relationship> filter)
 	{
-		core.execute(()->filter(pointer, Objects.requireNonNull(filter)));
+		relationships = core.relationships.values().stream().filter(filter).toList();
 	}
 
 	/**
@@ -97,15 +96,7 @@ public class RelationshipManager
 	 */
 	public int count()
 	{
-		Object ret = core.execute(()->count(pointer));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Integer) ret;
-		}
+		return relationships.size();
 	}
 
 	/**
@@ -121,15 +112,7 @@ public class RelationshipManager
 	 */
 	public Relationship getAt(int index)
 	{
-		Object ret = core.execute(()->getAt(pointer, index));
-		if(ret instanceof Result)
-		{
-			throw new GameSDKException((Result) ret);
-		}
-		else
-		{
-			return (Relationship) ret;
-		}
+		return relationships.get(index);
 	}
 
 	/**
@@ -141,17 +124,6 @@ public class RelationshipManager
 	 */
 	public List<Relationship> asList()
 	{
-		int count = count();
-		Relationship[] relationships = new Relationship[count];
-		for(int i=0; i<relationships.length; i++)
-		{
-			relationships[i] = getAt(i);
-		}
-		return Arrays.asList(relationships);
+		return relationships;
 	}
-
-	private native void filter(long pointer, Predicate<Relationship> filter);
-	private native Object count(long pointer);
-	private native Object get(long pointer, long userId);
-	private native Object getAt(long pointer, int index);
 }

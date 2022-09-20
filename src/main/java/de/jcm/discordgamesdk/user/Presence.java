@@ -12,7 +12,7 @@ public class Presence
 	private final OnlineStatus status;
 	private final Activity activity;
 
-	Presence(OnlineStatus status, Activity activity)
+	public Presence(OnlineStatus status, Activity activity)
 	{
 		this.status = status;
 		this.activity = activity;

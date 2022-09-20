@@ -13,7 +13,7 @@ public class Relationship
 	private final DiscordUser user;
 	private final Presence presence;
 
-	private Relationship(RelationshipType type, DiscordUser user, Presence presence)
+	public Relationship(RelationshipType type, DiscordUser user, Presence presence)
 	{
 		this.type = type;
 		this.user = user;

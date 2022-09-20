@@ -1,5 +1,7 @@
 package de.jcm.discordgamesdk.user;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * <p>Representation of a Discord user.</p>
  * <p>Only used as output from SDK functions.</p>
@@ -8,11 +10,16 @@ package de.jcm.discordgamesdk.user;
  */
 public class DiscordUser
 {
-	private final long userId;
+	@SerializedName("id")
+	private final String userId;
+
 	private final String username;
 	private final String discriminator;
 	private final String avatar;
-	private final boolean bot;
+	private final String avatar_decoration;
+
+	private final Boolean bot;
+	private final Integer flags;
 
 	/**
 	 * <p>Create a new Discord user object, holding the data provided as arguments.</p>
@@ -23,13 +30,24 @@ public class DiscordUser
 	 * @param avatar Resource key of the user's avator
 	 * @param bot {@code true} if the user is a bot
 	 */
-	public DiscordUser(long userId, String username, String discriminator, String avatar, boolean bot)
+	public DiscordUser(long userId, String username, String discriminator, String avatar, Boolean bot)
 	{
-		this.userId = userId;
+		this.userId = Long.toString(userId);
 		this.username = username;
 		this.discriminator = discriminator;
 		this.avatar = avatar;
+		this.avatar_decoration = null;
 		this.bot = bot;
+		this.flags = null;
+	}
+	/**
+	 * <p>Create a new Discord user object used to request a user by UID.</p>
+	 * <p>You probably do <b>not</b> want to construct the class, since it is mainly used for output.</p>
+	 * @param userId ID of the user, a Discord snowflake
+	 */
+	public DiscordUser(long userId)
+	{
+		this(userId, null, null, null, null);
 	}
 
 	/**
@@ -38,7 +56,7 @@ public class DiscordUser
 	 */
 	public long getUserId()
 	{
-		return userId;
+		return Long.parseLong(userId);
 	}
 
 	/**
@@ -79,21 +97,29 @@ public class DiscordUser
 		return bot;
 	}
 
+	public int getFlags()
+	{
+		return flags;
+	}
+
 	/**
 	 * <p>Generates a string representation of the user containing all its attributes.</p>
 	 * <p>This is just one of <i>IntelliJ IDEA</i>'s default {@code toString()}-Methods,
 	 * so don't expect anything special.</p>
+	 *
 	 * @return A string representation of the user
 	 */
 	@Override
 	public String toString()
 	{
 		return "DiscordUser{" +
-				"userId=" + userId +
+				"userId='" + userId + '\'' +
 				", username='" + username + '\'' +
 				", discriminator='" + discriminator + '\'' +
 				", avatar='" + avatar + '\'' +
+				", avatar_decoration='" + avatar_decoration + '\'' +
 				", bot=" + bot +
+				", flags=" + flags +
 				'}';
 	}
 }

@@ -1,8 +1,8 @@
 package de.jcm.discordgamesdk;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 /**
  * Initial parameters to create a {@link Core} from.
@@ -74,6 +74,8 @@ public class CreateParams implements AutoCloseable
 
 	private final long pointer;
 	private final AtomicBoolean open = new AtomicBoolean(true);
+
+	DiscordEventAdapter eventAdapter;
 
 	/**
 	 * Allocates a new structure and initializes it with default parameters.
@@ -148,6 +150,7 @@ public class CreateParams implements AutoCloseable
 	public void registerEventHandler(DiscordEventAdapter eventHandler)
 	{
 		registerEventHandler(pointer, Objects.requireNonNull(eventHandler));
+		eventAdapter = eventHandler;
 	}
 
 	private native long allocate();
