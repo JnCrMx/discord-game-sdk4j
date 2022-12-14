@@ -122,7 +122,7 @@ public class OverlayManager
 	 */
 	public void openGuildInvite(String code, Consumer<Result> callback)
 	{
-		core.sendCommand(Command.Type.OPEN_OVERLAY_GUILD_INVITE, new OpenOverlayGuildInvite.Args(code, core.pid), c->{
+		core.sendCommandNoResponse(Command.Type.OPEN_OVERLAY_GUILD_INVITE, new OpenOverlayGuildInvite.Args(code, core.pid), c->{
 			callback.accept(core.checkError(c));
 		});
 	}
@@ -147,7 +147,7 @@ public class OverlayManager
 	 */
 	public void openVoiceSettings(Consumer<Result> callback)
 	{
-		core.sendCommand(Command.Type.OPEN_OVERLAY_VOICE_SETTINGS, new OpenOverlayVoiceSettings.Args(core.pid), c->{
+		core.sendCommandNoResponse(Command.Type.OPEN_OVERLAY_VOICE_SETTINGS, new OpenOverlayVoiceSettings.Args(core.pid), c->{
 			callback.accept(core.checkError(c));
 		});
 	}

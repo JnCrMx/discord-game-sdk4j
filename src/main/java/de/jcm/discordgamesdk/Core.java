@@ -165,6 +165,31 @@ public class Core implements AutoCloseable
 			Core.this.sendCommand(command, responseHandler);
 		}
 
+		public void sendCommandNoResponse(Command.Type type, Object args, Consumer<Command> responseHandler)
+		{
+			Command command = new Command();
+			command.setCmd(type);
+			command.setArgs(gson.toJsonTree(args).getAsJsonObject());
+			command.setNonce(Long.toString(0));
+
+			try
+			{
+				sendString(gson.toJson(command));
+			}
+			catch(IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+			corePrivate.workQueue.add(()->{
+				Command c = new Command();
+				c.setEvt(null);
+				c.setNonce(Long.toString(0));
+				c.setCmd(type);
+				c.setData(null);
+				responseHandler.accept(c);
+			});
+		}
+
 		public Gson getGson()
 		{
 			return gson;
