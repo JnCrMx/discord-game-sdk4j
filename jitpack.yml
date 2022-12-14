@@ -1,6 +1,4 @@
 jdk:
-    - openjdk8
-before_install:
-    - sh jitpack-download-natives.sh
+    - openjdk16
 install:
-    - mvn install -DskipTests -Dmaven.antrun.skip=true
+    - mvn install -DskipTests
