@@ -54,6 +54,7 @@ public class RelationshipManager
 			{
 				core.relationships.put(rel.user.getUserId(), rel.toRelationship());
 			}
+			core.getEventAdapter().onRelationshipRefresh();
 		});
 	}
 
