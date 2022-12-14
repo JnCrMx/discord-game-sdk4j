@@ -2,10 +2,6 @@ package de.jcm.discordgamesdk.activity;
 
 import de.jcm.discordgamesdk.user.Presence;
 
-import java.lang.ref.PhantomReference;
-import java.lang.ref.ReferenceQueue;
-import java.util.ArrayList;
-
 /**
  * Java representation of the Activity structure.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activity-struct">
@@ -15,7 +11,7 @@ public class Activity implements AutoCloseable
 {
 	private Long applicationId;
 	private String name;
-	private ActivityType type;
+	private int type;
 
 	private String state;
 	private String details;
@@ -106,7 +102,7 @@ public class Activity implements AutoCloseable
 	 */
 	public void setType(ActivityType type)
 	{
-		this.type = type;
+		this.type = type.ordinal();
 	}
 	/**
 	 * <p>Gets the type of the Activity.</p>
@@ -119,7 +115,7 @@ public class Activity implements AutoCloseable
 	 */
 	public ActivityType getType()
 	{
-		return type;
+		return ActivityType.values()[type];
 	}
 
 	/**
