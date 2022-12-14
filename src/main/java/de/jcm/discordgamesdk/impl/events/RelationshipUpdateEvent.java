@@ -18,8 +18,7 @@ public class RelationshipUpdateEvent
 		public void handle(Command command, DataProxies.RelationshipImpl data)
 		{
 			core.relationships.put(data.user.getUserId(), data.toRelationship());
-			if(core.getEventAdapter() != null)
-				core.getEventAdapter().onRelationshipUpdate(data.toRelationship());
+			core.getEventAdapter().onRelationshipUpdate(data.toRelationship());
 		}
 
 		@Override

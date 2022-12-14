@@ -14,8 +14,7 @@ import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
@@ -119,8 +118,8 @@ public class Core implements AutoCloseable
 		}
 
 		this.activityManager = new ActivityManager(corePrivate);
-		this.userManager = new UserManager(corePrivate);
 		this.overlayManager = new OverlayManager(corePrivate);
+		this.userManager = new UserManager(corePrivate);
 		this.relationshipManager = new RelationshipManager(corePrivate);
 		this.imageManager = new ImageManager(corePrivate);
 		lobbyManager = null;
@@ -132,15 +131,18 @@ public class Core implements AutoCloseable
 	{
 		private CorePrivate() {}
 
+		public Queue<Runnable> workQueue = new ArrayDeque<>();
+
 		public int pid = 0;
 		public DiscordUser currentUser;
 		public Map<Long, Relationship> relationships = new HashMap<>();
 		public OverlayUpdateEvent.Data overlayData = new OverlayUpdateEvent.Data();
 		public VoiceSettingsUpdate2Event.Data voiceData = new VoiceSettingsUpdate2Event.Data();
 
+		private static final DiscordEventAdapter NULL_ADAPTER = new DiscordEventAdapter(){};
 		public DiscordEventAdapter getEventAdapter()
 		{
-			return eventAdapter;
+			return Optional.ofNullable(eventAdapter).orElse(NULL_ADAPTER);
 		}
 
 		public void ready()
@@ -414,6 +416,10 @@ public class Core implements AutoCloseable
 	 */
 	public void runCallbacks()
 	{
+		Runnable r;
+		while((r = corePrivate.workQueue.poll()) != null)
+			r.run();
+
 		try
 		{
 			Command c = receiveCommand();

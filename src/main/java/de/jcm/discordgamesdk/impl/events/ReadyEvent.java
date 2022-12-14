@@ -53,7 +53,7 @@ public class ReadyEvent
 		{
 			core.ready();
 			core.currentUser = data.user;
-			core.getEventAdapter().onCurrentUserUpdate();
+			core.workQueue.add(()->core.getEventAdapter().onCurrentUserUpdate());
 		}
 
 		@Override
