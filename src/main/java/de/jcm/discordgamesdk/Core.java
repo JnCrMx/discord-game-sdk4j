@@ -133,7 +133,7 @@ public class Core implements AutoCloseable
 
 		public Queue<Runnable> workQueue = new ArrayDeque<>();
 
-		public int pid = 0;
+		public int pid = (int) ProcessHandle.current().pid();
 		public DiscordUser currentUser;
 		public Map<Long, Relationship> relationships = new HashMap<>();
 		public OverlayUpdateEvent.Data overlayData = new OverlayUpdateEvent.Data();
