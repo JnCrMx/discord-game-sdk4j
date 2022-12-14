@@ -55,21 +55,6 @@ public class DiscordTest
 	}
 	*/
 
-	@BeforeAll
-	static void initCore()
-	{
-		String discordLibraryPath;
-		if(System.getProperty("os.name").toLowerCase().contains("windows"))
-		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.dll";
-		}
-		else
-		{
-			discordLibraryPath = "./discord_game_sdk/lib/x86_64/discord_game_sdk.so";
-		}
-		Core.init(new File(discordLibraryPath));
-	}
-
 	@Test
 	void activityTest()
 	{
@@ -125,10 +110,10 @@ public class DiscordTest
 						                                  "Join me baka!");
 					});
 				}
-				Assertions.assertEquals(Result.OK, core.activityManager().registerCommand("cmd.exe"),
+				/*Assertions.assertEquals(Result.OK, core.activityManager().registerCommand("cmd.exe"),
 				                        "register_command failed");
 				Assertions.assertEquals(Result.OK, core.activityManager().registerSteam(1234),
-				                        "register_steam failed");
+				                        "register_steam failed");*/
 
 				for(int i=0; i<1000; i++)
 				{
@@ -238,15 +223,9 @@ public class DiscordTest
 			try(Core core = new Core(params))
 			{
 				coreRef.set(core);
-				/*
-				 Calling it directly after initialization of the Core will fail
-				 because onCurrentUserUpdate() hasn't been fired at this point.
-				 */
-				Assertions.assertThrows(GameSDKException.class, ()->core.userManager().getCurrentUser(),
-				                        "We can access the current user too early. This is weird.");
 
-				Assertions.assertDoesNotThrow(()->core.userManager().getCurrentUserPremiumType(),
-				                              "get_current_user_premium_type failed.");
+				/*Assertions.assertDoesNotThrow(()->core.userManager().getCurrentUserPremiumType(),
+				                              "get_current_user_premium_type failed.");*/
 				Assertions.assertDoesNotThrow(()->core.userManager().currentUserHasFlag(UserManager.USER_FLAG_PARTNER),
 				                              "current_user_has_flag failed.");
 
