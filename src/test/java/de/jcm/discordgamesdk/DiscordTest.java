@@ -8,10 +8,8 @@ import de.jcm.discordgamesdk.image.ImageType;
 import de.jcm.discordgamesdk.lobby.*;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
-import de.jcm.discordgamesdk.voice.VoiceInputMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -300,7 +298,7 @@ public class DiscordTest
 					{
 						Assumptions.assumeTrue(result == Result.OK,
 						                       "Cannot set activity.");
-						core.overlayManager().openActivityInvite(ActivityActionType.SPECTATE, r->
+						core.overlayManager().openActivityInvite(ActivityActionType.JOIN, r->
 						{
 							Assertions.assertEquals(Result.OK, r, "open_activity_invite failed.");
 							openActivityInviteComplete.set(true);
@@ -335,6 +333,9 @@ public class DiscordTest
 						e.printStackTrace();
 					}
 				}
+				Assertions.assertTrue(openActivityInviteComplete.get(), "openActivityInvite did not complete");
+				Assertions.assertTrue(openGuildInviteComplete.get(), "open_guild_invite did not complete");
+				Assertions.assertTrue(openVoiceSettingsComplete.get(), "open_voice_settings did not complete");
 			}
 		}
 	}
