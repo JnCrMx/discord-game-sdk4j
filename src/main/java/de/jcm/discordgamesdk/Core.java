@@ -16,10 +16,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The main component for accessing Discord's game SDK.
@@ -62,15 +60,12 @@ public class Core implements AutoCloseable
 
 	private final CreateParams createParams;
 	private final AtomicBoolean open = new AtomicBoolean(true);
-	private final ReentrantLock lock = new ReentrantLock();
 
 	private final ActivityManager activityManager;
 	private final UserManager userManager;
 	private final OverlayManager overlayManager;
 	private final RelationshipManager relationshipManager;
 	private final ImageManager imageManager;
-	private final LobbyManager lobbyManager;
-	private final NetworkManager networkManager;
 	private final VoiceManager voiceManager;
 
 	/**
@@ -122,8 +117,6 @@ public class Core implements AutoCloseable
 		this.userManager = new UserManager(corePrivate);
 		this.relationshipManager = new RelationshipManager(corePrivate);
 		this.imageManager = new ImageManager(corePrivate);
-		lobbyManager = null;
-		networkManager = null;
 		this.voiceManager = new VoiceManager(corePrivate);
 	}
 
@@ -392,39 +385,12 @@ public class Core implements AutoCloseable
 	}
 
 	/**
-	 * <p>Returns the {@link LobbyManager} associated with this core.</p>
-	 * <p>A LobbyManager is used to create, manage and connect to Discord Lobbies.</p>
-	 * @return A {@link LobbyManager}
-	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getlobbymanager">
-	 *     https://discord.com/developers/docs/game-sdk/discord#getlobbymanager</a>
-	 */
-	public LobbyManager lobbyManager()
-	{
-		return lobbyManager;
-	}
-
-	/**
-	 * Returns the {@link NetworkManager} associated with this core.
-	 * <p>
-	 * A NetworkManager can be used to open network channels over
-	 * Discord on which you can send arbitrary messages.
-	 * @return A {@link NetworkManager}
-	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager">
-	 *     https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager</a>
-	 */
-	public NetworkManager networkManager()
-	{
-		return networkManager;
-	}
-
-	/**
 	 * Returns the {@link VoiceManager} associated with this core.
 	 * <p>
 	 * A VoiceManager is used to control Discord Lobby voice channels.
 	 * It can be used to configure input modes, to mute and deaf the current user,
 	 * to locally mute other users and to locally adjust their volume.
 	 * @return A {@link VoiceManager}
-	 * @see LobbyManager#connectVoice(long)
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getvoicemanager">
 	 *     https://discord.com/developers/docs/game-sdk/discord#getvoicemanager</a>
 	 */
@@ -501,31 +467,6 @@ public class Core implements AutoCloseable
 		catch(IOException e)
 		{
 			throw new RuntimeException(e);
-		}
-	}
-
-	void execute(Runnable runnable)
-	{
-		execute((Supplier<Void>) () ->
-		{
-			runnable.run();
-			return null;
-		});
-	}
-
-	<T> T execute(Supplier<T> provider)
-	{
-		if(!isOpen())
-			throw new CoreClosedException();
-
-		lock.lock();
-		try
-		{
-			return provider.get();
-		}
-		finally
-		{
-			lock.unlock();
 		}
 	}
 }
