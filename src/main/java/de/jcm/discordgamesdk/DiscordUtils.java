@@ -1,7 +1,5 @@
 package de.jcm.discordgamesdk;
 
-import de.jcm.discordgamesdk.lobby.LobbyTransaction;
-
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
