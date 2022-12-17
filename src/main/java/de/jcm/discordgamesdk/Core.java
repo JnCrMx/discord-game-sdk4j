@@ -103,7 +103,7 @@ public class Core implements AutoCloseable
 		{
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
             {
-                throw new IOException("No windows support, yet :(");
+                this.channel = new WindowsDiscordChannel();
             }
             else // Assume UDS are available, if it is not Windows.
             {
