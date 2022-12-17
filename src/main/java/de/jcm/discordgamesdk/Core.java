@@ -9,6 +9,7 @@ import de.jcm.discordgamesdk.impl.events.VoiceSettingsUpdate2Event;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
@@ -102,8 +103,39 @@ public class Core implements AutoCloseable
 
 		try
 		{
-			this.channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
-			this.sendHandshake();
+            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
+            {
+                throw new IOException("No windows support, yet :(");
+            }
+            else
+            {
+                String socketPath = System.getenv("XDG_RUNTIME_DIR");
+                if (socketPath == null)
+                {
+                    socketPath = System.getenv("TMPDIR");
+                    if (socketPath == null)
+                    {
+                        socketPath = System.getenv("TMP");
+                        if (socketPath == null)
+                        {
+                            socketPath = System.getenv("TEMP");
+                            if (socketPath == null)
+                            {
+                                socketPath = "/tmp";
+                            }
+                        }
+                    }
+                }
+                if (new File(socketPath + "/app/com.discordapp.Discord").exists())
+                {
+                    this.channel = SocketChannel.open(UnixDomainSocketAddress.of(socketPath + "/app/com.discordapp.Discord/discord-ipc-0"));
+                }
+                else
+                {
+                    this.channel = SocketChannel.open(UnixDomainSocketAddress.of(socketPath + "/discord-ipc-0"));
+                }
+            }
+            this.sendHandshake();
 			runCallbacks();
 			channel.configureBlocking(false);
 		}
