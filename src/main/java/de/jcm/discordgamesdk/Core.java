@@ -9,12 +9,10 @@ import de.jcm.discordgamesdk.impl.events.VoiceSettingsUpdate2Event;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
@@ -48,7 +46,7 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
-	private final SocketChannel channel;
+	private final DiscordChannel channel;
 	private ConnectionState state;
 	private final Gson gson;
 	private long nonce;
@@ -107,33 +105,9 @@ public class Core implements AutoCloseable
             {
                 throw new IOException("No windows support, yet :(");
             }
-            else
+            else // Assume UDS are available, if it is not Windows.
             {
-                String socketPath = System.getenv("XDG_RUNTIME_DIR");
-                if (socketPath == null)
-                {
-                    socketPath = System.getenv("TMPDIR");
-                    if (socketPath == null)
-                    {
-                        socketPath = System.getenv("TMP");
-                        if (socketPath == null)
-                        {
-                            socketPath = System.getenv("TEMP");
-                            if (socketPath == null)
-                            {
-                                socketPath = "/tmp";
-                            }
-                        }
-                    }
-                }
-                if (new File(socketPath + "/app/com.discordapp.Discord").exists())
-                {
-                    this.channel = SocketChannel.open(UnixDomainSocketAddress.of(socketPath + "/app/com.discordapp.Discord/discord-ipc-0"));
-                }
-                else
-                {
-                    this.channel = SocketChannel.open(UnixDomainSocketAddress.of(socketPath + "/discord-ipc-0"));
-                }
+                this.channel = new UnixDiscordChannel();
             }
             this.sendHandshake();
 			runCallbacks();
