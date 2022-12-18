@@ -1,4 +1,4 @@
-package de.jcm.discordgamesdk;
+package de.jcm.discordgamesdk.impl.channel;
 
 import java.io.RandomAccessFile;
 import java.io.IOException;
