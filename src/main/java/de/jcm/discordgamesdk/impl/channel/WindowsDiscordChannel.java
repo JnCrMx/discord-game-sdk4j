@@ -47,6 +47,8 @@ public class WindowsDiscordChannel implements DiscordChannel {
     }
 
     public int write(ByteBuffer src) throws IOException {
-        return channel.write(src);
+        int res = channel.write(src);
+        channel.force(false); // ensure that data is actually written to file
+        return res;
     }
 }
