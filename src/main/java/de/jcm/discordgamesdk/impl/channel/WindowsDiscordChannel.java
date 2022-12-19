@@ -23,14 +23,19 @@ public class WindowsDiscordChannel implements DiscordChannel {
     }
 
     public int read(ByteBuffer dst) throws IOException {
+        System.out.println("read1 start");
         if (!blocking && (channel.size() - channel.position()) < dst.remaining())
         {
+            System.out.println("read1 done 0");
             return 0;
         }
-        return channel.read(dst);
+        int res = channel.read(dst);
+        System.out.println("read1 done " + res);
+        return res;
     }
 
     public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+        System.out.println("read2 start");
         long remaining = 0;
         if (!blocking)
         {
@@ -40,15 +45,20 @@ public class WindowsDiscordChannel implements DiscordChannel {
             }
             if ((channel.size() - channel.position()) < remaining)
             {
+                System.out.println("read2 done 0");
                 return 0;
             }
         }
-        return channel.read(dsts, offset, length);
+        long res = channel.read(dsts, offset, length);
+        System.out.println("read2 done " + res);
+        return res;
     }
 
     public int write(ByteBuffer src) throws IOException {
+        System.out.println("write start");
         int res = channel.write(src);
         channel.force(false); // ensure that data is actually written to file
+        System.out.println("write done");
         return res;
     }
 }

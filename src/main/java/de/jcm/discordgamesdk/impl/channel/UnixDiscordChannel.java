@@ -47,14 +47,23 @@ public class UnixDiscordChannel implements DiscordChannel {
     }
 
     public int read(ByteBuffer dst) throws IOException {
-        return channel.read(dst);
+        System.out.println("read1 start");
+        int res = channel.read(dst);
+        System.out.println("read1 done " + res);
+        return res;
     }
 
     public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
-        return channel.read(dsts, offset, length);
+        System.out.println("read2 start");
+        long res = channel.read(dsts, offset, length);
+        System.out.println("read2 done " + res);
+        return res;
     }
 
     public int write(ByteBuffer src) throws IOException {
-        return channel.write(src);
+        System.out.println("write start");
+        int res= channel.write(src);
+        System.out.println("write done");
+        return res;
     }
 }
