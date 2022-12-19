@@ -106,11 +106,11 @@ public class Core implements AutoCloseable
 		{
             if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
             {
-                this.channel = new WindowsDiscordChannel();
+                this.channel = new WindowsDiscordChannel(corePrivate);
             }
             else // Assume UDS are available, if it is not Windows.
             {
-                this.channel = new UnixDiscordChannel();
+                this.channel = new UnixDiscordChannel(corePrivate);
             }
             this.sendHandshake();
 			runCallbacks();

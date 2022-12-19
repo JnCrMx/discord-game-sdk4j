@@ -1,15 +1,20 @@
 package de.jcm.discordgamesdk.impl.channel;
 
+import de.jcm.discordgamesdk.Core;
+import de.jcm.discordgamesdk.LogLevel;
+
 import java.io.RandomAccessFile;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class WindowsDiscordChannel implements DiscordChannel {
+    private final Core.CorePrivate core;
     private final FileChannel channel;
     private boolean blocking = true;
 
-    public WindowsDiscordChannel() throws IOException {
+    public WindowsDiscordChannel(Core.CorePrivate core) throws IOException {
+        this.core = core;
         RandomAccessFile raf = new RandomAccessFile("\\\\?\\pipe\\discord-ipc-0", "rw");
         channel = raf.getChannel();
     }
@@ -23,42 +28,37 @@ public class WindowsDiscordChannel implements DiscordChannel {
     }
 
     public int read(ByteBuffer dst) throws IOException {
-        System.out.println("read1 start");
-        if (!blocking && (channel.size() - channel.position()) < dst.remaining())
+        long start = System.currentTimeMillis();
+        int res = 0;
+        if (blocking || (channel.size() - channel.position()) >= dst.remaining())
         {
-            System.out.println("read1 done 0");
-            return 0;
+            res = channel.read(dst);
         }
-        int res = channel.read(dst);
-        System.out.println("read1 done " + res);
+        core.log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
     public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
-        System.out.println("read2 start");
+        long start = System.currentTimeMillis();
+        long res = 0;
         long remaining = 0;
-        if (!blocking)
+        for (int i = offset; !blocking && i < offset+length; i++)
         {
-            for (int i = offset; i < offset+length; i++)
-            {
-                remaining += dsts[i].remaining();
-            }
-            if ((channel.size() - channel.position()) < remaining)
-            {
-                System.out.println("read2 done 0");
-                return 0;
-            }
+            remaining += dsts[i].remaining();
         }
-        long res = channel.read(dsts, offset, length);
-        System.out.println("read2 done " + res);
+        if (blocking || (channel.size() - channel.position()) >= remaining)
+        {
+            res = channel.read(dsts, offset, length);
+        }
+        core.log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
     public int write(ByteBuffer src) throws IOException {
-        System.out.println("write start");
+        long start = System.currentTimeMillis();
         int res = channel.write(src);
         channel.force(false); // ensure that data is actually written to file
-        System.out.println("write done");
+        core.log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 }
