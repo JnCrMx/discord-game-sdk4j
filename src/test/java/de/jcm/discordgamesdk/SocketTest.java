@@ -17,7 +17,7 @@ import java.nio.channels.SocketChannel;
 
 public class SocketTest
 {
-	String receive(SocketChannel channel) throws IOException
+    String receive(SocketChannel channel) throws IOException
 	{
 		ByteBuffer header = ByteBuffer.allocate(8);
 		channel.read(header);
@@ -70,7 +70,7 @@ public class SocketTest
 		Command getUser = new Command();
 		getUser.setCmd(Command.Type.GET_USER);
 		getUser.setNonce("1");
-		DiscordUser u = new DiscordUser(352386023159758848L, null, null, null, null);
+		DiscordUser u = new DiscordUser(Config.USER_ID, null, null, null, null);
 		getUser.setArgs(gson.toJsonTree(u).getAsJsonObject());
 
 		System.out.println(gson.toJson(u));
@@ -91,7 +91,7 @@ public class SocketTest
 		CreateParams params = new CreateParams();
 		DiscordEventHandler handler = new DiscordEventHandler();
 		params.registerEventHandler(handler);
-		params.setClientID(698611073133051974L);
+		params.setClientID(Config.CLIENT_ID);
 		Core core = new Core(params);
 
 		handler.addListener(new DiscordEventAdapter()
@@ -102,7 +102,7 @@ public class SocketTest
 				System.out.println(core.userManager().getCurrentUser());
 			}
 		});
-		core.userManager().getUser(691614879399936078L, (r,u)->{
+		core.userManager().getUser(Config.RELATIONSHIP_ID, (r,u)->{
 			System.out.println(r+" "+u);
 		});
 
@@ -117,7 +117,7 @@ public class SocketTest
 		activity.secrets().setSpectateSecret("spectate");
 		core.activityManager().updateActivity(activity, r->{
 			System.out.println(r);
-			core.activityManager().sendInvite(691614879399936078L, ActivityActionType.JOIN, "Join me baka!");
+			core.activityManager().sendInvite(Config.RELATIONSHIP_ID, ActivityActionType.JOIN, "Join me baka!");
 		});
 
 		for(int i=0; i<1000; i++)
