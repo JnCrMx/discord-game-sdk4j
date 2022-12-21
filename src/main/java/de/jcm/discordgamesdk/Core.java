@@ -49,6 +49,18 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
+	public static final DiscordChannel getDiscordChannel(CorePrivate corePrivate) throws IOException
+	{
+		if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
+		{
+			return new WindowsDiscordChannel(corePrivate);
+		}
+		else // Assume Unix domain sockets are available, if it is not Windows.
+		{
+			return new UnixDiscordChannel(corePrivate);
+		}
+	}
+
 	private final DiscordChannel channel;
 	private ConnectionState state;
 	private final Gson gson;
@@ -104,14 +116,7 @@ public class Core implements AutoCloseable
 
 		try
 		{
-            if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
-            {
-                this.channel = new WindowsDiscordChannel(corePrivate);
-            }
-            else // Assume UDS are available, if it is not Windows.
-            {
-                this.channel = new UnixDiscordChannel(corePrivate);
-            }
+            channel = Core.getDiscordChannel(corePrivate);
             this.sendHandshake();
 			runCallbacks();
 			channel.configureBlocking(false);

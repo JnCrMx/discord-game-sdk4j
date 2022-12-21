@@ -55,21 +55,29 @@ public class UnixDiscordChannel implements DiscordChannel {
     public int read(ByteBuffer dst) throws IOException {
         long start = System.currentTimeMillis();
         int res = channel.read(dst);
-        core.log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
     public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
         long start = System.currentTimeMillis();
         long res = channel.read(dsts, offset, length);
-        core.log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
     public int write(ByteBuffer src) throws IOException {
         long start = System.currentTimeMillis();
         int res= channel.write(src);
-        core.log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
+    }
+
+    private void log(LogLevel level, String msg)
+    {
+        if (core != null)
+        {
+            core.log(level, msg);
+        }
     }
 }

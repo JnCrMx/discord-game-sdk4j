@@ -34,7 +34,7 @@ public class WindowsDiscordChannel implements DiscordChannel {
         {
             res = channel.read(dst);
         }
-        core.log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
@@ -50,7 +50,7 @@ public class WindowsDiscordChannel implements DiscordChannel {
         {
             res = channel.read(dsts, offset, length);
         }
-        core.log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
     }
 
@@ -58,7 +58,15 @@ public class WindowsDiscordChannel implements DiscordChannel {
         long start = System.currentTimeMillis();
         int res = channel.write(src);
         channel.force(false); // ensure that data is actually written to file
-        core.log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
+        log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
         return res;
+    }
+
+    private void log(LogLevel level, String msg)
+    {
+        if (core != null)
+        {
+            core.log(level, msg);
+        }
     }
 }

@@ -6,6 +6,7 @@ import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.impl.ConnectionState;
 import de.jcm.discordgamesdk.impl.HandshakeMessage;
+import de.jcm.discordgamesdk.impl.channel.DiscordChannel;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +14,10 @@ import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
 
 public class SocketTest
 {
-    String receive(SocketChannel channel) throws IOException
+    String receive(DiscordChannel channel) throws IOException
 	{
 		ByteBuffer header = ByteBuffer.allocate(8);
 		channel.read(header);
@@ -39,7 +39,7 @@ public class SocketTest
 		return new String(data.flip().array());
 	}
 
-	void send(SocketChannel channel, ConnectionState state, String message) throws IOException
+	void send(DiscordChannel channel, ConnectionState state, String message) throws IOException
 	{
 		byte[] bytes = message.getBytes();
 		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
@@ -54,7 +54,7 @@ public class SocketTest
 	@Test
 	void testProtocol() throws IOException
 	{
-		SocketChannel channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
+        DiscordChannel channel = Core.getDiscordChannel(null);
 
 		/*String hello = "{\"v\":1,\"client_id\":\"698611073133051974\"}";
 		String subscribe = "{\"cmd\":\"SUBSCRIBE\",\"nonce\":7,\"evt\":\"RELATIONSHIP_UPDATE\",\"args\":null}";
