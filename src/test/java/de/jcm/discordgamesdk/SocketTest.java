@@ -54,7 +54,7 @@ public class SocketTest
 	@Test
 	void testProtocol() throws IOException
 	{
-        DiscordChannel channel = Core.getDiscordChannel(null);
+        DiscordChannel channel = Core.getDiscordChannel();
 
 		/*String hello = "{\"v\":1,\"client_id\":\"698611073133051974\"}";
 		String subscribe = "{\"cmd\":\"SUBSCRIBE\",\"nonce\":7,\"evt\":\"RELATIONSHIP_UPDATE\",\"args\":null}";

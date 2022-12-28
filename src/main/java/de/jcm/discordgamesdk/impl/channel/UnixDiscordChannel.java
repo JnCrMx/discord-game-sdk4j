@@ -1,8 +1,5 @@
 package de.jcm.discordgamesdk.impl.channel;
 
-import de.jcm.discordgamesdk.Core;
-import de.jcm.discordgamesdk.LogLevel;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,12 +7,9 @@ import java.nio.channels.SocketChannel;
 import java.net.UnixDomainSocketAddress;
 
 public class UnixDiscordChannel implements DiscordChannel {
-    private final Core.CorePrivate core;
     private final SocketChannel channel;
 
-    public UnixDiscordChannel(Core.CorePrivate core) throws IOException {
-        this.core = core;
-
+    public UnixDiscordChannel() throws IOException {
         String path = System.getenv("XDG_RUNTIME_DIR");
         if (path == null)
         {
@@ -53,31 +47,14 @@ public class UnixDiscordChannel implements DiscordChannel {
     }
 
     public int read(ByteBuffer dst) throws IOException {
-        long start = System.currentTimeMillis();
-        int res = channel.read(dst);
-        log(LogLevel.VERBOSE, "read(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
-        return res;
+        return channel.read(dst);
     }
 
     public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
-        long start = System.currentTimeMillis();
-        long res = channel.read(dsts, offset, length);
-        log(LogLevel.VERBOSE, "read(ByteBuffer[], offset, length) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
-        return res;
+        return channel.read(dsts, offset, length);
     }
 
     public int write(ByteBuffer src) throws IOException {
-        long start = System.currentTimeMillis();
-        int res= channel.write(src);
-        log(LogLevel.VERBOSE, "write(ByteBuffer) returned " + res + " (" + (System.currentTimeMillis() - start)  + "ms)");
-        return res;
-    }
-
-    private void log(LogLevel level, String msg)
-    {
-        if (core != null)
-        {
-            core.log(level, msg);
-        }
+        return channel.write(src);
     }
 }
