@@ -116,8 +116,8 @@ public class Core implements AutoCloseable
 
 		try
 		{
-            channel = Core.getDiscordChannel();
-            this.sendHandshake();
+			channel = Core.getDiscordChannel();
+			this.sendHandshake();
 			runCallbacks();
 			channel.configureBlocking(false);
 		}

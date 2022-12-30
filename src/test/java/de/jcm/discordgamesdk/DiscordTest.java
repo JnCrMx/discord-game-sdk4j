@@ -18,8 +18,6 @@ import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-
-
 public class DiscordTest
 {
 	/* TODO: Find Java 8 replacement
