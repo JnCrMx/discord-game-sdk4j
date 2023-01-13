@@ -1,11 +1,8 @@
 jdk:
     - openjdk16
 before_install:
-    - echo "Before Install"
-    - sh jitpack-openjdk-16.sh install
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - sdk install java 16.0.2-open
 install:
-    - echo "Install"
-    - if ! sh jitpack-openjdk-16.sh use; then source ~/.sdkman/bin/sdkman-init.sh; fi
-    - java -version
-    - mvn install
-    - mvn install -DskipTests -Dmaven.javadoc.skip=true
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - mvn install --show-version -DskipTests -Dmaven.javadoc.skip=true
