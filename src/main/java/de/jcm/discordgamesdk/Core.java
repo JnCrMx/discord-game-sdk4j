@@ -3,6 +3,9 @@ package de.jcm.discordgamesdk;
 import com.google.gson.Gson;
 import de.jcm.discordgamesdk.impl.Error;
 import de.jcm.discordgamesdk.impl.*;
+import de.jcm.discordgamesdk.impl.channel.DiscordChannel;
+import de.jcm.discordgamesdk.impl.channel.UnixDiscordChannel;
+import de.jcm.discordgamesdk.impl.channel.WindowsDiscordChannel;
 import de.jcm.discordgamesdk.impl.commands.Subscribe;
 import de.jcm.discordgamesdk.impl.events.OverlayUpdateEvent;
 import de.jcm.discordgamesdk.impl.events.VoiceSettingsUpdate2Event;
@@ -13,7 +16,6 @@ import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
@@ -47,7 +49,19 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
-	private final SocketChannel channel;
+	public static final DiscordChannel getDiscordChannel() throws IOException
+	{
+		if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
+		{
+			return new WindowsDiscordChannel();
+		}
+		else // Assume Unix domain sockets are available, if it is not Windows.
+		{
+			return new UnixDiscordChannel();
+		}
+	}
+
+	private final DiscordChannel channel;
 	private ConnectionState state;
 	private final Gson gson;
 	private long nonce;
@@ -102,7 +116,7 @@ public class Core implements AutoCloseable
 
 		try
 		{
-			this.channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
+			channel = Core.getDiscordChannel();
 			this.sendHandshake();
 			runCallbacks();
 			channel.configureBlocking(false);

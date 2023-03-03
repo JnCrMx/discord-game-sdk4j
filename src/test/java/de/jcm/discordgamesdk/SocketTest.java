@@ -6,6 +6,7 @@ import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.impl.ConnectionState;
 import de.jcm.discordgamesdk.impl.HandshakeMessage;
+import de.jcm.discordgamesdk.impl.channel.DiscordChannel;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +14,10 @@ import java.io.IOException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
 
 public class SocketTest
 {
-	String receive(SocketChannel channel) throws IOException
+	String receive(DiscordChannel channel) throws IOException
 	{
 		ByteBuffer header = ByteBuffer.allocate(8);
 		channel.read(header);
@@ -39,7 +39,7 @@ public class SocketTest
 		return new String(data.flip().array());
 	}
 
-	void send(SocketChannel channel, ConnectionState state, String message) throws IOException
+	void send(DiscordChannel channel, ConnectionState state, String message) throws IOException
 	{
 		byte[] bytes = message.getBytes();
 		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
@@ -54,7 +54,7 @@ public class SocketTest
 	@Test
 	void testProtocol() throws IOException
 	{
-		SocketChannel channel = SocketChannel.open(UnixDomainSocketAddress.of("/run/user/1000/discord-ipc-0"));
+		DiscordChannel channel = Core.getDiscordChannel();
 
 		/*String hello = "{\"v\":1,\"client_id\":\"698611073133051974\"}";
 		String subscribe = "{\"cmd\":\"SUBSCRIBE\",\"nonce\":7,\"evt\":\"RELATIONSHIP_UPDATE\",\"args\":null}";
@@ -70,7 +70,7 @@ public class SocketTest
 		Command getUser = new Command();
 		getUser.setCmd(Command.Type.GET_USER);
 		getUser.setNonce("1");
-		DiscordUser u = new DiscordUser(352386023159758848L, null, null, null, null);
+		DiscordUser u = new DiscordUser(Config.USER_ID, null, null, null, null);
 		getUser.setArgs(gson.toJsonTree(u).getAsJsonObject());
 
 		System.out.println(gson.toJson(u));
@@ -91,7 +91,7 @@ public class SocketTest
 		CreateParams params = new CreateParams();
 		DiscordEventHandler handler = new DiscordEventHandler();
 		params.registerEventHandler(handler);
-		params.setClientID(698611073133051974L);
+		params.setClientID(Config.CLIENT_ID);
 		Core core = new Core(params);
 
 		handler.addListener(new DiscordEventAdapter()
@@ -102,7 +102,7 @@ public class SocketTest
 				System.out.println(core.userManager().getCurrentUser());
 			}
 		});
-		core.userManager().getUser(691614879399936078L, (r,u)->{
+		core.userManager().getUser(Config.RELATIONSHIP_ID, (r,u)->{
 			System.out.println(r+" "+u);
 		});
 
@@ -117,7 +117,7 @@ public class SocketTest
 		activity.secrets().setSpectateSecret("spectate");
 		core.activityManager().updateActivity(activity, r->{
 			System.out.println(r);
-			core.activityManager().sendInvite(691614879399936078L, ActivityActionType.JOIN, "Join me baka!");
+			core.activityManager().sendInvite(Config.RELATIONSHIP_ID, ActivityActionType.JOIN, "Join me baka!");
 		});
 
 		for(int i=0; i<1000; i++)

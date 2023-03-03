@@ -53,8 +53,8 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
-			params.setClientID(698611073133051974L);
-			Assertions.assertEquals(698611073133051974L, params.getClientID());
+			params.setClientID(Config.CLIENT_ID);
+			Assertions.assertEquals(Config.CLIENT_ID, params.getClientID());
 
 			params.setFlags(CreateParams.getDefaultFlags());
 			Assertions.assertEquals(CreateParams.getDefaultFlags(), params.getFlags());
@@ -98,7 +98,7 @@ public class DiscordTest
 						Assertions.assertEquals(Result.OK, result,
 						                        "update_activity failed.");
 
-						core.activityManager().sendInvite(691614879399936078L,
+						core.activityManager().sendInvite(Config.RELATIONSHIP_ID,
 						                                  ActivityActionType.JOIN,
 						                                  "Join me baka!");
 					});
@@ -134,7 +134,7 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			params.registerEventHandler(new DiscordEventAdapter()
 			{
 				@Override
@@ -201,7 +201,7 @@ public class DiscordTest
 			AtomicBoolean receivedCurrentUser = new AtomicBoolean(false);
 			AtomicBoolean receivedUser = new AtomicBoolean(false);
 
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			params.registerEventHandler(new DiscordEventAdapter()
 			{
 				@Override
@@ -222,12 +222,11 @@ public class DiscordTest
 				Assertions.assertDoesNotThrow(()->core.userManager().currentUserHasFlag(UserManager.USER_FLAG_PARTNER),
 				                              "current_user_has_flag failed.");
 
-				long userId = 352386023159758848L;
-				core.userManager().getUser(userId, (result, user) ->
+				core.userManager().getUser(Config.USER_ID, (result, user) ->
 				{
 					Assertions.assertEquals(Result.OK, result, "get_user failed.");
 					Assertions.assertNotNull(user, "get_user returned null.");
-					Assertions.assertEquals(userId, user.getUserId(), "get_user did not return correct user ID.");
+					Assertions.assertEquals(Config.USER_ID, user.getUserId(), "get_user did not return correct user ID.");
 
 					receivedUser.set(true);
 				});
@@ -262,7 +261,7 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			try(Core core = new Core(params))
 			{
 				Assertions.assertDoesNotThrow(()->core.overlayManager().isEnabled(),
@@ -343,7 +342,7 @@ public class DiscordTest
 			// We sadly need this rather ugly reference to access the Core in our EventAdapter.
 			AtomicReference<Core> coreRef = new AtomicReference<>();
 
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			params.registerEventHandler(new DiscordEventAdapter()
 			{
 				@Override
@@ -351,10 +350,9 @@ public class DiscordTest
 				{
 					System.out.println("DiscordTest.onRelationshipRefresh");
 
-					long userId = 691614879399936078L;
 					Relationship relationship = coreRef.get()
-							.relationshipManager().getWith(userId);
-					Assertions.assertEquals(userId, relationship.getUser().getUserId(),
+							.relationshipManager().getWith(Config.RELATIONSHIP_ID);
+					Assertions.assertEquals(Config.RELATIONSHIP_ID, relationship.getUser().getUserId(),
 					                        "Relationship has wrong user ID.");
 
 					coreRef.get().relationshipManager().filter(RelationshipManager.NO_FILTER);
@@ -393,12 +391,12 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			try(Core core = new Core(params))
 			{
 				AtomicBoolean complete = new AtomicBoolean(false);
 
-				ImageHandle handle = new ImageHandle(ImageType.USER, 691614879399936078L, 256);
+				ImageHandle handle = new ImageHandle(ImageType.USER, Config.RELATIONSHIP_ID, 256);
 				core.imageManager().fetch(handle, false, (result, handle1)->
 				{
 					Assertions.assertEquals(Result.OK, result,
@@ -431,7 +429,7 @@ public class DiscordTest
 	{
 		try(CreateParams params = new CreateParams())
 		{
-			params.setClientID(698611073133051974L);
+			params.setClientID(Config.CLIENT_ID);
 			try(Core core = new Core(params))
 			{
 				/*VoiceInputMode inputMode = new VoiceInputMode(
