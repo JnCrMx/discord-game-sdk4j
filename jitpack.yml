@@ -1,4 +1,8 @@
 jdk:
     - openjdk16
+before_install:
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - sdk install java 16.0.2-open
 install:
-    - mvn install -DskipTests
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - mvn install --show-version -DskipTests -Dmaven.javadoc.skip=true
