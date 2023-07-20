@@ -94,3 +94,43 @@ try(CreateParams params = new CreateParams())
 ````
 
 For real examples see the ``examples/`` directory in this repository.
+
+### Environment Variables
+
+#### `DISCORD_INSTANCE_ID`
+
+This library supports using the `DISCORD_INSTANCE_ID` environment variable to select a Discord instance to use.
+
+On Windows, this results in the socket `\\?\pipe\discord-ipc-${DISCORD_INSTANCE_ID}` being used.
+This should equal the behaviour of the official native libraries.
+
+On Linux however, there are multiple locations and sockets, which this library tries to support, but the offical
+library does not.
+Therefore, an order of instances is established as follows:
+1. Discord instances running directly as host applications (i.e. `$XDG_RUNTIME_DIR/discord-ipc-{0,1,2,3,...}`).
+   The following directories (in the order given) are searched: `$XDG_RUNTIME_DIR`, `$TMPDIR`, `$TMP`, `$TEMP`.
+2. Discord instances running as a Flatpak, whose socket is found in
+   `<one of the directories from 1.>/app/com.discordapp.Discord`.
+3. Discord instances running as a Snap, whose socket is found in
+   `<one of the directories from 1.>/snap.discord`.
+4. Discord instances running as a Snap with a different instance name (using the `experimental.parallel-instances` setting),
+   whose socket is found in `<one of the directories from 1.>/snap.discord_${instance_name}` *in alphabetical order*.
+
+**Example:**
+Let's say there are a total of five Discord instances running.
+Two of them are running on the host system directly, one is running as a Flatpak and one is running as a "normal"
+Snap and one running as a Snap (with `experimental.parallel-instances`) as `discord_test`.
+
+Then the two Discord instances on the host system get the `DISCORD_INSTANCE_ID` `0` and `1`.
+The Flatpak one is getting the `DISCORD_INSTANCE_ID` `2` and the normal Snap one is getting the `DISCORD_INSTANCE_ID` `3`.
+Lately, the Snap one installed as `discord_test` gets `DISCORD_INSTANCE_ID` `4`.
+
+#### `DISCORD_IPC_PATH`
+
+To make it possible to select one specific Discord instance, rather than relying on this ordering,
+this library introduces the environment variable `DISCORD_IPC_PATH`.
+
+If this variable is set, this library will **not search for any sockets at all**.
+It will simply assume that a socket is preset at `$DISCORD_IPC_PATH` and use that one.
+
+This can be useful for automated tests, that might break on changing Discord instances.

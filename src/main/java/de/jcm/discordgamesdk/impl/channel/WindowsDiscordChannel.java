@@ -10,7 +10,16 @@ public class WindowsDiscordChannel implements DiscordChannel {
 	private boolean blocking = true;
 
 	public WindowsDiscordChannel() throws IOException {
-		RandomAccessFile raf = new RandomAccessFile("\\\\?\\pipe\\discord-ipc-0", "rw");
+		String path = System.getenv("DISCORD_IPC_PATH");
+		if(path == null) {
+			String instance = System.getenv("DISCORD_INSTANCE_ID");
+			int i = 0;
+			if (instance != null) {
+				i = Integer.parseInt(instance);
+			}
+			path = "\\\\?\\pipe\\discord-ipc-"+i;
+		}
+		RandomAccessFile raf = new RandomAccessFile(path, "rw");
 		channel = raf.getChannel();
 	}
 
