@@ -2,6 +2,10 @@ package de.jcm.discordgamesdk.activity;
 
 import de.jcm.discordgamesdk.user.Presence;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Java representation of the Activity structure.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activity-struct">
@@ -17,10 +21,15 @@ public class Activity implements AutoCloseable
 	private String details;
 	private boolean instance;
 
+	private List<ActivityButton> buttons;
+
 	private final ActivityTimestamps timestamps;
 	private final ActivityAssets assets;
 	private final ActivityParty party;
-	private final ActivitySecrets secrets;
+	private ActivitySecrets secrets;
+
+	private transient final ActivitySecrets secretsBak;
+	private transient final List<ActivityButton> buttonsBak;
 
 	/**
 	 * Allocates a new Activity structure.
@@ -30,7 +39,9 @@ public class Activity implements AutoCloseable
 		this.timestamps = new ActivityTimestamps();
 		this.assets = new ActivityAssets();
 		this.party = new ActivityParty();
-		this.secrets = new ActivitySecrets();
+		this.secretsBak = new ActivitySecrets();
+		this.buttonsBak = new ArrayList<>();
+		setActivityButtonsMode(ActivityButtonsMode.SECRETS);
 	}
 
 	/**
@@ -184,9 +195,68 @@ public class Activity implements AutoCloseable
 	{
 	}
 
+	/**
+	 * <p>Returns the current activity custom buttons</p>
+	 * @return An unmodifiable list of custom buttons
+	 */
+	public List<ActivityButton> getButtons() {
+		return Collections.unmodifiableList(buttonsBak);
+	}
+
+	/**
+	 * Add a custom button
+	 * @param button button to add
+	 */
+	public void addButton(ActivityButton button) {
+		if(buttonsBak.size() == 2) {
+			throw new IllegalStateException("Buttons can't be more than 2");
+		}
+		buttonsBak.add(button);
+	}
+
+	/**
+	 * Remove a custom button
+	 * @param button button to remove
+	 */
+	public boolean removeButton(ActivityButton button) {
+		return buttons.remove(button);
+	}
+
+	/**
+	 * <p>Changes the button display mode</p>
+	 * <p>Only custom buttons (ActivityButtonsMode.BUTTONS) or "Ask to join"/"Spectate" (ActivityButtonsMode.SECRETS) buttons can be displayed at the same time</p>
+	 * @param mode button mode
+	 */
+	public void setActivityButtonsMode(ActivityButtonsMode mode) {
+		switch (mode) {
+			case BUTTONS -> {
+				buttons = buttonsBak;
+				secrets = null;
+			}
+			case SECRETS -> {
+				secrets = secretsBak;
+				buttons = null;
+			}
+		}
+	}
+
+	/**
+	 * <p>Get the current button display mode</p>
+	 * <p>Only custom buttons (ActivityButtonsMode.BUTTONS) or "Ask to join"/"Spectate" (ActivityButtonsMode.SECRETS) buttons can be displayed at the same time</p>
+	 * @return current mode
+	 */
+	public ActivityButtonsMode getActivityButtonsMode() {
+		if(secrets != null) {
+			return ActivityButtonsMode.SECRETS;
+		}
+		if(buttons != null) {
+			return ActivityButtonsMode.BUTTONS;
+		}
+		return null; //Impossible
+	}
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "Activity{" +
 				"applicationId=" + applicationId +
 				", name='" + name + '\'' +
@@ -194,6 +264,7 @@ public class Activity implements AutoCloseable
 				", state='" + state + '\'' +
 				", details='" + details + '\'' +
 				", instance=" + instance +
+				", buttons=" + buttons +
 				", timestamps=" + timestamps +
 				", assets=" + assets +
 				", party=" + party +
