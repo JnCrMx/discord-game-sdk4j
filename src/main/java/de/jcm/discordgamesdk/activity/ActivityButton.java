@@ -10,7 +10,8 @@ public class ActivityButton {
     private String label;
     private String url;
 
-    public ActivityButton() {
+    public ActivityButton()
+    {
     }
 
     /**
@@ -18,7 +19,8 @@ public class ActivityButton {
      * @param label The text displayed on the button
      * @param url Link that is clicked to
      */
-    public ActivityButton(String label, String url) {
+    public ActivityButton(String label, String url)
+    {
         this.label = label;
         this.url = url;
     }
@@ -27,7 +29,8 @@ public class ActivityButton {
      * Get a label
      * @return button label
      */
-    public String getLabel() {
+    public String getLabel()
+    {
         return label;
     }
 
@@ -35,7 +38,8 @@ public class ActivityButton {
      * Set a label
      * @param label The text displayed on the button
      */
-    public void setLabel(String label) {
+    public void setLabel(String label)
+    {
         this.label = label;
     }
 
@@ -43,7 +47,8 @@ public class ActivityButton {
      * Get a url
      * @return button url
      */
-    public String getUrl() {
+    public String getUrl()
+    {
         return url;
     }
 
@@ -51,7 +56,8 @@ public class ActivityButton {
      * Set a url
      * @param url Link that is clicked to
      */
-    public void setUrl(String url) {
+    public void setUrl(String url)
+    {
         this.url = url;
     }
 }

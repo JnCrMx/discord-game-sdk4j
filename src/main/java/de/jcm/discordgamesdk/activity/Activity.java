@@ -199,7 +199,8 @@ public class Activity implements AutoCloseable
 	 * <p>Returns the current activity custom buttons</p>
 	 * @return An unmodifiable list of custom buttons
 	 */
-	public List<ActivityButton> getButtons() {
+	public List<ActivityButton> getButtons()
+	{
 		return Collections.unmodifiableList(buttonsBak);
 	}
 
@@ -207,7 +208,8 @@ public class Activity implements AutoCloseable
 	 * Add a custom button
 	 * @param button button to add
 	 */
-	public void addButton(ActivityButton button) {
+	public void addButton(ActivityButton button)
+	{
 		if(buttonsBak.size() == 2) {
 			throw new IllegalStateException("Buttons can't be more than 2");
 		}
@@ -218,7 +220,8 @@ public class Activity implements AutoCloseable
 	 * Remove a custom button
 	 * @param button button to remove
 	 */
-	public boolean removeButton(ActivityButton button) {
+	public boolean removeButton(ActivityButton button)
+	{
 		return buttons.remove(button);
 	}
 
@@ -227,7 +230,8 @@ public class Activity implements AutoCloseable
 	 * <p>Only custom buttons (ActivityButtonsMode.BUTTONS) or "Ask to join"/"Spectate" (ActivityButtonsMode.SECRETS) buttons can be displayed at the same time</p>
 	 * @param mode button mode
 	 */
-	public void setActivityButtonsMode(ActivityButtonsMode mode) {
+	public void setActivityButtonsMode(ActivityButtonsMode mode)
+	{
 		switch (mode) {
 			case BUTTONS -> {
 				buttons = buttonsBak;
@@ -245,7 +249,8 @@ public class Activity implements AutoCloseable
 	 * <p>Only custom buttons (ActivityButtonsMode.BUTTONS) or "Ask to join"/"Spectate" (ActivityButtonsMode.SECRETS) buttons can be displayed at the same time</p>
 	 * @return current mode
 	 */
-	public ActivityButtonsMode getActivityButtonsMode() {
+	public ActivityButtonsMode getActivityButtonsMode()
+	{
 		if(secrets != null) {
 			return ActivityButtonsMode.SECRETS;
 		}
@@ -256,7 +261,8 @@ public class Activity implements AutoCloseable
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "Activity{" +
 				"applicationId=" + applicationId +
 				", name='" + name + '\'' +
