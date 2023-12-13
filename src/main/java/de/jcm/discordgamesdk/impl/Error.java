@@ -14,4 +14,9 @@ public class Error
 	{
 		return message;
 	}
+
+	@Override
+	public String toString() {
+		return "Error "+getCode()+": "+getMessage();
+	}
 }

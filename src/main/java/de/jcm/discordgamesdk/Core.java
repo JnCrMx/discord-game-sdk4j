@@ -324,6 +324,11 @@ public class Core implements AutoCloseable
 
 	private void handleCommand(Command command)
 	{
+		if(command.isError()) {
+			corePrivate.log(LogLevel.ERROR, command.getCmd().toString()+": "
+					+corePrivate.getGson().fromJson(command.getData(), Error.class));
+		}
+
 		if(command.getNonce() != null)
 		{
 			handlers.remove(command.getNonce()).accept(command);

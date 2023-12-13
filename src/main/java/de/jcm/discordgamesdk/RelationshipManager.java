@@ -49,6 +49,9 @@ public class RelationshipManager
 	{
 		this.core = core;
 		this.core.sendCommand(Command.Type.GET_RELATIONSHIPS, new Object(), o->{
+			if(o.isError()) {
+				return;
+			}
 			GetRelationships.Response r = core.getGson().fromJson(o.getData(), GetRelationships.Response.class);
 			for(DataProxies.RelationshipImpl rel : r.getRelationships())
 			{

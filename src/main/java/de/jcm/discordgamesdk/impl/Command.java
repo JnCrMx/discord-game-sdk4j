@@ -91,6 +91,10 @@ public class Command
 		this.evt = evt;
 	}
 
+	public boolean isError() {
+		return getEvent() == Event.ERROR;
+	}
+
 	public String getNonce()
 	{
 		return nonce;
