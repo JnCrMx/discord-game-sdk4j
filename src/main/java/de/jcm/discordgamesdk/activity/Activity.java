@@ -187,10 +187,10 @@ public class Activity implements AutoCloseable
 	}
 
 	/**
-	 * <p>Frees the allocated native structure and therefore also all embedded native structures.</p>
-	 * <p>You should call this when you do not need the structure anymore.</p>
+	 * No operation, only kept for backwards compatibility
 	 */
 	@Override
+	@Deprecated
 	public void close()
 	{
 	}
