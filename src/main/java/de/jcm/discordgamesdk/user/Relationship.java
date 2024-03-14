@@ -1,7 +1,5 @@
 package de.jcm.discordgamesdk.user;
 
-import de.jcm.discordgamesdk.activity.Activity;
-
 /**
  * The relationship between a user and the current user.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/relationships#data-models-relationship-struct">
@@ -13,7 +11,7 @@ public class Relationship
 	private final DiscordUser user;
 	private final Presence presence;
 
-	private Relationship(RelationshipType type, DiscordUser user, Presence presence)
+	public Relationship(RelationshipType type, DiscordUser user, Presence presence)
 	{
 		this.type = type;
 		this.user = user;
@@ -61,17 +59,5 @@ public class Relationship
 				", user=" + user +
 				", presence=" + presence +
 				'}';
-	}
-
-	static Relationship createRelationship(int type, DiscordUser user, int status, long activity)
-	{
-		RelationshipType type1 = RelationshipType.values()[type];
-		OnlineStatus status1 = OnlineStatus.values()[status];
-
-		Activity activity1 = new Activity(activity);
-
-		Presence presence = new Presence(status1, activity1);
-
-		return new Relationship(type1, user, presence);
 	}
 }

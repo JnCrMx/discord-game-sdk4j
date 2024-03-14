@@ -9,12 +9,8 @@ import java.time.Instant;
  */
 public class ActivityTimestamps
 {
-	private final long pointer;
-
-	ActivityTimestamps(long pointer)
-	{
-		this.pointer = pointer;
-	}
+	private Long start;
+	private Long end;
 
 	/**
 	 * <p>Sets the time the user started playing.</p>
@@ -23,7 +19,8 @@ public class ActivityTimestamps
 	 */
 	public void setStart(Instant start)
 	{
-		setStart(pointer, start.getEpochSecond());
+		this.start = start.getEpochSecond();
+		this.end = null;
 	}
 
 	/**
@@ -32,7 +29,7 @@ public class ActivityTimestamps
 	 */
 	public Instant getStart()
 	{
-		return Instant.ofEpochSecond(getStart(pointer));
+		return Instant.ofEpochSecond(start);
 	}
 
 	/**
@@ -42,7 +39,8 @@ public class ActivityTimestamps
 	 */
 	public void setEnd(Instant end)
 	{
-		setEnd(pointer, end.getEpochSecond());
+		this.start = null;
+		this.end = end.getEpochSecond();
 	}
 
 	/**
@@ -51,12 +49,6 @@ public class ActivityTimestamps
 	 */
 	public Instant getEnd()
 	{
-		return Instant.ofEpochSecond(getEnd(pointer));
+		return Instant.ofEpochSecond(end);
 	}
-
-	private native void setStart(long pointer, long start);
-	private native long getStart(long pointer);
-
-	private native void setEnd(long pointer, long end);
-	private native long getEnd(long pointer);
 }

@@ -116,4 +116,19 @@ public class ImageHandle
 				", size=" + size +
 				'}';
 	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		ImageHandle that = (ImageHandle) o;
+		return id == that.id && size == that.size && type == that.type;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(type, id, size);
+	}
 }

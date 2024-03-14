@@ -13,15 +13,6 @@ public class ActivityExample
 {
 	public static void main(String[] args) throws IOException
 	{
-		File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
-		if(discordLibrary == null)
-		{
-			System.err.println("Error downloading Discord SDK.");
-			System.exit(-1);
-		}
-		// Initialize the Core
-		Core.init(discordLibrary);
-
 		// Set parameters for the Core
 		try(CreateParams params = new CreateParams())
 		{

@@ -3,8 +3,11 @@ package de.jcm.discordgamesdk;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityActionType;
 import de.jcm.discordgamesdk.activity.ActivityJoinRequestReply;
+import de.jcm.discordgamesdk.impl.Command;
+import de.jcm.discordgamesdk.impl.commands.ActivityInviteUser;
+import de.jcm.discordgamesdk.impl.commands.SendActivityJoinInvite;
+import de.jcm.discordgamesdk.impl.commands.SetActivity;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -14,12 +17,10 @@ import java.util.function.Consumer;
  */
 public class ActivityManager
 {
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
 
-	ActivityManager(long pointer, Core core)
+	ActivityManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
 	}
 
@@ -32,7 +33,7 @@ public class ActivityManager
 	 */
 	public Result registerCommand(String command)
 	{
-		return core.execute(()->registerCommand(pointer, Objects.requireNonNull(command)));
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -45,7 +46,7 @@ public class ActivityManager
 	 */
 	public Result registerSteam(int steamId)
 	{
-		return core.execute(()->registerSteam(pointer, steamId));
+		throw new RuntimeException("not implemented");
 	}
 
 	/**
@@ -70,7 +71,9 @@ public class ActivityManager
 	 */
 	public void updateActivity(Activity activity, Consumer<Result> callback)
 	{
-		core.execute(()->updateActivity(pointer, activity.getPointer(), Objects.requireNonNull(callback)));
+		core.sendCommand(Command.Type.SET_ACTIVITY, new SetActivity.Args(core.pid, activity), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class ActivityManager
 	 */
 	public void clearActivity(Consumer<Result> callback)
 	{
-		core.execute(()->clearActivity(pointer, Objects.requireNonNull(callback)));
+		updateActivity(null);
 	}
 
 	/**
@@ -120,7 +123,18 @@ public class ActivityManager
 	 */
 	public void sendRequestReply(long userId, ActivityJoinRequestReply reply, Consumer<Result> callback)
 	{
-		core.execute(()->sendRequestReply(pointer, userId, reply.ordinal(), Objects.requireNonNull(callback)));
+		if(reply == ActivityJoinRequestReply.YES)
+		{
+			core.sendCommand(Command.Type.SEND_ACTIVITY_JOIN_INVITE, new SendActivityJoinInvite.Args(Long.toString(userId)), c->{
+				callback.accept(core.checkError(c));
+			});
+		}
+		else
+		{
+			core.sendCommand(Command.Type.CLOSE_ACTIVITY_JOIN_REQUEST, new SendActivityJoinInvite.Args(Long.toString(userId)), c->{
+				callback.accept(core.checkError(c));
+			});
+		}
 	}
 
 	/**
@@ -149,7 +163,9 @@ public class ActivityManager
 	 */
 	public void sendInvite(long userId, ActivityActionType type, String content, Consumer<Result> callback)
 	{
-		core.execute(()->sendInvite(pointer, userId, type.nativeValue(), Objects.requireNonNull(content), Objects.requireNonNull(callback)));
+		core.sendCommand(Command.Type.ACTIVITY_INVITE_USER, new ActivityInviteUser.Args(type.nativeValue(), Long.toString(userId), content, core.pid), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
 
 	/**
@@ -174,14 +190,6 @@ public class ActivityManager
 	 */
 	public void acceptRequest(long userId, Consumer<Result> callback)
 	{
-		core.execute(()->acceptRequest(pointer, userId, Objects.requireNonNull(callback)));
+		throw new RuntimeException("not implemented");
 	}
-
-	private native Result registerCommand(long pointer, String command);
-	private native Result registerSteam(long pointer, int steamId);
-	private native void updateActivity(long pointer, long activityPointer, Consumer<Result> callback);
-	private native void clearActivity(long pointer, Consumer<Result> callback);
-	private native void sendRequestReply(long pointer, long userId, int reply, Consumer<Result> callback);
-	private native void sendInvite(long pointer, long userId, int type, String content, Consumer<Result> callback);
-	private native void acceptRequest(long pointer, long userId, Consumer<Result> callback);
 }

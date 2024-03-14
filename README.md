@@ -21,26 +21,29 @@ They are marked with :broken_heart: in the table.
 Those already implemented will most likely continue to work until Discord decommissions them.
 Those not implemented will remains such, as putting work into features which will end working in less than a year does not seem worth it to me.**
 
-| Feature                                                                     | State                                         | Example                                                                                                                                  |
-|-----------------------------------------------------------------------------|-----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| [Achievements](https://discord.com/developers/docs/game-sdk/achievements)   | :x: not implemented :broken_heart:            |                                                                                                                                          |
-| [Activities](https://discord.com/developers/docs/game-sdk/activities)       | :heavy_check_mark: implemented                | [ActivityExample.java](examples/ActivityExample.java)                                                                                    |
-| [Applications](https://discord.com/developers/docs/game-sdk/applications)   | :x: not implemented :broken_heart:            |                                                                                                                                          |
-| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice)         | :heavy_check_mark: implemented :broken_heart: | [VoiceExample.java](examples/VoiceExample.java)                                                                                          |
-| [Images](https://discord.com/developers/docs/game-sdk/images)               | :heavy_check_mark: implemented :broken_heart: | none yet :cry: (see [``imageTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L417) for now)                                |
-| [Lobbies](https://discord.com/developers/docs/game-sdk/lobbies)             | :heavy_check_mark: implemented :broken_heart: | [LobbyExample.java](examples/LobbyExample.java)                                                                                          |
-| [Networking](https://discord.com/developers/docs/game-sdk/networking)       | :heavy_check_mark: implemented :broken_heart: | [NetworkExample.java](examples/NetworkExample.java)                                                                                      |
-| [Overlay](https://discord.com/developers/docs/game-sdk/overlay)             | :heavy_check_mark: implemented                | none yet :cry: (see [``overlayTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L289) for now)                              |
-| [Relationships](https://discord.com/developers/docs/game-sdk/relationships) | :heavy_check_mark: implemented                | [RelationshipExample.java](examples/RelationshipExample.java), [FriendNotificationExample.java](examples/FriendNotificationExample.java) |
-| [Storage](https://discord.com/developers/docs/game-sdk/storage)             | :x: not implemented :broken_heart:            |                                                                                                                                          |
-| [Store](https://discord.com/developers/docs/game-sdk/store)                 | :x: not implemented :broken_heart:            |                                                                                                                                          |
-| [Users](https://discord.com/developers/docs/game-sdk/users)                 | :heavy_check_mark: implemented                | none yet :cry: (see [``userTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L216) for now)                                 |
+**The Java-only implementation currently does not support all features fully.
+I am aiming to fully implement all non-deprecated features soon.**
+
+| Feature                                                                     | State                                                   | Example                                                                                                                                  |
+|-----------------------------------------------------------------------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [Achievements](https://discord.com/developers/docs/game-sdk/achievements)   | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Activities](https://discord.com/developers/docs/game-sdk/activities)       | :white_check_mark: partially implemented                | [ActivityExample.java](examples/ActivityExample.java)                                                                                    |
+| [Applications](https://discord.com/developers/docs/game-sdk/applications)   | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice)         | :white_check_mark: partially implemented :broken_heart: |                                                                                                                                          |
+| [Images](https://discord.com/developers/docs/game-sdk/images)               | :heavy_check_mark: implemented :broken_heart:           | none yet :cry: (see [``imageTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L417) for now)                                |
+| [Lobbies](https://discord.com/developers/docs/game-sdk/lobbies)             | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Networking](https://discord.com/developers/docs/game-sdk/networking)       | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Overlay](https://discord.com/developers/docs/game-sdk/overlay)             | :heavy_check_mark: implemented                          | none yet :cry: (see [``overlayTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L289) for now)                              |
+| [Relationships](https://discord.com/developers/docs/game-sdk/relationships) | :heavy_check_mark: implemented                          | [RelationshipExample.java](examples/RelationshipExample.java), [FriendNotificationExample.java](examples/FriendNotificationExample.java) |
+| [Storage](https://discord.com/developers/docs/game-sdk/storage)             | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Store](https://discord.com/developers/docs/game-sdk/store)                 | :x: not implemented :broken_heart:                      |                                                                                                                                          |
+| [Users](https://discord.com/developers/docs/game-sdk/users)                 | :white_check_mark: partially implemented                | none yet :cry: (see [``userTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L216) for now)                                 |
 
 I will try to work on features that are not implemented yet soon,
 but the remaining ones are quite difficult to test,
 so I don't know how much progress I can make on them.
 
-## Installation 
+## Installation
 
 ### Pre-compiled
 
@@ -57,8 +60,6 @@ from the [releases page](https://github.com/JnCrMx/discord-game-sdk4j/releases).
 If you want, you can also download the JavaDocs (``discord-game-sdk4j-<version>-javadoc.jar``) or
 the sources (``discord-game-sdk4j-<version>-sources.jar``).
 
-You do **not** need to download the .dll or .so files! They are packed in the JAR and will be automatically extracted.
-
 After downloading those JARs, just add the main JAR to your project's classpath and optionally
 attach sources or JavaDocs.
 
@@ -68,48 +69,17 @@ To install the library from source first of all clone the repository:
 ```shell script
 git clone https://github.com/JnCrMx/discord-game-sdk4j.git
 ```
-To obtain the native libraries you can build them from source too (see below) or just download them:
-````shell script
-sh jitpack-download-natives.sh
-````
 
 Finally build (and install) the library with Maven:
 ````shell script
-mvn install -Dmaven.antrun.skip=true
+mvn install
 ````
 
 If you want to skip the tests (sometimes they fail for really weird reasons), add ``-DskipTests`` to the command arguments.
 
-#### Building the native library from source
-
-To build the native libraries from source make sure you have CMake, a compiler that works with CMake (e.g. gcc)
-and a JDK11 installed and properly set up.
-
-Then download [Discord's native library](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip)
-and extract it to ``./discord_game_sdk/``.
-
-The CMake build system is integrated in Maven, so just execute to following command to
-build and install the Java and native library:
-
-```shell script
-mvn install
-```
-
 ## Usage
 
-To use the library, you first need to download [Discord's native library](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip).
-Extract the ZIP file and remember where you put it.
-
-In code the first step is initializing the Core. To do this you need to pass the path to Discord's native library as an argument.
-You can find this library in the directory you just extracted the ZIP file at ``lib/x86_64/discord_game_sdk.dll`` (for 64-bit Windows)
-and ``lib/x86_64/discord_game_sdk.so`` (for 64-bit Linux):
-
-```java
-Core.init(new File("<path to the native library>"));
-```
-
-Now you are ready to use the library!
-
+Create a ``Core`` object to start using the library:
 ````java
 try(CreateParams params = new CreateParams())
 {
@@ -124,3 +94,43 @@ try(CreateParams params = new CreateParams())
 ````
 
 For real examples see the ``examples/`` directory in this repository.
+
+### Environment Variables
+
+#### `DISCORD_INSTANCE_ID`
+
+This library supports using the `DISCORD_INSTANCE_ID` environment variable to select a Discord instance to use.
+
+On Windows, this results in the socket `\\?\pipe\discord-ipc-${DISCORD_INSTANCE_ID}` being used.
+This should equal the behaviour of the official native libraries.
+
+On Linux however, there are multiple locations and sockets, which this library tries to support, but the offical
+library does not.
+Therefore, an order of instances is established as follows:
+1. Discord instances running directly as host applications (i.e. `$XDG_RUNTIME_DIR/discord-ipc-{0,1,2,3,...}`).
+   The following directories (in the order given) are searched: `$XDG_RUNTIME_DIR`, `$TMPDIR`, `$TMP`, `$TEMP`.
+2. Discord instances running as a Flatpak, whose socket is found in
+   `<one of the directories from 1.>/app/com.discordapp.Discord`.
+3. Discord instances running as a Snap, whose socket is found in
+   `<one of the directories from 1.>/snap.discord`.
+4. Discord instances running as a Snap with a different instance name (using the `experimental.parallel-instances` setting),
+   whose socket is found in `<one of the directories from 1.>/snap.discord_${instance_name}` *in alphabetical order*.
+
+**Example:**
+Let's say there are a total of five Discord instances running.
+Two of them are running on the host system directly, one is running as a Flatpak and one is running as a "normal"
+Snap and one running as a Snap (with `experimental.parallel-instances`) as `discord_test`.
+
+Then the two Discord instances on the host system get the `DISCORD_INSTANCE_ID` `0` and `1`.
+The Flatpak one is getting the `DISCORD_INSTANCE_ID` `2` and the normal Snap one is getting the `DISCORD_INSTANCE_ID` `3`.
+Lately, the Snap one installed as `discord_test` gets `DISCORD_INSTANCE_ID` `4`.
+
+#### `DISCORD_IPC_PATH`
+
+To make it possible to select one specific Discord instance, rather than relying on this ordering,
+this library introduces the environment variable `DISCORD_IPC_PATH`.
+
+If this variable is set, this library will **not search for any sockets at all**.
+It will simply assume that a socket is preset at `$DISCORD_IPC_PATH` and use that one.
+
+This can be useful for automated tests, that might break on changing Discord instances.

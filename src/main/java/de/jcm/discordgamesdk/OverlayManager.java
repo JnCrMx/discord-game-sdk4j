@@ -1,6 +1,11 @@
 package de.jcm.discordgamesdk;
 
 import de.jcm.discordgamesdk.activity.ActivityActionType;
+import de.jcm.discordgamesdk.impl.Command;
+import de.jcm.discordgamesdk.impl.commands.OpenOverlayActivityInvite;
+import de.jcm.discordgamesdk.impl.commands.OpenOverlayGuildInvite;
+import de.jcm.discordgamesdk.impl.commands.OpenOverlayVoiceSettings;
+import de.jcm.discordgamesdk.impl.commands.SetOverlayLocked;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -12,12 +17,10 @@ import java.util.function.Consumer;
  */
 public class OverlayManager
 {
-	private final long pointer;
-	private final Core core;
+	private final Core.CorePrivate core;
 
-	OverlayManager(long pointer, Core core)
+	OverlayManager(Core.CorePrivate core)
 	{
-		this.pointer = pointer;
 		this.core = core;
 	}
 
@@ -29,7 +32,7 @@ public class OverlayManager
 	 */
 	public boolean isEnabled()
 	{
-		return core.execute(()->isEnabled(pointer));
+		return core.overlayData.isEnabled();
 	}
 
 	/**
@@ -40,7 +43,7 @@ public class OverlayManager
 	 */
 	public boolean isLocked()
 	{
-		return core.execute(()->isLocked(pointer));
+		return core.overlayData.isLocked();
 	}
 
 	/**
@@ -65,7 +68,9 @@ public class OverlayManager
 	 */
 	public void setLocked(boolean locked, Consumer<Result> callback)
 	{
-		core.execute(()->setLocked(pointer, locked, Objects.requireNonNull(callback)));
+		core.sendCommand(Command.Type.SET_OVERLAY_LOCKED, new SetOverlayLocked.Args(locked, core.pid), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
 
 	/**
@@ -90,7 +95,9 @@ public class OverlayManager
 	 */
 	public void openActivityInvite(ActivityActionType type, Consumer<Result> callback)
 	{
-		core.execute(()->openActivityInvite(pointer, type.ordinal(), Objects.requireNonNull(callback)));
+		core.sendCommand(Command.Type.OPEN_OVERLAY_ACTIVITY_INVITE, new OpenOverlayActivityInvite.Args(type.nativeValue(), core.pid), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
 
 	/**
@@ -115,7 +122,9 @@ public class OverlayManager
 	 */
 	public void openGuildInvite(String code, Consumer<Result> callback)
 	{
-		core.execute(()->openGuildInvite(pointer, code, Objects.requireNonNull(callback)));
+		core.sendCommandNoResponse(Command.Type.OPEN_OVERLAY_GUILD_INVITE, new OpenOverlayGuildInvite.Args(code, core.pid), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
 
 	/**
@@ -138,13 +147,8 @@ public class OverlayManager
 	 */
 	public void openVoiceSettings(Consumer<Result> callback)
 	{
-		core.execute(()->openVoiceSettings(pointer, Objects.requireNonNull(callback)));
+		core.sendCommandNoResponse(Command.Type.OPEN_OVERLAY_VOICE_SETTINGS, new OpenOverlayVoiceSettings.Args(core.pid), c->{
+			callback.accept(core.checkError(c));
+		});
 	}
-
-	private native boolean isEnabled(long pointer);
-	private native boolean isLocked(long pointer);
-	private native void setLocked(long pointer, boolean locked, Consumer<Result> callback);
-	private native void openActivityInvite(long pointer, int type, Consumer<Result> callback);
-	private native void openGuildInvite(long pointer, String code, Consumer<Result> callback);
-	private native void openVoiceSettings(long pointer, Consumer<Result> callback);
 }

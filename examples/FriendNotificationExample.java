@@ -202,24 +202,6 @@ public class FriendNotificationExample extends DiscordEventAdapter
 
 	public static void main(String[] args)
 	{
-		try
-		{
-			File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
-			if(discordLibrary == null)
-			{
-				System.err.println("Error downloading Discord SDK.");
-				System.exit(-1);
-			}
-			// Initialize the Core
-			Core.init(discordLibrary);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			System.err.println("Error downloading Discord SDK.");
-			System.exit(-1);
-		}
-
 		FriendNotificationExample example = new FriendNotificationExample();
 		example.run();
 	}

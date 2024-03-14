@@ -7,11 +7,11 @@ package de.jcm.discordgamesdk.activity;
  */
 public class ActivityPartySize
 {
-	private final long pointer;
+	private final int[] size;
 
-	ActivityPartySize(long pointer)
+	ActivityPartySize(int[] size)
 	{
-		this.pointer = pointer;
+		this.size = size;
 	}
 
 	/**
@@ -20,7 +20,7 @@ public class ActivityPartySize
 	 */
 	public void setCurrentSize(int size)
 	{
-		setCurrentSize(pointer, size);
+		this.size[0] = size;
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class ActivityPartySize
 	 */
 	public int getCurrentSize()
 	{
-		return getCurrentSize(pointer);
+		return size[0];
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class ActivityPartySize
 	 */
 	public void setMaxSize(int size)
 	{
-		setMaxSize(pointer, size);
+		this.size[1] = size;
 	}
 
 	/**
@@ -47,11 +47,15 @@ public class ActivityPartySize
 	 */
 	public int getMaxSize()
 	{
-		return getMaxSize(pointer);
+		return size[1];
 	}
 
-	private native void setCurrentSize(long pointer, int size);
-	private native int getCurrentSize(long pointer);
-	private native void setMaxSize(long pointer, int size);
-	private native int getMaxSize(long pointer);
+	@Override
+	public String toString()
+	{
+		return "ActivityPartySize{" +
+				"currentSize=" + size[0] +
+				", maxSize=" + size[1] +
+				'}';
+	}
 }

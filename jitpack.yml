@@ -1,6 +1,8 @@
 jdk:
-    - openjdk8
+    - openjdk16
 before_install:
-    - sh jitpack-download-natives.sh
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - sdk install java 16.0.2-open
 install:
-    - mvn install -DskipTests -Dmaven.antrun.skip=true
+    - source ~/.sdkman/bin/sdkman-init.sh
+    - mvn install --show-version -DskipTests -Dmaven.javadoc.skip=true

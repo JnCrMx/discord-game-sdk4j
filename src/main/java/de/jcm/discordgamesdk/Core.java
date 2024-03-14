@@ -1,22 +1,25 @@
 package de.jcm.discordgamesdk;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.google.gson.Gson;
+import de.jcm.discordgamesdk.impl.Error;
+import de.jcm.discordgamesdk.impl.*;
+import de.jcm.discordgamesdk.impl.channel.DiscordChannel;
+import de.jcm.discordgamesdk.impl.channel.UnixDiscordChannel;
+import de.jcm.discordgamesdk.impl.channel.WindowsDiscordChannel;
+import de.jcm.discordgamesdk.impl.commands.Subscribe;
+import de.jcm.discordgamesdk.impl.events.OverlayUpdateEvent;
+import de.jcm.discordgamesdk.impl.events.VoiceSettingsUpdate2Event;
+import de.jcm.discordgamesdk.user.DiscordUser;
+import de.jcm.discordgamesdk.user.Relationship;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Locale;
-import java.util.Objects;
+import java.net.UnixDomainSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * The main component for accessing Discord's game SDK.
@@ -26,358 +29,6 @@ import java.util.zip.ZipInputStream;
  */
 public class Core implements AutoCloseable
 {
-	/**
-	 * Extracts and initializes the native library.
-	 * This method also loads Discord's native library.
-	 * <p>
-	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
-	 * using {@link Class#getResourceAsStream(String)}.
-	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
-	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
-	 * the system property {@code os.arch} and {@code object name} is the name of the native object
-	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
-	 * <p>
-	 * You may call this method more than once which unloads the old shared object and loads the new one.
-	 *
-	 * @param discordLibrary Location of Discord's native library.
-	 *
-	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
-	 */
-	public static void init(File discordLibrary)
-	{
-		File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-discord-game-sdk-"+System.nanoTime());
-		if(!(tempDir.exists() && tempDir.isDirectory()) && !tempDir.mkdir())
-			throw new RuntimeException(new IOException("Cannot create temporary directory"));
-		tempDir.deleteOnExit();
-		init(discordLibrary, tempDir);
-	}
-
-	/**
-	 * Extracts and initializes the native library.
-	 * This method also loads Discord's native library.
-	 * <p>
-	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
-	 * using {@link Class#getResourceAsStream(String)}.
-	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
-	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
-	 * the system property {@code os.arch} and {@code object name} is the name of the native object
-	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
-	 * <p>
-	 * You may call this method more than once which unloads the old shared object and loads the new one.
-	 *
-	 * @param discordLibrary Location of Discord's native library.
-	 * @param tempDir Temporary directory, to which the discordLibrary will be copied to avoid problems
-	 *                on Windows.
-	 *
-	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
-	 */
-	public static void init(File discordLibrary, File tempDir)
-	{
-		String name = "discord_game_sdk_jni";
-		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-
-		String objectName;
-
-		if(osName.contains("windows"))
-		{
-			osName = "windows";
-			objectName = name + ".dll";
-
-			// the Discord native library needs to be loaded before our JNI library on Windows
-			System.load(discordLibrary.getAbsolutePath());
-		}
-		else if(osName.contains("linux"))
-		{
-			osName = "linux";
-			objectName = "lib" + name + ".so";
-		}
-		else if(osName.contains("mac os"))
-		{
-			osName = "macos";
-			objectName = "lib" + name + ".dylib";
-		}
-		else
-		{
-			throw new RuntimeException("cannot determine OS type: "+osName);
-		}
-
-		/*
-		Some systems (e.g. Mac OS X) might report the architecture as "x86_64" instead of "amd64".
-		While it would be possible to store the MacOS dylib as "x86_x64" instead of "amd64",
-		I personally prefer to keep the system architecture consistent.
-		 */
-		if(arch.equals("x86_64"))
-			arch = "amd64";
-
-		String path = "/native/"+osName+"/"+arch+"/"+objectName;
-		InputStream in = Core.class.getResourceAsStream(path);
-		if(in == null)
-			throw new RuntimeException(new FileNotFoundException("cannot find native library at "+path));
-
-		File temp = new File(tempDir, objectName);
-		temp.deleteOnExit();
-
-		try
-		{
-			Files.copy(in, temp.toPath());
-		}
-		catch(IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-
-		System.load(temp.getAbsolutePath());
-		initDiscordNative(discordLibrary.getAbsolutePath());
-	}
-
-	/**
-	 * Extracts and initializes the native library.
-	 * This method also loads Discord's native library from any given URL.
-	 * <p>
-	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
-	 * using {@link Class#getResourceAsStream(String)}.
-	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
-	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
-	 * the system property {@code os.arch} and {@code object name} is the name of the native object
-	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
-	 * <p>
-	 * You may call this method more than once which unloads the old shared object and loads the new one.
-	 * <p>
-	 * The URL will be read and copied into a temporary file.
-	 *
-	 * @param url URL from which to load Discord's native library.
-	 *
-	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
-	 */
-	public static void init(URL url)
-	{
-		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-		String protocol = url.getProtocol();
-		if(protocol.equalsIgnoreCase("file") &&
-				(!osName.contains("windows") || url.getFile().endsWith("discord_game_sdk.dll")))
-		{
-			try
-			{
-				File file = new File(url.toURI());
-				init(file);
-			}
-			catch(URISyntaxException e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
-		else
-		{
-			try
-			{
-				InputStream in = url.openStream();
-
-				String objectName;
-				if(osName.contains("windows"))
-					objectName = "discord_game_sdk.dll";
-				else if(osName.contains("mac os"))
-					objectName = "discord_game_sdk.dylib";
-				else if(osName.contains("linux"))
-					objectName = "discord_game_sdk.so";
-				else
-					throw new RuntimeException("cannot determine OS type: "+osName);
-
-				File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-discord-game-sdk-"+System.nanoTime());
-				if(!(tempDir.exists() && tempDir.isDirectory()) && !tempDir.mkdir())
-					throw new RuntimeException(new IOException("Cannot create temporary directory"));
-				File temp = new File(tempDir, objectName);
-				temp.deleteOnExit();
-
-				Files.copy(in, temp.toPath());
-
-				in.close();
-
-				init(temp, tempDir);
-			}
-			catch(IOException e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	/**
-	 * Extracts and initializes the native library.
-	 * This method also loads Discord's native library from the classpath, which <b>must</b> be located
-	 * at {@code /lib/{arch}/{name}} where {@code arch} is the system architecture from {@code os.arch},
-	 * where {@code amd64} is replaced with {@code x86_64} for unification, and {@code name} is either
-	 * {@code discord_game_sdk.dll} for Windows, {@code discord_game_sdk.so} for Linux or {@code discord_game_sdk.dylib}
-	 * for macOS.
-	 * <p>
-	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
-	 * using {@link Class#getResourceAsStream(String)}.
-	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
-	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
-	 * the system property {@code os.arch} and {@code object name} is the name of the native object
-	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
-	 * <p>
-	 * You may call this method more than once which unloads the old shared object and loads the new one.
-	 * <p>
-	 * The resource will be read and copied into a temporary file.
-	 *
-	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
-	 */
-	public static void initFromClasspath()
-	{
-		// Find out which name Discord's library has (.dll for Windows, .so for Linux)
-		String name = "discord_game_sdk";
-		String suffix;
-
-		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-
-		if(osName.contains("windows"))
-		{
-			suffix = ".dll";
-		}
-		else if(osName.contains("linux"))
-		{
-			suffix = ".so";
-		}
-		else if(osName.contains("mac os"))
-		{
-			suffix = ".dylib";
-		}
-		else
-		{
-			throw new RuntimeException("cannot determine OS type: "+osName);
-		}
-
-		/*
-		Some systems report "amd64" (e.g. Windows and Linux), some "x86_64" (e.g. Mac OS).
-		At this point we need the "x86_64" version, as this one is used in the ZIP.
-		 */
-		if(arch.equals("amd64"))
-			arch = "x86_64";
-
-		// Path of Discord's library inside the ZIP
-		String res = "/lib/"+arch+"/"+name+suffix;
-
-		Core.init(Objects.requireNonNull(Core.class.getResource(res)));
-	}
-
-	private static File downloadDiscordLibrary() throws IOException
-	{
-		// Find out which name Discord's library has (.dll for Windows, .so for Linux)
-		String name = "discord_game_sdk";
-		String suffix;
-
-		String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-		String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-
-		if(osName.contains("windows"))
-		{
-			suffix = ".dll";
-		}
-		else if(osName.contains("linux"))
-		{
-			suffix = ".so";
-		}
-		else if(osName.contains("mac os"))
-		{
-			suffix = ".dylib";
-		}
-		else
-		{
-			throw new RuntimeException("cannot determine OS type: "+osName);
-		}
-
-		/*
-		Some systems report "amd64" (e.g. Windows and Linux), some "x86_64" (e.g. Mac OS).
-		At this point we need the "x86_64" version, as this one is used in the ZIP.
-		 */
-		if(arch.equals("amd64"))
-			arch = "x86_64";
-
-		// Path of Discord's library inside the ZIP
-		String zipPath = "lib/"+arch+"/"+name+suffix;
-
-		// Open the URL as a ZipInputStream
-		URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
-		HttpURLConnection connection = (HttpURLConnection) downloadUrl.openConnection();
-		connection.setRequestProperty("User-Agent", "discord-game-sdk4j (https://github.com/JnCrMx/discord-game-sdk4j)");
-		ZipInputStream zin = new ZipInputStream(connection.getInputStream());
-
-		// Search for the right file inside the ZIP
-		ZipEntry entry;
-		while((entry = zin.getNextEntry())!=null)
-		{
-			if(entry.getName().equals(zipPath))
-			{
-				// Create a new temporary directory
-				// We need to do this, because we may not change the filename on Windows
-				File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-"+name+System.nanoTime());
-				if(!tempDir.mkdir())
-					throw new IOException("Cannot create temporary directory");
-				tempDir.deleteOnExit();
-
-				// Create a temporary file inside our directory (with a "normal" name)
-				File temp = new File(tempDir, name+suffix);
-				temp.deleteOnExit();
-
-				// Copy the file in the ZIP to our temporary file
-				Files.copy(zin, temp.toPath());
-
-				// We are done, so close the input stream
-				zin.close();
-
-				// Return our temporary file
-				return temp;
-			}
-			// next entry
-			zin.closeEntry();
-		}
-		zin.close();
-		// We couldn't find the library inside the ZIP
-		return null;
-	}
-
-	/**
-	 * Extracts and initializes the native library.
-	 * This method also downloads, extracts and loads Discord's native library from
-	 * <a href="https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip">
-	 *     https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip</a>.
-	 * <p>
-	 * The JNI library is extracted from the classpath (e.g. the currently running JAR)
-	 * using {@link Class#getResourceAsStream(String)}.
-	 * Its path inside the JAR must be of the pattern {@code /native/{os}/{arch}/{object name}}
-	 * where {@code os} is either "windows" or "linux", {@code arch} is the system architecture as in
-	 * the system property {@code os.arch} and {@code object name} is the name of the native object
-	 * (e.g. "discord_game_sdk_jni.dll" on Windows or "libdiscord_game_sdk_jni.so" on Linux.
-	 * <p>
-	 * You may call this method more than once which unloads the old shared object and loads the new one.
-	 * <p>
-	 * The resource will be read and copied into a temporary file.
-	 *
-	 * @throws UnsatisfiedLinkError if Discord's native library can not be loaded
-	 */
-	public static void initDownload() throws IOException
-	{
-		File f = downloadDiscordLibrary();
-		if(f == null)
-			throw new FileNotFoundException("cannot find native library in downloaded zip file");
-		init(f);
-	}
-
-	/**
-	 * Loads Discord's SDK library.
-	 * <p>
-	 * This does not extract nor load the JNI native library.
-	 * If you want to do that, please use {@link Core#init(File)}
-	 * which extracts and loads the JNI native and then calls this method.
-	 * @param discordPath Location of Discord's native library.
-	 *                    <p>On Windows the filename (last component of the path) must be
-	 *                    "discord_game_sdk.dll" or an {@link UnsatisfiedLinkError} will occur.</p>
-	 *                    <p>On Linux the filename does not matter.</p>
-	 */
-	public static native void initDiscordNative(String discordPath);
-
 	/**
 	 * <p>Default callback to use for operation returning a {@link Result}.</p>
 	 *
@@ -398,25 +49,43 @@ public class Core implements AutoCloseable
 		System.out.printf("[%s] %s\n", level, message);
 	};
 
-	private final long pointer;
+	public static final DiscordChannel getDiscordChannel() throws IOException
+	{
+		if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows"))
+		{
+			return new WindowsDiscordChannel();
+		}
+		else // Assume Unix domain sockets are available, if it is not Windows.
+		{
+			return new UnixDiscordChannel();
+		}
+	}
+
+	private final DiscordChannel channel;
+	private ConnectionState state;
+	private final Gson gson;
+	private long nonce;
+	private final Map<String, Consumer<Command>> handlers;
+	private final Events events;
+	private final DiscordEventAdapter eventAdapter;
+	private BiConsumer<LogLevel, String> logHook = DEFAULT_LOG_HOOK;
+	private LogLevel minLogLevel = LogLevel.VERBOSE;
+	private final CorePrivate corePrivate;
 
 	private final CreateParams createParams;
 	private final AtomicBoolean open = new AtomicBoolean(true);
-	private final ReentrantLock lock = new ReentrantLock();
 
 	private final ActivityManager activityManager;
 	private final UserManager userManager;
 	private final OverlayManager overlayManager;
 	private final RelationshipManager relationshipManager;
 	private final ImageManager imageManager;
-	private final LobbyManager lobbyManager;
-	private final NetworkManager networkManager;
 	private final VoiceManager voiceManager;
 
 	/**
 	 * Creates an instance of the SDK from {@link CreateParams} and
 	 * sets the log hook to {@link Core#DEFAULT_LOG_HOOK}.
-	 *
+	 * <p>
 	 * Example:
 	 * <pre>{@code
 	 *  try(CreateParams params = new CreateParams())
@@ -436,43 +105,241 @@ public class Core implements AutoCloseable
 	public Core(CreateParams params)
 	{
 		this.createParams = params;
-		Object ret = create(params.getPointer());
-		if(ret instanceof Result)
+
+		this.state = ConnectionState.HANDSHAKE;
+		this.gson = new Gson();
+		this.nonce = 0;
+		this.handlers = new HashMap<>();
+		this.corePrivate = new CorePrivate();
+		this.events = new Events(corePrivate);
+		this.eventAdapter = createParams.eventAdapter;
+
+		try
 		{
-			throw new GameSDKException((Result) ret);
+			channel = Core.getDiscordChannel();
+			this.sendHandshake();
+			runCallbacks();
+			channel.configureBlocking(false);
 		}
-		else
+		catch(IOException e)
 		{
-			pointer = (long) ret;
+			throw new RuntimeException(e);
 		}
 
-		setLogHook(LogLevel.DEBUG, DEFAULT_LOG_HOOK);
-
-		this.activityManager = new ActivityManager(getActivityManager(pointer), this);
-		this.userManager = new UserManager(getUserManager(pointer), this);
-		this.overlayManager = new OverlayManager(getOverlayManager(pointer), this);
-		this.relationshipManager = new RelationshipManager(getRelationshipManager(pointer), this);
-		this.imageManager = new ImageManager(getImageManager(pointer), this);
-		this.lobbyManager = new LobbyManager(getLobbyManager(pointer), this);
-		this.networkManager = new NetworkManager(getNetworkManager(pointer), this);
-		this.voiceManager = new VoiceManager(getVoiceManager(pointer), this);
+		this.activityManager = new ActivityManager(corePrivate);
+		this.overlayManager = new OverlayManager(corePrivate);
+		this.userManager = new UserManager(corePrivate);
+		this.relationshipManager = new RelationshipManager(corePrivate);
+		this.imageManager = new ImageManager(corePrivate);
+		this.voiceManager = new VoiceManager(corePrivate);
 	}
 
-	private native Object create(long paramPointer);
-	private native void destroy(long pointer);
+	public class CorePrivate
+	{
+		private CorePrivate() {}
 
-	private native long getActivityManager(long pointer);
-	private native long getUserManager(long pointer);
-	private native long getOverlayManager(long pointer);
-	private native long getRelationshipManager(long pointer);
-	private native long getImageManager(long pointer);
-	private native long getLobbyManager(long pointer);
-	private native long getNetworkManager(long pointer);
-	private native long getVoiceManager(long pointer);
+		public Queue<Runnable> workQueue = new ArrayDeque<>();
 
-	private native void runCallbacks(long pointer);
+		public int pid = (int) ProcessHandle.current().pid();
+		public DiscordUser currentUser;
+		public Map<Long, Relationship> relationships = new HashMap<>();
+		public OverlayUpdateEvent.Data overlayData = new OverlayUpdateEvent.Data();
+		public VoiceSettingsUpdate2Event.Data voiceData = new VoiceSettingsUpdate2Event.Data();
 
-	private native void setLogHook(long pointer, int minLevel, BiConsumer<LogLevel, String> logHook);
+		private static final DiscordEventAdapter NULL_ADAPTER = new DiscordEventAdapter(){};
+		public DiscordEventAdapter getEventAdapter()
+		{
+			return Optional.ofNullable(eventAdapter).orElse(NULL_ADAPTER);
+		}
+
+		public void ready()
+		{
+			state = ConnectionState.CONNECTED;
+			registerEvents();
+		}
+
+		public Core getCore()
+		{
+			return Core.this;
+		}
+
+		public void sendCommand(Command.Type type, Object args, Consumer<Command> responseHandler)
+		{
+			Command command = new Command();
+			command.setCmd(type);
+			command.setArgs(gson.toJsonTree(args).getAsJsonObject());
+			command.setNonce(Long.toString(++nonce));
+			Core.this.sendCommand(command, responseHandler);
+		}
+
+		public void sendCommandNoResponse(Command.Type type, Object args, Consumer<Command> responseHandler)
+		{
+			Command command = new Command();
+			command.setCmd(type);
+			command.setArgs(gson.toJsonTree(args).getAsJsonObject());
+			command.setNonce(Long.toString(0));
+
+			try
+			{
+				sendString(gson.toJson(command));
+			}
+			catch(IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+			corePrivate.workQueue.add(()->{
+				Command c = new Command();
+				c.setEvt(null);
+				c.setNonce(Long.toString(0));
+				c.setCmd(type);
+				c.setData(null);
+				responseHandler.accept(c);
+			});
+		}
+
+		public Gson getGson()
+		{
+			return gson;
+		}
+
+		public void log(LogLevel level, String message)
+		{
+			if(level.compareTo(minLogLevel) <= 0)
+			{
+				logHook.accept(level, message);
+			}
+		}
+
+		public Result checkError(Command c)
+		{
+			if(c.getEvent() == Command.Event.ERROR)
+			{
+				Error error = gson.fromJson(c.getData(), Error.class);
+				log(LogLevel.ERROR, error.getMessage());
+
+				return Result.fromCode(error.getCode());
+			}
+			return Result.OK;
+		}
+	}
+
+	private void sendString(String message) throws IOException
+	{
+		byte[] bytes = message.getBytes();
+		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		buf.putInt(state.ordinal());
+		buf.putInt(bytes.length);
+		buf.put(bytes);
+
+		channel.write(buf.flip());
+		corePrivate.log(LogLevel.VERBOSE, "Sent string \""+message+"\" at state "+state);
+	}
+
+	private static class Res
+	{
+		public ConnectionState result;
+		public String data;
+
+		public Res(ConnectionState result, String data)
+		{
+			this.result = result;
+			this.data = data;
+		}
+	}
+
+	private Res receiveString() throws IOException
+	{
+		ByteBuffer header = ByteBuffer.allocate(8);
+		channel.read(header);
+		header.flip();
+		header.order(ByteOrder.LITTLE_ENDIAN);
+		if(header.remaining() == 0)
+		{
+			return null;
+		}
+
+		int status = header.getInt(); // ignored for now?
+		int length = header.getInt();
+
+		ByteBuffer data = ByteBuffer.allocate(length);
+		int read = 0;
+		do
+		{
+			read += (int) channel.read(new ByteBuffer[]{data}, 0, 1);
+		}
+		while(read < length);
+		String s = new String(data.flip().array());
+		ConnectionState state1 = ConnectionState.values()[status];
+
+		corePrivate.log(LogLevel.VERBOSE, "Received string \""+s+"\" at state "+state1);
+
+		return new Res(state1, s);
+	}
+
+	private void sendCommand(Command command, Consumer<Command> responseHandler)
+	{
+		handlers.put(command.getNonce(), responseHandler);
+		try
+		{
+			sendString(gson.toJson(command));
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void sendHandshake() throws IOException
+	{
+		HandshakeMessage handshakeMessage = new HandshakeMessage(Long.toString(createParams.getClientID()));
+		sendString(gson.toJson(handshakeMessage));
+	}
+
+	private void registerEvents()
+	{
+		for(Map.Entry<Command.Event, EventHandler<?>> e : events.getEventTypes())
+		{
+			Command.Event event = e.getKey();
+			EventHandler<?> handler = e.getValue();
+			if(!handler.shouldRegister()) continue;
+
+			Command command = new Command();
+			command.setCmd(Command.Type.SUBSCRIBE);
+			command.setEvt(event);
+			command.setArgs(gson.toJsonTree(handler.getRegisterArgs()));
+			command.setNonce(Long.toString(++nonce));
+			sendCommand(command, o->
+					corePrivate.log(LogLevel.DEBUG, "Registered event "+gson.fromJson(o.getData(), Subscribe.Response.class).getEvent()));
+		}
+	}
+
+	private Command receiveCommand() throws IOException
+	{
+		Res r = receiveString();
+		if(r == null)
+			return null;
+		return gson.fromJson(r.data, Command.class);
+	}
+
+	private void handleCommand(Command command)
+	{
+		if(command.isError()) {
+			corePrivate.log(LogLevel.ERROR, command.getCmd().toString()+": "
+					+corePrivate.getGson().fromJson(command.getData(), Error.class));
+		}
+
+		if(command.getNonce() != null)
+		{
+			handlers.remove(command.getNonce()).accept(command);
+		}
+		else if(command.getEvent() != null)
+		{
+			EventHandler<?> handler = events.forEvent(command.getEvent());
+			Object data = gson.fromJson(command.getData(), handler.getDataClass());
+			handler.handleObject(command, data);
+		}
+	}
 
 	/**
 	 * <p>Returns the {@link ActivityManager} associated with this core.</p>
@@ -537,39 +404,12 @@ public class Core implements AutoCloseable
 	}
 
 	/**
-	 * <p>Returns the {@link LobbyManager} associated with this core.</p>
-	 * <p>A LobbyManager is used to create, manage and connect to Discord Lobbies.</p>
-	 * @return A {@link LobbyManager}
-	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getlobbymanager">
-	 *     https://discord.com/developers/docs/game-sdk/discord#getlobbymanager</a>
-	 */
-	public LobbyManager lobbyManager()
-	{
-		return lobbyManager;
-	}
-
-	/**
-	 * Returns the {@link NetworkManager} associated with this core.
-	 * <p>
-	 * A NetworkManager can be used to open network channels over
-	 * Discord on which you can send arbitrary messages.
-	 * @return A {@link NetworkManager}
-	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager">
-	 *     https://discord.com/developers/docs/game-sdk/discord#getnetworkmanager</a>
-	 */
-	public NetworkManager networkManager()
-	{
-		return networkManager;
-	}
-
-	/**
 	 * Returns the {@link VoiceManager} associated with this core.
 	 * <p>
 	 * A VoiceManager is used to control Discord Lobby voice channels.
 	 * It can be used to configure input modes, to mute and deaf the current user,
 	 * to locally mute other users and to locally adjust their volume.
 	 * @return A {@link VoiceManager}
-	 * @see LobbyManager#connectVoice(long)
 	 * @see <a href="https://discord.com/developers/docs/game-sdk/discord#getvoicemanager">
 	 *     https://discord.com/developers/docs/game-sdk/discord#getvoicemanager</a>
 	 */
@@ -586,7 +426,22 @@ public class Core implements AutoCloseable
 	 */
 	public void runCallbacks()
 	{
-		execute(()->runCallbacks(pointer));
+		Runnable r;
+		while((r = corePrivate.workQueue.poll()) != null)
+			r.run();
+
+		try
+		{
+			Command c = receiveCommand();
+			if(c != null)
+			{
+				handleCommand(c);
+			}
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -599,7 +454,8 @@ public class Core implements AutoCloseable
 	 */
 	public void setLogHook(LogLevel minLevel, BiConsumer<LogLevel, String> logHook)
 	{
-		execute(()->setLogHook(pointer, minLevel.ordinal(), Objects.requireNonNull(logHook)));
+		this.logHook = logHook;
+		this.minLogLevel = minLevel;
 	}
 
 	/**
@@ -623,53 +479,13 @@ public class Core implements AutoCloseable
 	@Override
 	public void close()
 	{
-		if(open.compareAndSet(true, false))
-		{
-			lock.lock();
-			try
-			{
-				destroy(pointer);
-			}
-			finally
-			{
-				lock.unlock();
-			}
-			createParams.close();
-		}
-	}
-
-	/**
-	 * <p>Return the pointer to the native structure.</p>
-	 * <p>This is <b>not</b> an API method. Do <b>not</b> call it.</p>
-	 * @return A native pointer.
-	 */
-	public long getPointer()
-	{
-		return pointer;
-	}
-
-	void execute(Runnable runnable)
-	{
-		execute((Supplier<Void>) () ->
-		{
-			runnable.run();
-			return null;
-		});
-	}
-
-	<T> T execute(Supplier<T> provider)
-	{
-		if(!isOpen())
-			throw new CoreClosedException();
-
-		lock.lock();
 		try
 		{
-			return provider.get();
+			channel.close();
 		}
-		finally
+		catch(IOException e)
 		{
-			lock.unlock();
+			throw new RuntimeException(e);
 		}
 	}
 }

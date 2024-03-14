@@ -54,4 +54,24 @@ public enum Result
 	INVALID_GIFT_CODE,
 	PURCHASE_ERROR,
 	TRANSACTION_ABORTED
+	;
+
+	public static Result fromCode(int code)
+	{
+		switch(code)
+		{
+			case 1000:
+				return INTERNAL_ERROR;
+			case 4000:
+				return INVALID_PAYLOAD;
+			case 4002:
+				return INVALID_COMMAND;
+			case 4010:
+				return NOT_FOUND;
+			case 5006:
+				return NO_ELIGIBLE_ACTIVITY;
+			default:
+				return INTERNAL_ERROR;
+		}
+	}
 }
