@@ -43,7 +43,7 @@ I will try to work on features that are not implemented yet soon,
 but the remaining ones are quite difficult to test,
 so I don't know how much progress I can make on them.
 
-## Installation 
+## Installation
 
 ### Pre-compiled
 
