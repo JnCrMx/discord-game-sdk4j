@@ -444,6 +444,13 @@ public class Core implements AutoCloseable
 		}
 	}
 
+	public void checkConnection() {
+		if (!channel.isConnected())
+		{
+			throw new RuntimeException("Channel is not connected");
+		}
+	}
+
 	/**
 	 * Registers a log function.
 	 * @param minLevel Minimal level of message to receive.
