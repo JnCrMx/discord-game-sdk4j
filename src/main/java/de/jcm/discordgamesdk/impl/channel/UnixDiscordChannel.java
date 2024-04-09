@@ -76,7 +76,7 @@ public class UnixDiscordChannel implements DiscordChannel {
 	}
 
 	public boolean isAvailable() {
-		return new File(path).exists();
+		return new File(path).exists() && channel.isConnected();
 	}
 
 	public int read(ByteBuffer dst) throws IOException {

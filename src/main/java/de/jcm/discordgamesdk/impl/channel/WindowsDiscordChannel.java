@@ -34,7 +34,7 @@ public class WindowsDiscordChannel implements DiscordChannel {
 	}
 
 	public boolean isAvailable() {
-		return new File(path).exists();
+		return new File(path).exists() && channel.isOpen();
 	}
 
 	public int read(ByteBuffer dst) throws IOException {
