@@ -33,7 +33,7 @@ public class WindowsDiscordChannel implements DiscordChannel {
 		blocking = block;
 	}
 
-	public boolean isConnected() {
+	public boolean isAvailable() {
 		return new File(path).exists();
 	}
 

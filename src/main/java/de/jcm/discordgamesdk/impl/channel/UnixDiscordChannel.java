@@ -75,7 +75,7 @@ public class UnixDiscordChannel implements DiscordChannel {
 		channel.configureBlocking(block);
 	}
 
-	public boolean isConnected() {
+	public boolean isAvailable() {
 		return new File(path).exists();
 	}
 

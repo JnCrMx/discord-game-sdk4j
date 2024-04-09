@@ -444,10 +444,10 @@ public class Core implements AutoCloseable
 		}
 	}
 
-	public void checkConnection() {
-		if (!channel.isConnected())
+	public void isDiscordRunning() {
+		if (!channel.isAvailable())
 		{
-			throw new RuntimeException("Channel is not connected");
+			throw new RuntimeException("Discord is not running");
 		}
 	}
 

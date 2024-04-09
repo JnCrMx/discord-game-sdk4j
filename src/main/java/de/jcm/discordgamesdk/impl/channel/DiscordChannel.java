@@ -9,5 +9,5 @@ public interface DiscordChannel {
 	public int read(ByteBuffer dst) throws IOException;
 	public long read(ByteBuffer[] dsts, int offset, int length) throws IOException;
 	public int write(ByteBuffer src) throws IOException;
-	public boolean isConnected();
+	public boolean isAvailable();
 }
