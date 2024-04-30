@@ -1,6 +1,7 @@
 package de.jcm.discordgamesdk.impl.channel;
 
 import java.io.RandomAccessFile;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -11,6 +12,7 @@ public class WindowsDiscordChannel implements DiscordChannel {
 
 	public WindowsDiscordChannel() throws IOException {
 		String path = System.getenv("DISCORD_IPC_PATH");
+		String exceptionalPath = path;
 		if(path == null) {
 			String instance = System.getenv("DISCORD_INSTANCE_ID");
 			int i = 0;
@@ -18,8 +20,12 @@ public class WindowsDiscordChannel implements DiscordChannel {
 				i = Integer.parseInt(instance);
 			}
 			path = "\\\\?\\pipe\\discord-ipc-"+i;
+			exceptionalPath = "\\\\.\\\\pipe\\\\discord-ipc-" + i;
 		}
-		RandomAccessFile raf = new RandomAccessFile(path, "rw");
+		File pipe = new File(path);
+		String finalPath = exceptionalPath;
+		if(pipe.exists()) finalPath = path;
+		RandomAccessFile raf = new RandomAccessFile(finalPath, "rw");
 		channel = raf.getChannel();
 	}
 
