@@ -444,11 +444,8 @@ public class Core implements AutoCloseable
 		}
 	}
 
-	public void isDiscordRunning() {
-		if (!channel.isAvailable())
-		{
-			throw new RuntimeException("Discord is not running");
-		}
+	public boolean isDiscordRunning() {
+		return channel.isAvailable();
 	}
 
 	/**
