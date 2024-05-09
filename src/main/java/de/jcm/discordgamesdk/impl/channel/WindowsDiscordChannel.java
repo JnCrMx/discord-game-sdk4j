@@ -12,20 +12,15 @@ public class WindowsDiscordChannel implements DiscordChannel {
 
 	public WindowsDiscordChannel() throws IOException {
 		String path = System.getenv("DISCORD_IPC_PATH");
-		String exceptionalPath = path;
 		if(path == null) {
 			String instance = System.getenv("DISCORD_INSTANCE_ID");
 			int i = 0;
 			if (instance != null) {
 				i = Integer.parseInt(instance);
 			}
-			path = "\\\\?\\pipe\\discord-ipc-"+i;
-			exceptionalPath = "\\\\.\\\\pipe\\\\discord-ipc-" + i;
+			path = "\\\\.\\\\pipe\\\\discord-ipc-" + i;
 		}
-		File pipe = new File(path);
-		String finalPath = exceptionalPath;
-		if(pipe.exists()) finalPath = path;
-		RandomAccessFile raf = new RandomAccessFile(finalPath, "rw");
+		RandomAccessFile raf = new RandomAccessFile(path, "rw");
 		channel = raf.getChannel();
 	}
 
