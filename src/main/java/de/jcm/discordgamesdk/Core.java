@@ -444,6 +444,10 @@ public class Core implements AutoCloseable
 		}
 	}
 
+	public boolean isDiscordRunning() {
+		return channel.isAvailable();
+	}
+
 	/**
 	 * Registers a log function.
 	 * @param minLevel Minimal level of message to receive.

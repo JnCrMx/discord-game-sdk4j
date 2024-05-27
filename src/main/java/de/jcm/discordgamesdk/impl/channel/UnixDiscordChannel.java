@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 
 public class UnixDiscordChannel implements DiscordChannel {
 	private final SocketChannel channel;
+	private String path;
 
 	private static String[] getSockets()
 	{
@@ -48,7 +49,7 @@ public class UnixDiscordChannel implements DiscordChannel {
 	}
 
 	public UnixDiscordChannel() throws IOException {
-		String path = System.getenv("DISCORD_IPC_PATH");
+		path = System.getenv("DISCORD_IPC_PATH");
 		if(path == null) {
 			String instance = System.getenv("DISCORD_INSTANCE_ID");
 			int i = 0;
@@ -72,6 +73,10 @@ public class UnixDiscordChannel implements DiscordChannel {
 
 	public void configureBlocking(boolean block) throws IOException {
 		channel.configureBlocking(block);
+	}
+
+	public boolean isAvailable() {
+		return new File(path).exists() && channel.isConnected();
 	}
 
 	public int read(ByteBuffer dst) throws IOException {

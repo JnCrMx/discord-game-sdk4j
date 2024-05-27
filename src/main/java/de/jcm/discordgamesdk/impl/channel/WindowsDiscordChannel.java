@@ -1,5 +1,6 @@
 package de.jcm.discordgamesdk.impl.channel;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +10,10 @@ import java.nio.channels.FileChannel;
 public class WindowsDiscordChannel implements DiscordChannel {
 	private final FileChannel channel;
 	private boolean blocking = true;
+	private String path;
 
 	public WindowsDiscordChannel() throws IOException {
-		String path = System.getenv("DISCORD_IPC_PATH");
+		path = System.getenv("DISCORD_IPC_PATH");
 		if(path == null) {
 			String instance = System.getenv("DISCORD_INSTANCE_ID");
 			int i = 0;
@@ -30,6 +32,10 @@ public class WindowsDiscordChannel implements DiscordChannel {
 
 	public void configureBlocking(boolean block) throws IOException {
 		blocking = block;
+	}
+
+	public boolean isAvailable() {
+		return new File(path).exists() && channel.isOpen();
 	}
 
 	public int read(ByteBuffer dst) throws IOException {
