@@ -101,7 +101,7 @@ For real examples see the ``examples/`` directory in this repository.
 
 This library supports using the `DISCORD_INSTANCE_ID` environment variable to select a Discord instance to use.
 
-On Windows, this results in the socket `\\.\\pipe\discord-ipc-${DISCORD_INSTANCE_ID}` being used.
+On Windows, this results in the socket `\\.\pipe\discord-ipc-${DISCORD_INSTANCE_ID}` being used.
 This should equal the behaviour of the official native libraries.
 
 On Linux however, there are multiple locations and sockets, which this library tries to support, but the offical
