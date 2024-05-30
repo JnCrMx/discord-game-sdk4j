@@ -1,0 +1,19 @@
+steps:
+  javadoc:
+    image: maven:3.9.7-eclipse-temurin-21
+    commands:
+      - mvn javadoc:javadoc
+  upload:
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_user
+      key:
+        from_secret: ssh_key
+      port:
+        from_secret: ssh_port
+      target: /config/data/docs/discord-game-sdk4j
+      source: target/site/apidocs/
+      strip_components: 3

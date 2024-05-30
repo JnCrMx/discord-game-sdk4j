@@ -49,8 +49,7 @@ public class DiscordUtils
 	/**
 	 * Creates a {@link BiConsumer} that takes a {@link Result} and then completes a {@link CompletableFuture}.
 	 * <p>
-	 * The future is completely normally with the value passed to the {@link BiConsumer}
-	 * (e.g. as part of {@link LobbyManager#createLobby(LobbyTransaction, BiConsumer)}),
+	 * The future is completely normally with the value passed to the {@link BiConsumer},
 	 * if and only if the {@link Result} is {@link Result#OK}.
 	 * <p>
 	 * In any other case it is completed exceptionally with
