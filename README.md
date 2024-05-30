@@ -1,6 +1,8 @@
 # discord-game-sdk4j
 
 [![](https://jitpack.io/v/JnCrMx/discord-game-sdk4j.svg)](https://jitpack.io/#JnCrMx/discord-game-sdk4j)
+[![](https://img.shields.io/badge/JavaDoc-latest-4c1)](https://docs.jcm.re/discord-game-sdk4j/)
+
 
 This project provides Java bindings for the
 [Discord GameSDK](https://discordapp.com/developers/docs/game-sdk/sdk-starter-guide).
