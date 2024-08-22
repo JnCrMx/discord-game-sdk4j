@@ -14,6 +14,6 @@ steps:
         from_secret: ssh_key
       port:
         from_secret: ssh_port
-      target: /config/data/docs/discord-game-sdk4j
+      target: /config/data/docs/${CI_REPO}/${CI_COMMIT_BRANCH}
       source: target/site/apidocs/
       strip_components: 3
