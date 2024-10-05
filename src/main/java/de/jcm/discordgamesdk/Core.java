@@ -355,7 +355,15 @@ public class Core implements AutoCloseable
 		return activityManager;
 	}
 
-	public ApplicationManager applicationManager() {
+	/**
+	 * <p>Returns the {@link ApplicationManager} associated with this core.</p>
+	 * <p>An ApplicationManager is used to obtain an OAuth2 token for the application.</p>
+	 * @return An {@link ApplicationManager}
+	 * @see <a href="https://discordapp.com/developers/docs/game-sdk/discord#getapplicationmanager">
+	 *     https://discordapp.com/developers/docs/game-sdk/discord#getapplicationmanager</a>
+	 */
+	public ApplicationManager applicationManager()
+	{
 		return applicationManager;
 	}
 
