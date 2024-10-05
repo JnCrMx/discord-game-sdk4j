@@ -30,8 +30,8 @@ I am aiming to fully implement all non-deprecated features soon.**
 |-----------------------------------------------------------------------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | [Achievements](https://discord.com/developers/docs/game-sdk/achievements)   | :x: not implemented :broken_heart:                      |                                                                                                                                          |
 | [Activities](https://discord.com/developers/docs/game-sdk/activities)       | :white_check_mark: partially implemented                | [ActivityExample.java](examples/ActivityExample.java)                                                                                    |
-| [Applications](https://discord.com/developers/docs/game-sdk/applications)   | :x: not implemented :broken_heart:                      |                                                                                                                                          |
-| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice)         | :white_check_mark: partially implemented :broken_heart: |                                                                                                                                          |
+| [Applications](https://discord.com/developers/docs/game-sdk/applications)   | :white_check_mark: partially implemented :broken_heart: |                                                                                                                                          |
+| [Voice](https://discord.com/developers/docs/game-sdk/discord-voice)         | :heavy_check_mark: implemented :broken_heart:           |                                                                                                                                          |
 | [Images](https://discord.com/developers/docs/game-sdk/images)               | :heavy_check_mark: implemented :broken_heart:           | none yet :cry: (see [``imageTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L417) for now)                                |
 | [Lobbies](https://discord.com/developers/docs/game-sdk/lobbies)             | :x: not implemented :broken_heart:                      |                                                                                                                                          |
 | [Networking](https://discord.com/developers/docs/game-sdk/networking)       | :x: not implemented :broken_heart:                      |                                                                                                                                          |
@@ -40,10 +40,6 @@ I am aiming to fully implement all non-deprecated features soon.**
 | [Storage](https://discord.com/developers/docs/game-sdk/storage)             | :x: not implemented :broken_heart:                      |                                                                                                                                          |
 | [Store](https://discord.com/developers/docs/game-sdk/store)                 | :x: not implemented :broken_heart:                      |                                                                                                                                          |
 | [Users](https://discord.com/developers/docs/game-sdk/users)                 | :white_check_mark: partially implemented                | none yet :cry: (see [``userTest()``](src/test/java/de/jcm/discordgamesdk/DiscordTest.java#L216) for now)                                 |
-
-I will try to work on features that are not implemented yet soon,
-but the remaining ones are quite difficult to test,
-so I don't know how much progress I can make on them.
 
 ## Installation
 
