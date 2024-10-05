@@ -1,5 +1,8 @@
 package de.jcm.discordgamesdk;
 
+import de.jcm.discordgamesdk.impl.Command;
+import de.jcm.discordgamesdk.impl.commands.SetUserVoiceSettings;
+import de.jcm.discordgamesdk.impl.commands.SetVoiceSettings2;
 import de.jcm.discordgamesdk.voice.VoiceInputMode;
 
 import java.util.function.Consumer;
@@ -52,7 +55,10 @@ public class VoiceManager
 	 */
 	public void setInputMode(VoiceInputMode inputMode, Consumer<Result> callback)
 	{
-		throw new RuntimeException("not implemented");
+		core.sendCommand(Command.Type.SET_VOICE_SETTINGS_2, new SetVoiceSettings2.InputMode(inputMode), c->{
+			callback.accept(core.checkError(c));
+		});
+		core.voiceData.input_mode = inputMode;
 	}
 
 	/**
@@ -93,7 +99,10 @@ public class VoiceManager
 	 */
 	public void setSelfMute(boolean selfMute)
 	{
-		throw new RuntimeException("not implemented");
+		core.sendCommand(Command.Type.SET_VOICE_SETTINGS_2, new SetVoiceSettings2.SelfMute(selfMute), c->{
+			Core.DEFAULT_CALLBACK.accept(core.checkError(c));
+		});
+		core.voiceData.self_mute = selfMute;
 	}
 
 	/**
@@ -119,7 +128,10 @@ public class VoiceManager
 	 */
 	public void setSelfDeaf(boolean selfDeaf)
 	{
-		throw new RuntimeException("not implemented");
+		core.sendCommand(Command.Type.SET_VOICE_SETTINGS_2, new SetVoiceSettings2.SelfDeaf(selfDeaf), c->{
+			Core.DEFAULT_CALLBACK.accept(core.checkError(c));
+		});
+		core.voiceData.self_deaf = selfDeaf;
 	}
 
 	/**
@@ -147,7 +159,17 @@ public class VoiceManager
 	 */
 	public void setLocalMute(long userId, boolean mute)
 	{
-		throw new RuntimeException("not implemented");
+		String user_id = Long.toString(userId);
+		core.sendCommand(Command.Type.SET_USER_VOICE_SETTINGS_2, new SetUserVoiceSettings.Mute(user_id, mute), c->{
+			Core.DEFAULT_CALLBACK.accept(core.checkError(c));
+		});
+
+		boolean old = core.voiceData.local_mutes.contains(user_id);
+		if(old && !mute) {
+			core.voiceData.local_mutes.remove(user_id);
+		} else if(!old && mute) {
+			core.voiceData.local_mutes.add(user_id);
+		}
 	}
 
 	/**
@@ -167,7 +189,7 @@ public class VoiceManager
 	 */
 	public int getLocalVolume(long userId)
 	{
-		return core.voiceData.getLocalVolumes().get(Long.toString(userId));
+		return core.voiceData.getLocalVolumes().getOrDefault(Long.toString(userId), 100);
 	}
 
 	/**
@@ -190,6 +212,10 @@ public class VoiceManager
 		if(volume < 0 || volume > 200)
 			throw new IllegalArgumentException("volume out of range: "+volume);
 
-		throw new RuntimeException("not implemented");
+		String user_id = Long.toString(userId);
+		core.sendCommand(Command.Type.SET_USER_VOICE_SETTINGS_2, new SetUserVoiceSettings.Volume(user_id, volume), c->{
+			Core.DEFAULT_CALLBACK.accept(core.checkError(c));
+		});
+		core.voiceData.getLocalVolumes().put(user_id, volume);
 	}
 }

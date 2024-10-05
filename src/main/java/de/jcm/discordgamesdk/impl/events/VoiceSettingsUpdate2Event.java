@@ -5,6 +5,8 @@ import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.impl.EventHandler;
 import de.jcm.discordgamesdk.voice.VoiceInputMode;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +14,11 @@ public class VoiceSettingsUpdate2Event
 {
 	public static class Data
 	{
-		private VoiceInputMode input_mode;
-		private List<String> local_mutes;
-		private Map<String, Integer> local_volumes;
-		private boolean self_mute;
-		private boolean self_deaf;
+		public VoiceInputMode input_mode = new VoiceInputMode(VoiceInputMode.InputModeType.VOICE_ACTIVITY, "");
+		public List<String> local_mutes = new ArrayList<>();
+		public Map<String, Integer> local_volumes = new HashMap<>();
+		public boolean self_mute;
+		public boolean self_deaf;
 
 		public VoiceInputMode getInputMode()
 		{

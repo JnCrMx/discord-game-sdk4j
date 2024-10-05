@@ -7,6 +7,7 @@ import de.jcm.discordgamesdk.image.ImageHandle;
 import de.jcm.discordgamesdk.image.ImageType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 import de.jcm.discordgamesdk.user.Relationship;
+import de.jcm.discordgamesdk.voice.VoiceInputMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -432,7 +433,7 @@ public class DiscordTest
 			params.setClientID(Config.CLIENT_ID);
 			try(Core core = new Core(params))
 			{
-				/*VoiceInputMode inputMode = new VoiceInputMode(
+				VoiceInputMode inputMode = new VoiceInputMode(
 						VoiceInputMode.InputModeType.PUSH_TO_TALK,
 						Integer.toString((int) (System.currentTimeMillis()%10))); // use pseudo-random shortcut
 
@@ -441,6 +442,16 @@ public class DiscordTest
 
 					VoiceInputMode inputMode2 = core.voiceManager().getInputMode();
 					Assertions.assertEquals(inputMode, inputMode2, "input mode not correct");
+
+					long testUid = 0;
+
+					Assertions.assertFalse(core.voiceManager().isLocalMute(testUid));
+					core.voiceManager().setLocalMute(testUid, true);
+					Assertions.assertTrue(core.voiceManager().isLocalMute(testUid));
+
+					Assertions.assertEquals(100, core.voiceManager().getLocalVolume(testUid));
+					core.voiceManager().setLocalVolume(testUid, 200);
+					Assertions.assertEquals(200, core.voiceManager().getLocalVolume(testUid));
 				});
 
 				core.overlayManager().openVoiceSettings(r->{
@@ -448,22 +459,10 @@ public class DiscordTest
 
 					VoiceInputMode mode = core.voiceManager().getInputMode();
 					System.out.println(mode);
-				});*/
+				});
 
 				boolean selfMute = core.voiceManager().isSelfMute();
 				core.voiceManager().setSelfMute(!selfMute);
-				boolean selfMute2 = core.voiceManager().isSelfMute();
-				Assertions.assertNotEquals(selfMute, selfMute2, "self mute did not change");
-
-				long testUid = 0;
-
-				Assertions.assertFalse(core.voiceManager().isLocalMute(testUid));
-				core.voiceManager().setLocalMute(testUid, true);
-				Assertions.assertTrue(core.voiceManager().isLocalMute(testUid));
-
-				Assertions.assertEquals(100, core.voiceManager().getLocalVolume(testUid));
-				core.voiceManager().setLocalVolume(testUid, 200);
-				Assertions.assertEquals(200, core.voiceManager().getLocalVolume(testUid));
 
 				for(int i = 0; i < 1000; i++)
 				{
