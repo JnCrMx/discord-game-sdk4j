@@ -20,6 +20,7 @@ public class Command
 		SET_ACTIVITY,
 		SET_OVERLAY_LOCKED,
 		SUBSCRIBE,
+		AUTHENTICATE
 	}
 
 	public enum Event

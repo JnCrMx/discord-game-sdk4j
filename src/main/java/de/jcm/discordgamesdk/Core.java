@@ -76,6 +76,7 @@ public class Core implements AutoCloseable
 	private final AtomicBoolean open = new AtomicBoolean(true);
 
 	private final ActivityManager activityManager;
+	private final ApplicationManager applicationManager;
 	private final UserManager userManager;
 	private final OverlayManager overlayManager;
 	private final RelationshipManager relationshipManager;
@@ -127,6 +128,7 @@ public class Core implements AutoCloseable
 		}
 
 		this.activityManager = new ActivityManager(corePrivate);
+		this.applicationManager = new ApplicationManager(corePrivate);
 		this.overlayManager = new OverlayManager(corePrivate);
 		this.userManager = new UserManager(corePrivate);
 		this.relationshipManager = new RelationshipManager(corePrivate);
@@ -351,6 +353,10 @@ public class Core implements AutoCloseable
 	public ActivityManager activityManager()
 	{
 		return activityManager;
+	}
+
+	public ApplicationManager applicationManager() {
+		return applicationManager;
 	}
 
 	/**

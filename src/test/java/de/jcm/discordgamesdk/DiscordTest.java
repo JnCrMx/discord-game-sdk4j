@@ -480,4 +480,36 @@ public class DiscordTest
 			}
 		}
 	}
+
+	@Test
+	void applicationTest()
+	{
+		CreateParams params = new CreateParams();
+		params.setClientID(Config.CLIENT_ID);
+
+		try(Core core = new Core(params))
+		{
+			core.applicationManager().authenticate((r,data)->{
+				System.out.println(r);
+				System.out.println(data.token().accessToken());
+				System.out.println(data.token().scopes());
+				System.out.println(data.user().toString());
+				System.out.println(data.application().id());
+				System.out.println(data.application().name());
+			});
+
+			for(int i=0; i<1000; i++)
+			{
+				core.runCallbacks();
+				try
+				{
+					Thread.sleep(16);
+				}
+				catch(InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }
