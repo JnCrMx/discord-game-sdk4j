@@ -20,7 +20,7 @@ public class Events
 	private void registerEvents()
 	{
 		handlers.put(Command.Event.READY, new ReadyEvent.Handler(core));
-
+		handlers.put(Command.Event.ACTIVITY_JOIN, new ActivityJoinEvent.Handler(core));
 		handlers.put(Command.Event.CURRENT_USER_UPDATE, new CurrentUserUpdateEvent.Handler(core));
 		handlers.put(Command.Event.OVERLAY_UPDATE, new OverlayUpdateEvent.Handler(core));
 		handlers.put(Command.Event.RELATIONSHIP_UPDATE, new RelationshipUpdateEvent.Handler(core));
