@@ -7,24 +7,23 @@ import de.jcm.discordgamesdk.impl.EventHandler;
 import de.jcm.discordgamesdk.user.DiscordUser;
 
 public class ActivityJoinEvent {
-    public static class Handler extends EventHandler<DiscordUser>
-    {
-        public Handler(Core.CorePrivate core)
-        {
+    public static class Data {
+        String secret;
+    }
+
+    public static class Handler extends EventHandler<Data> {
+        public Handler(Core.CorePrivate core) {
             super(core);
         }
 
         @Override
-        public void handle(Command command, DiscordUser user)
-        {
-            core.log(LogLevel.VERBOSE, "Secret: " + command.getData().getAsJsonObject().get("secret").getAsString());
-            core.getEventAdapter().onActivityJoin(command.getData().getAsJsonObject().get("secret").getAsString());
+        public void handle(Command command, Data data) {
+            core.getEventAdapter().onActivityJoin(data.secret);
         }
 
         @Override
-        public Class<?> getDataClass()
-        {
-            return DiscordUser.class;
+        public Class<?> getDataClass() {
+            return Data.class;
         }
 
     }
