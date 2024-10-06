@@ -8,7 +8,7 @@ public class GetRelationships
 {
 	private GetRelationships() {}
 
-	public class Response
+	public static class Response
 	{
 		private List<DataProxies.RelationshipImpl> relationships;
 

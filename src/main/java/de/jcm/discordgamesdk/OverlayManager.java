@@ -7,7 +7,6 @@ import de.jcm.discordgamesdk.impl.commands.OpenOverlayGuildInvite;
 import de.jcm.discordgamesdk.impl.commands.OpenOverlayVoiceSettings;
 import de.jcm.discordgamesdk.impl.commands.SetOverlayLocked;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**

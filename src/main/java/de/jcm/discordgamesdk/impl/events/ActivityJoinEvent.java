@@ -1,10 +1,8 @@
 package de.jcm.discordgamesdk.impl.events;
 
 import de.jcm.discordgamesdk.Core;
-import de.jcm.discordgamesdk.LogLevel;
 import de.jcm.discordgamesdk.impl.Command;
 import de.jcm.discordgamesdk.impl.EventHandler;
-import de.jcm.discordgamesdk.user.DiscordUser;
 
 public class ActivityJoinEvent {
     public static class Data {
@@ -25,6 +23,5 @@ public class ActivityJoinEvent {
         public Class<?> getDataClass() {
             return Data.class;
         }
-
     }
 }

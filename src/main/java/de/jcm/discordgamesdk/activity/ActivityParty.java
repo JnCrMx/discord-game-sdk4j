@@ -1,7 +1,5 @@
 package de.jcm.discordgamesdk.activity;
 
-import java.util.Arrays;
-
 /**
  * A structure used show information about the player's party.
  * @see <a href="https://discordapp.com/developers/docs/game-sdk/activities#data-models-activityparty-struct">

@@ -1,6 +1,5 @@
 package de.jcm.discordgamesdk.impl.channel;
 
-import java.io.File;
 import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.IOException;

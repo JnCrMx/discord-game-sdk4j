@@ -58,20 +58,13 @@ public enum Result
 
 	public static Result fromCode(int code)
 	{
-		switch(code)
-		{
-			case 1000:
-				return INTERNAL_ERROR;
-			case 4000:
-				return INVALID_PAYLOAD;
-			case 4002:
-				return INVALID_COMMAND;
-			case 4010:
-				return NOT_FOUND;
-			case 5006:
-				return NO_ELIGIBLE_ACTIVITY;
-			default:
-				return INTERNAL_ERROR;
-		}
+        return switch (code) {
+            case 1000 -> INTERNAL_ERROR;
+            case 4000 -> INVALID_PAYLOAD;
+            case 4002 -> INVALID_COMMAND;
+            case 4010 -> NOT_FOUND;
+            case 5006 -> NO_ELIGIBLE_ACTIVITY;
+            default -> INTERNAL_ERROR;
+        };
 	}
 }

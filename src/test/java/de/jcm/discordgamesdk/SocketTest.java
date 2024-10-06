@@ -11,7 +11,6 @@ import de.jcm.discordgamesdk.user.DiscordUser;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
