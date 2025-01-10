@@ -25,11 +25,23 @@ public class CreateParams implements AutoCloseable
 		/**
 		 * This flag does <i>not</i> require Discord to be active to use the SDK.
 		 * <p>
-		 * Nevertheless, {@link Core#runCallbacks()} will fail if Discord is not active,
-		 * but it will just throw a {@link GameSDKException} and will not terminate
-		 * the application.
+		 * Nevertheless, {@link Core#runCallbacks()} and all other relevant operations
+		 * will fail if Discord is not active and throw {@link GameSDKException}s.
+		 * <p>
+		 * Use {@link Flags#SUPPRESS_EXCEPTIONS} to suppress exceptions in those
+		 * operations as well.
+		 * <p>
+		 * Use {@link Core#isDiscordRunning()} to check if Discord is available.
 		 */
-		NO_REQUIRE_DISCORD(1)
+		NO_REQUIRE_DISCORD(1),
+		/**
+		 * Suppresses all exceptions. This implies {@link Flags#NO_REQUIRE_DISCORD}.
+		 * All operations will be effectively a no-op if Discord is not running.
+		 * The library does not automatically reconnect to Discord if it launches.
+		 * <p>
+		 * Use {@link Core#isDiscordRunning()} to check if Discord is available.
+		 */
+		SUPPRESS_EXCEPTIONS(2+1)
 		;
 
 		private final long value;

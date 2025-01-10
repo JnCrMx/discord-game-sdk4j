@@ -69,6 +69,7 @@ public class Core implements AutoCloseable
 	private final DiscordEventAdapter eventAdapter;
 	private BiConsumer<LogLevel, String> logHook = DEFAULT_LOG_HOOK;
 	private LogLevel minLogLevel = LogLevel.VERBOSE;
+	private boolean suppressExceptions;
 	private final CorePrivate corePrivate;
 
 	private final CreateParams createParams;
@@ -104,7 +105,8 @@ public class Core implements AutoCloseable
 	 */
 	public Core(CreateParams params)
 	{
-		this.createParams = params;
+        this.createParams = params;
+		this.suppressExceptions = (this.createParams.flags & 1) != 0 || (this.createParams.flags & 2) != 0;
 
 		this.state = ConnectionState.HANDSHAKE;
 		this.gson = new Gson();
@@ -114,25 +116,32 @@ public class Core implements AutoCloseable
 		this.events = new Events(corePrivate);
 		this.eventAdapter = createParams.eventAdapter;
 
+		DiscordChannel tempChannel;
 		try
 		{
-			channel = Core.getDiscordChannel();
+			tempChannel = Core.getDiscordChannel();
 			this.sendHandshake();
 			runCallbacks();
-			channel.configureBlocking(false);
+			tempChannel.configureBlocking(false);
 		}
 		catch(IOException e)
 		{
-			throw new RuntimeException(e);
+			if(!suppressExceptions) {
+				throw new RuntimeException(e);
+			}
+			tempChannel = null;
 		}
+        this.channel = tempChannel;
 
-		this.activityManager = new ActivityManager(corePrivate);
+        this.activityManager = new ActivityManager(corePrivate);
 		this.applicationManager = new ApplicationManager(corePrivate);
 		this.overlayManager = new OverlayManager(corePrivate);
 		this.userManager = new UserManager(corePrivate);
 		this.relationshipManager = new RelationshipManager(corePrivate);
 		this.imageManager = new ImageManager(corePrivate);
 		this.voiceManager = new VoiceManager(corePrivate);
+
+		this.suppressExceptions = (this.createParams.flags & 2) != 0;
 	}
 
 	public class CorePrivate
@@ -175,6 +184,14 @@ public class Core implements AutoCloseable
 
 		public void sendCommandNoResponse(Command.Type type, Object args, Consumer<Command> responseHandler)
 		{
+			if(channel == null) {
+				if(suppressExceptions) {
+					return;
+				} else {
+					throw new GameSDKException(Result.NOT_RUNNING);
+				}
+			}
+
 			Command command = new Command();
 			command.setCmd(type);
 			command.setArgs(gson.toJsonTree(args).getAsJsonObject());
@@ -186,7 +203,11 @@ public class Core implements AutoCloseable
 			}
 			catch(IOException e)
 			{
-				throw new RuntimeException(e);
+				if(suppressExceptions) {
+					return;
+				} else {
+					throw new RuntimeException(e);
+				}
 			}
 			corePrivate.workQueue.add(()->{
 				Command c = new Command();
@@ -280,15 +301,27 @@ public class Core implements AutoCloseable
 
 	private void sendCommand(Command command, Consumer<Command> responseHandler)
 	{
-		handlers.put(command.getNonce(), responseHandler);
+		if(channel == null) {
+			if(suppressExceptions) {
+				return;
+			} else {
+				throw new GameSDKException(Result.NOT_RUNNING);
+			}
+		}
+
 		try
 		{
 			sendString(gson.toJson(command));
 		}
 		catch(IOException e)
 		{
-			throw new RuntimeException(e);
+			if(suppressExceptions) {
+				return;
+			} else {
+				throw new RuntimeException(e);
+			}
 		}
+		handlers.put(command.getNonce(), responseHandler);
 	}
 
 	private void sendHandshake() throws IOException
@@ -443,6 +476,14 @@ public class Core implements AutoCloseable
 		while((r = corePrivate.workQueue.poll()) != null)
 			r.run();
 
+		if(channel == null) {
+			if(suppressExceptions) {
+				return;
+			} else {
+				throw new GameSDKException(Result.NOT_RUNNING);
+			}
+		}
+
 		try
 		{
 			Command c = receiveCommand();
@@ -453,7 +494,9 @@ public class Core implements AutoCloseable
 		}
 		catch(IOException e)
 		{
-			throw new RuntimeException(e);
+			if(!suppressExceptions) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -498,11 +541,15 @@ public class Core implements AutoCloseable
 	{
 		try
 		{
-			channel.close();
+			if(channel != null) {
+				channel.close();
+			}
 		}
 		catch(IOException e)
 		{
-			throw new RuntimeException(e);
+			if(!suppressExceptions) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }
