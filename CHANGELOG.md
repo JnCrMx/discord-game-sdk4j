@@ -11,6 +11,7 @@ The new implementation is in plain Java.
 
 ### Breaking Changes
 - Raised minimum Java version to Java 16
+- No macOS support for now
 - `Core.init` was removed, because it is no longer required
 - Removed Managers due to deprecation:
   - `LobbyManager`
@@ -35,10 +36,10 @@ This big release would not have been possible without the help of various people
 contributions to this library!
 
 In rough historical order:
-- @Kevin-OVI for fixing the DownloadNativeLibrary example before the rewrite
-- @letorbi for massive work towards the rewrite, in particular the Windows support and tons of clean-up and improvements
-- @gravit0 for custom button support
-- @Desoroxxx for clean-up and documentation
-- @immails for Windows-specific fixes
-- @RedTeaDev for implementing the `ActivityJoinEvent`
-- @isabelcoolaf for "progress" activities and updating part of the library to reflect latest changes by Discord
+- [@Kevin-OVI](https://github.com/Kevin-OVI) for fixing the DownloadNativeLibrary example before the rewrite
+- [@letorbi](https://github.com/letorbi) for massive work towards the rewrite, in particular the Windows support and tons of clean-up and improvements
+- [@gravit0](https://github.com/gravit0) for custom button support
+- [@Desoroxxx](https://github.com/Desoroxxx) for clean-up and documentation
+- [@immails](https://github.com/immails) for Windows-specific fixes
+- [@RedTeaDev](https://github.com/RedTeaDev) for implementing the `ActivityJoinEvent`
+- [@isabelcoolaf](https://github.com/isabelcoolaf) for "progress" activities and updating part of the library to reflect latest changes by Discord
