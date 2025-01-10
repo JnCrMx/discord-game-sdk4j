@@ -20,7 +20,6 @@ public class ActivityTimestamps
 	public void setStart(Instant start)
 	{
 		this.start = start.getEpochSecond();
-		this.end = null;
 	}
 
 	/**
@@ -39,7 +38,6 @@ public class ActivityTimestamps
 	 */
 	public void setEnd(Instant end)
 	{
-		this.start = null;
 		this.end = end.getEpochSecond();
 	}
 
