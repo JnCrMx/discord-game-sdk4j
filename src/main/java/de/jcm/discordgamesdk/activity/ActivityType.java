@@ -16,7 +16,7 @@ public enum ActivityType
 	PLAYING,
 	STREAMING,
 	LISTENING,
-	UNUSED,
+	WATCHING,
 	CUSTOM,
 	COMPETING
 }
