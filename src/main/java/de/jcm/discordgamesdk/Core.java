@@ -501,7 +501,7 @@ public class Core implements AutoCloseable
 	}
 
 	public boolean isDiscordRunning() {
-		return channel.isAvailable();
+		return channel != null && channel.isAvailable();
 	}
 
 	/**
