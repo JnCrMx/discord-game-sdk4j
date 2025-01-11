@@ -60,7 +60,7 @@ public class Core implements AutoCloseable
 		}
 	}
 
-	private final DiscordChannel channel;
+	private DiscordChannel channel;
 	private ConnectionState state;
 	private final Gson gson;
 	private long nonce;
@@ -116,22 +116,19 @@ public class Core implements AutoCloseable
 		this.events = new Events(corePrivate);
 		this.eventAdapter = createParams.eventAdapter;
 
-		DiscordChannel tempChannel;
 		try
 		{
-			tempChannel = Core.getDiscordChannel();
+			this.channel = Core.getDiscordChannel();
 			this.sendHandshake();
 			runCallbacks();
-			tempChannel.configureBlocking(false);
+			this.channel.configureBlocking(false);
 		}
 		catch(IOException e)
 		{
 			if(!suppressExceptions) {
 				throw new RuntimeException(e);
 			}
-			tempChannel = null;
 		}
-        this.channel = tempChannel;
 
         this.activityManager = new ActivityManager(corePrivate);
 		this.applicationManager = new ApplicationManager(corePrivate);
