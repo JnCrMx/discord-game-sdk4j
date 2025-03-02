@@ -2,16 +2,15 @@
 
 ## 1.0.0
 
-In this version, the entire internals of the library has been rewritten
-to remove the requirement for the native library.
+In this version, the entire internals of the library have been rewritten
+to remove the requirement for a native library.
 
-The new implementation is in plain Java.
+The new implementation is in plain Java and interacts directly with Discord's IPC socket.
 
 **Some of the removed features might be re-added in a future version.**
 
 ### Breaking Changes
 - Raised minimum Java version to Java 16
-- No macOS support for now
 - `Core.init` was removed, because it is no longer required
 - Removed Managers due to deprecation:
   - `LobbyManager`
@@ -20,7 +19,7 @@ The new implementation is in plain Java.
   - `ActivityManager.registerCommand` because it does not communicate with Discord
   - `ActivityManager.registerSteam` because it does not communicate with Discord
   - `AcitvityManager.acceptRequest` because I cannot figure out how it works
-  - `UserManager.getCurrentUserPremiumType` because I don't have Discord Nitro, so I cannot test it
+  - `UserManager.getCurrentUserPremiumType` because I don't have Discord Nitro, so I cannot figure out how it works
 - `ActivityTimestamps.setStart` not longer resets the end timestamp, use `ActivityTimestamps.clearEnd` for that
 - `ActivityTimestamps.setEnd` not longer resets the start timestamp, use `ActivityTimestamps.clearStart` for that
 
@@ -31,7 +30,7 @@ The new implementation is in plain Java.
 - Support for "progress"-like activities featuring both start and end time
   (see `ActivityTimestamps.setStartAndEnd`)
 
-### Thank Yous and Acknowledgements
+### Thank You's and Acknowledgements
 This big release would not have been possible without the help of various people and I am incredibly thankful for their
 contributions to this library!
 
