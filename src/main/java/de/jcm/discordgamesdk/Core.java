@@ -15,6 +15,8 @@ import de.jcm.discordgamesdk.user.Relationship;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
@@ -244,7 +246,7 @@ public class Core implements AutoCloseable
 
 	private void sendString(String message) throws IOException
 	{
-		byte[] bytes = message.getBytes();
+		byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
 		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		buf.putInt(state.ordinal());

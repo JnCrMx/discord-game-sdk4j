@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 public class SocketTest
 {
@@ -40,7 +41,7 @@ public class SocketTest
 
 	void send(DiscordChannel channel, ConnectionState state, String message) throws IOException
 	{
-		byte[] bytes = message.getBytes();
+		byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
 		ByteBuffer buf = ByteBuffer.allocate(bytes.length + 8);
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		buf.putInt(state.ordinal());
